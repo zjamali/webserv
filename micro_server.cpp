@@ -23,7 +23,7 @@ int main()
     sockaddr.sin_port = htons(9999); // htons is necessary to convert a number to
                                      // network byte order
     if (bind(sockfd, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) < 0)
-    {
+    { 
         std::cout << "Failed to bind to port 9999. errno: " << errno << std::endl;
         exit(EXIT_FAILURE);
     }
