@@ -32,7 +32,8 @@ int main()
 
     // Grab a connection from the queue
     size_t addrlen = sizeof(sockaddr);
-    while (1)
+    
+   while (1)
     {
         /* code */
 
@@ -42,11 +43,30 @@ int main()
             std::cout << "Failed to grab connection. errno: " << errno << std::endl;
             exit(EXIT_FAILURE);
         }
-        char *buffer = (char*)malloc(1000);
-        int bytesRead = read(connection, buffer, 1000);
+        char buffer[10000];
+        int bytesRead;
+        //bytesRead = read(connection, buffer, 10000);
+        std::string recievedData;
+        while ((bytesRead = read(connection, buffer, 10000)) > 0)
+        {
+            std::cout << "-----------------------------readed " << bytesRead << "\n";
+            buffer[bytesRead] = '\0';
+            recievedData = recievedData + buffer;
+            std::cout << recievedData;
+            std::cout << "-------------\n";
+            if (bytesRead < 10000)
+                break;
+        }
+
         (void)bytesRead;
-        std::cout << buffer;
-        parseRequest(buffer);
+        //buffer[bytesRead] = '\0';
+        //std::cout << buffer;
+        //parseRequest(buffer);
+        //parseRequest(recievedData);
+
+        std::cout << recievedData;
+        HttpRequest request(recievedData);
+        request.print();
         std::string response = "Good talking to you\n";
         send(connection, response.c_str(), response.size(), 0);
         // close(connection);
@@ -80,6 +100,7 @@ struct fileParse {
     std:string ConDisposition;
     std:string ContType;
     std::string body;
+    string filename;
 }
 special variable for files: std::vector<struct fileParse> v;
 POST / HTTP/1.1

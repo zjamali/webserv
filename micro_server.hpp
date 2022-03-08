@@ -9,10 +9,11 @@
 #include <vector>
 #include <string>
 #include <map>
+#include "HttpRequest.hpp"
 
-#define PORT 9999 
+#define PORT 9996
 
 //////
-void parseRequest(char *buffer);
+///void parseRequest(std::string const &buffer);
 /////
 #endif
