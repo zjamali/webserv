@@ -1,10 +1,4 @@
-#include <sys/socket.h> // For socket functions
-#include <netinet/in.h> // For sockaddr_in
-#include <cstdlib>      // For exit() and EXIT_FAILURE
-#include <iostream>     // For cout
-#include <unistd.h>     // For read
-#include <vector>
-#include <string>
+#include "micro_server.hpp"
 
 int main()
 {
@@ -21,7 +15,7 @@ int main()
     sockaddr_in sockaddr;
     sockaddr.sin_family = AF_INET;
     sockaddr.sin_addr.s_addr = INADDR_ANY;
-    sockaddr.sin_port = htons(9995); // htons is necessary to convert a number to
+    sockaddr.sin_port = htons(PORT); // htons is necessary to convert a number to
                                      // network byte order
     if (bind(sockfd, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) < 0)
     {
@@ -48,44 +42,11 @@ int main()
             std::cout << "Failed to grab connection. errno: " << errno << std::endl;
             exit(EXIT_FAILURE);
         }
-        char buffer[1000];
+        char *buffer = (char*)malloc(1000);
         int bytesRead = read(connection, buffer, 1000);
         (void)bytesRead;
-        std::string str(buffer);
-        std::cout << "\n  lenght  " << str.length() << "\n";
         std::cout << buffer;
-
-        std::vector<std::string> requestLines;
-
-        int index = 0;
-        int startIndex = 0;
-        while (index < (int)str.length())
-        {
-
-            while (index < (int)str.length())
-            {
-                if (str[index] == '\r' && str[index + 1] == '\n')
-                {
-                    break;
-                }
-                //if (str[index] == '\r')
-                //    std::cout << "-----------------\n";
-                index = index + 2;
-            }
-            std::string str1 = str.substr(startIndex,index - 1);
-            std::cout << "{ " << str1 << " }\n"; 
-            requestLines.push_back(str1);
-            index= index + 2;
-            startIndex = index;
-        }
-        std::cout << " vector" <<requestLines.size() << "\n";
-
-        std::cout << "\\\\\\\n";
-        for (std::vector<std::string>::iterator it = requestLines.begin(); it != requestLines.end(); it++)
-        {
-            std::cout << *it << std::endl;
-        }
-        std::cout << "**************************\n";
+        parseRequest(buffer);
         std::string response = "Good talking to you\n";
         send(connection, response.c_str(), response.size(), 0);
         // close(connection);
