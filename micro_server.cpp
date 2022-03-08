@@ -64,11 +64,14 @@ int main()
         //parseRequest(buffer);
         //parseRequest(recievedData);
 
+
         std::cout << recievedData;
+        /////// request parse begin 
         HttpRequest request(recievedData);
+        ////// request parse end
         request.print();
-        std::string response = "Good talking to you\n";
-        send(connection, response.c_str(), response.size(), 0);
+        std::string myResponse = "HTTP/1.1 200 OK\r\nDate: Mon, 27 Jul 2009 12:28:53 GMT\r\nServer: Apache/2.2.14 (Win32)\r\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\r\nContent-Length: 88\r\nContent-Type: text/html\r\nConnection: Closed\r\n\r\n<html><body><h1>Hello, World!</h1></body></html>";
+        send(connection, myResponse.c_str(), myResponse.size(), 0);
         // close(connection);
     }
     close(sockfd);

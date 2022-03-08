@@ -1,9 +1,15 @@
 #include "HttpRequest.hpp"
 
-HttpRequest::HttpRequest(std::string const &request) : _requestIndex(0), _request(request)
+HttpRequest::HttpRequest(std::string const &request) : _requestIndex(0), _request(request), _requestStatus(0)
 {
     this->parseStartLine();
+    this->checkRequestStartLine();
     this->parseHeaders();
+    this->checkRequestkHeaders();
+}
+HttpRequest::~HttpRequest()
+{
+
 }
 
 void HttpRequest::parseStartLine()
@@ -34,7 +40,15 @@ void HttpRequest::parseHeaders()
 
 }
 
-HttpRequest::~HttpRequest()
+void HttpRequest::checkRequestStartLine()
+{
+    if(_method != "GET" && _method != "DELETE" && _method != "POST")
+        _requestStatus =501; // 501 Not Implemented
+    if (_httpVersion != "HTTP/1.1")
+        _requestStatus = 505; // 505 HTTP Version Not Supported
+}
+
+void HttpRequest::checkRequestkHeaders()
 {
 
 }
@@ -42,6 +56,7 @@ HttpRequest::~HttpRequest()
 void HttpRequest::print() const
 {
     std::cout << "\n-------------------------  REQUEST BEGIN -------------------------\n";
+    std::cout << "request status " << _requestStatus << "\n";
     std::cout << "method  :  {" << _method << "}\n"; 
     std::cout << "path  :  {" << _path << "}\n"; 
     std::cout << "http version  :  {" << _httpVersion << "}\n"; 
