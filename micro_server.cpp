@@ -52,33 +52,34 @@ int main()
             std::cout << "-----------------------------readed " << bytesRead << "\n";
             buffer[bytesRead] = '\0';
             recievedData = recievedData + buffer;
-            std::cout << recievedData;
-            std::cout << "-------------\n";
             if (bytesRead < 10000)
                 break;
         }
 
         (void)bytesRead;
-        //buffer[bytesRead] = '\0';
-        //std::cout << buffer;
-        //parseRequest(buffer);
-        //parseRequest(recievedData);
-
-
         std::cout << recievedData;
+         std::cout << "-------------\n";
         /////// request parse begin 
         HttpRequest request(recievedData);
         ////// request parse end
         request.print();
-        std::string myResponse = "HTTP/1.1 200 OK\r\nDate: Mon, 27 Jul 2009 12:28:53 GMT\r\nServer: Apache/2.2.14 (Win32)\r\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\r\nContent-Length: 88\r\nContent-Type: text/html\r\nConnection: Closed\r\n\r\n<html><body><h1>Hello, World!</h1></body></html>";
-        send(connection, myResponse.c_str(), myResponse.size(), 0);
-        // close(connection);
+
+        std::ifstream fs;
+        fs.open("./www/index.html");
+
+        char *indexData = (char*)malloc(20000);
+        fs.read(indexData,20000);
+        fs.close();
+        std::string header("HTTP/1.1 200 OK\r\nVary: Origin\r\nAccess-Control-Allow-Credentials: true\r\nAccept-Ranges: bytes\r\nCache-Control: public, max-age=0\r\nLast-Modified: Wed, 09 Mar 2022 18:28:40 GMT\r\nETag: W/\"4bbe-17f6ff0b3c0\"\r\nDate: Wed, 09 Mar 2022 18:43:38 GMT\r\nConnection: keep-alive\r\nKeep-Alive: timeout=5\r\n\r");
+        // std::string response1 = std::string("HTTP/1.1 200 OK\r\nDate: Mon, 27 Jul 2009 12:28:53 GMT\r\nServer:  webServ\r\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\r\nContent-Length: 20000\r\nContent-Type: text/html\r\nConnection: Closed\r\n\r") + std::string(indexData);
+        std::string response1 = header + std::string(indexData);
+        //std::string myResponse = "HTTP/1.1 200 OK\r\nDate: Mon, 27 Jul 2009 12:28:53 GMT\r\nServer:  webServ\r\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\r\nContent-Length: 88\r\nContent-Type: text/html\r\nConnection: Closed\r\n\r\n";
+        // send(connection, myResponse.c_str(), myResponse.size(), 0);
+        free(indexData);
+        send(connection, response1.c_str(), response1.size(), 0);
+        close(connection);
     }
     close(sockfd);
-    // Read from the connection
-
-    // Send a message to the connection
-    // Close the connections
 }
 
 /*
