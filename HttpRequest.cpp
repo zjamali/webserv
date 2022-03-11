@@ -6,9 +6,7 @@ HttpRequest::HttpRequest(std::string const &request)
     this->parseStartLine();
     this->checkRequestStartLine();
     this->parseHeaders();
-    this->checkRequestkHeaders();
-    if (_requestStatus == 0 && _method == "POST")
-        this->parseRequestBody();
+    this->parseRequestBody();
 }
 HttpRequest::~HttpRequest()
 {
@@ -35,21 +33,36 @@ void HttpRequest::parseHeaders()
     {
         int separator = _request.find(":", _requestIndex);
         int endLine = _request.find("\r\n", _requestIndex);
-        _headers[_request.substr(_requestIndex, separator - _requestIndex) /* separator - i : to doesn't include separator  */] = _request.substr(separator + 2, endLine - separator - 2); // separator + 2 : first charcter of value ;endLine - separator - 2 : index of last character of headers-entities
+        std::string headerKey = _request.substr(_requestIndex, separator - _requestIndex);
+        this->checkRequestkHeaders(headerKey);
+        _headers[_request.substr(_requestIndex, separator - _requestIndex)] = /* separator - i : to doesn't include separator  */ 
+        _request.substr(separator + 2, endLine - separator - 2); // separator + 2 : first charcter of value ;endLine - separator - 2 : index of last character of headers-entities
         _requestIndex = endLine + 2;
     }
+    if (_headers.find("Host") == _headers.end() && _headers.find("host") == _headers.end()) // no Host header found
+        _requestStatus = 400; // bad request
+    
 }
 
 void HttpRequest::checkRequestStartLine()
 {
     if (_method != "GET" && _method != "DELETE" && _method != "POST")
         _requestStatus = 501; // 501 Not Implemented
-    if (_httpVersion != "HTTP/1.1"  && _httpVersion != "HTTP/1.1")
+    if (_httpVersion != "HTTP/1.1" && _httpVersion != "HTTP/1.1")
         _requestStatus = 505; // 505 HTTP Version Not Supported
+    if (_method.size() != 3)
+        _requestStatus = 400; // 400 Bad Request
+    
 }
 
-void HttpRequest::checkRequestkHeaders()
+void HttpRequest::checkRequestkHeaders(std::string const &headerKey)
 {
+    if (headerKey == "Host")
+        if (_headers.find("Host") != _headers.end()) 
+            _requestStatus = 400 ; // bad request
+    if (headerKey == "host")
+        if (_headers.find("host") != _headers.end())
+            _requestStatus = 400;    
 }
 
 void HttpRequest::parseRequestBody()
@@ -59,36 +72,38 @@ void HttpRequest::parseRequestBody()
     std::cout << _requestBody << "\n";
     std::cout << "\n-------------------------  BODY END -------------------------\n";
 
-    // std::map<std::string, std::string>::iterator it = _headers.find("Content-Type");
-    if (_headers.find("Content-Type") == _headers.end() ||_headers["Content-Type"].empty())
+    if (_requestBody == "\r\n")
         _bodyExist = false;
     else
         _bodyExist = true;
-
-    if (_bodyExist)
-    {
-        
-    }
-    // find boundry key and get value of boundry
-    //_boundary = _headers["Content-Type"].c_str() + _headers["Content-Type"].find("boundary=") + strlen("boundary=");
 }
 
-void HttpRequest::parseBodyparts()
+/*
+**  getters
+*/
+std::string HttpRequest::getMethod() const
 {
-    long index = 0;
-    int contentDispositionStart;
-    int contentDispositionEnd;
-    std::string contentType;
-    std::string name;
-    std::string data;
-    while ((index = _requestBody.find("--" + _boundary + "\r\n", index + 1)))
-    {
-        if (index == (long)std::string::npos)
-            break;
-        contentDispositionStart = _requestBody.find("Content-Disposition:", index + 1) + strlen("Content-Disposition: ");
-        contentDispositionEnd = _requestBody.find(";", contentDispositionStart);
-        // std::cout <<"-> dispostion : {" << _requestBody.substr(contentDispositionStart, contentDispositionEnd - contentDispositionStart) <<"}\n";
-    }
+    return _method;
+}
+std::string HttpRequest::getHttpVersion() const
+{
+    return _httpVersion;
+}
+std::string HttpRequest::getPath() const
+{
+    return _path;
+}
+int HttpRequest::getRequestStatus() const
+{
+    return _requestStatus;
+}
+std::map<std::string, std::string> HttpRequest::getHedaers() const
+{
+    return _headers;
+}
+std::map<std::string, std::string> HttpRequest::getQueries() const
+{
+    return _queries;
 }
 
 void HttpRequest::print() const
@@ -98,7 +113,7 @@ void HttpRequest::print() const
     std::cout << "method  :  {" << _method << "}\n";
     std::cout << "path  :  {" << _path << "}\n";
     std::cout << "http version  :  {" << _httpVersion << "}\n";
-    std::cout << "body : " << (_bodyExist?"exist\n":"not exist\n") ;
+    std::cout << "body : " << (_bodyExist ? "exist\n" : "not exist\n");
 
     std::cout << "**** headers ****\n";
     for (std::map<std::string, std::string>::const_iterator it = _headers.begin(); it != _headers.end(); it++)

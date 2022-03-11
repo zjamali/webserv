@@ -3,10 +3,7 @@
 #include <iostream>
 #include <string>
 #include <map>
-
-typedef enum e_dataType{
-    file,text
-}dataType;
+#include <utility>
 
 class HttpRequest
 {
@@ -17,36 +14,28 @@ private:
     std::string _httpVersion;
     std::string _path;
     int _requestStatus;
-
-    std::string _contentType;
-    std::string _boundary;
-    std::string _requestBody;
-    bool _bodyExist;
-    typedef struct s_bodyPart
-    {
-        int dataType;
-        std::string contentDisposition;
-        std::string contentType;
-        std::string name;
-        std::string data;
-        s_bodyPart(std::string dispostion, std::string type, std::string name, std::string data):
-        contentDisposition(dispostion), contentType(type),name(name),data(data)
-         {};
-    } bodyPart;
-
+    std::map<std::string, std::string> _queries;
     std::map<std::string, std::string> _headers;
-    std::vector<bodyPart> _body();
+
+    bool _bodyExist;
+    std::string _requestBody;
 
     void parseStartLine();
     void parseHeaders();
     void checkRequestStartLine();
-    void checkRequestkHeaders();
+    void checkRequestkHeaders(std::string const  &headerKey);
     void parseRequestBody();
     void parseBodyparts();
 
 public:
     HttpRequest(std::string const &request);
     ~HttpRequest();
+    std::string getMethod() const;
+    std::string getHttpVersion() const;
+    std::string getPath() const;
+    int getRequestStatus() const; 
+    std::map<std::string, std::string> getHedaers() const;
+    std::map<std::string, std::string> getQueries() const;
     void print() const;
 };
 #endif
