@@ -64,6 +64,8 @@ int main()
         ////// request parse end
         request.print();
 
+        HttpResponse response(request);
+        /*
         std::ifstream fs;
         fs.open("./serverPages/200.html");
 
@@ -75,8 +77,12 @@ int main()
         std::string response1 = header + std::string(indexData);
         //std::string myResponse = "HTTP/1.1 200 OK\r\nDate: Mon, 27 Jul 2009 12:28:53 GMT\r\nServer:  webServ\r\nLast-Modified: Wed, 22 Jul 2009 19:15:56 GMT\r\nContent-Length: 88\r\nContent-Type: text/html\r\nConnection: Closed\r\n\r\n";
         // send(connection, myResponse.c_str(), myResponse.size(), 0);
-        free(indexData);
-        send(connection, response1.c_str(), response1.size(), 0);
+
+        
+        free(indexData);*/
+        response.print();
+        // send(connection, response1.c_str(), response1.size(), 0);
+        send(connection, response.generateResponse().c_str(), response.generateResponse().length() , 0);
         close(connection);
     }
     close(sockfd);

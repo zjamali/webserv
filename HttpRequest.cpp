@@ -62,7 +62,7 @@ void HttpRequest::checkRequestkHeaders(std::string const &headerKey)
             _requestStatus = 400 ; // bad request
     if (headerKey == "host")
         if (_headers.find("host") != _headers.end())
-            _requestStatus = 400;    
+            _requestStatus = 400;
 }
 
 void HttpRequest::parseRequestBody()
