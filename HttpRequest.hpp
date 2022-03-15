@@ -14,6 +14,7 @@ private:
     std::string _httpVersion;
     std::string _path;
     int _requestStatus;
+    std::string _queriesData;
     std::map<std::string, std::string> _queries;
     std::map<std::string, std::string> _headers;
 
