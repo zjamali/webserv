@@ -5,38 +5,81 @@
 #include <map>
 #include <utility>
 
-class HttpRequest
+class bodyPart
 {
 private:
+    std::string _conDisposition;
+    std::string _contType;
+    std::string _data;
+    std::string _filename;
+
+public:
+    bodyPart(){};
+    bodyPart(std::string const conDispo, std::string const conType,std::string const data, std::string const filename):
+    _conDisposition(conDispo), _contType(conType), _data(data), _filename(filename) {}
+    ~bodyPart();
+
+    std::string getContentDispostion() const { return _conDisposition;};
+    std::string getContentType() const { return _contType;};
+    std::string getData() const { return _data;};
+    std::string getFilename() const { return _filename;};
+
+};
+
+class HttpRequest
+{
+    /*
+     *   Request
+     */
+private:
     int _requestIndex;
+
+public:
+    int getRequestStatus() const;
+    void print() const;
+
+    /*
+     *   Request header
+     */
+private:
     std::string _request;
     std::string _method;
     std::string _httpVersion;
     std::string _path;
     int _requestStatus;
-    std::string _queriesData;
-    std::map<std::string, std::string> _queries;
+    std::string _quereyData;
+    std::map<std::string, std::string> _querey;
     std::map<std::string, std::string> _headers;
-
-    bool _bodyExist;
-    std::string _requestBody;
-
     void parseStartLine();
     void parseHeaders();
-    void checkRequestStartLine();
-    void checkRequestkHeaders(std::string const  &headerKey);
+    void checkRequestStartLine(std::string const &startLine);
+    void checkRequestkHeaders(std::string const &headerKey);
+
+public:
+    std::string getMethod() const { return _method;};
+    std::string getHttpVersion() const { return _httpVersion; };
+    std::string getPath() const { return _path; };
+    std::map<std::string, std::string> getHedaers() const {return _headers; };
+    std::map<std::string, std::string> getQueries() const {return _querey; };
+
+    /*
+     *   Request Body
+     */
+private:
+    bool _bodyExist;
+    std::string _bodyDataType;
+    std::string _boundary;
+    std::string _requestBody;
+    std::vector<bodyPart> bodyParts();
     void parseRequestBody();
     void parseBodyparts();
 
 public:
+    std::string getRequestBody() const;
+    std::vector<bodyPart> getBodyParts() const;
+
+public:
     HttpRequest(std::string const &request);
     ~HttpRequest();
-    std::string getMethod() const;
-    std::string getHttpVersion() const;
-    std::string getPath() const;
-    int getRequestStatus() const; 
-    std::map<std::string, std::string> getHedaers() const;
-    std::map<std::string, std::string> getQueries() const;
-    void print() const;
 };
 #endif

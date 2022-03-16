@@ -47,16 +47,19 @@ int main()
         int bytesRead;
         //bytesRead = read(connection, buffer, 10000);
         std::string recievedData;
-        while ((bytesRead = read(connection, buffer, 10000)) > 0)
+        while ((bytesRead = recv(connection, buffer, 10000, 0)) > 0)
         {
-            std::cout << "-----------------------------readed " << bytesRead << "\n";
-            buffer[bytesRead] = '\0';
+             buffer[bytesRead] = '\0';
+            std::cout << "-----------------------------readed " << bytesRead  << "\n";
+            std::cout << buffer << std::endl;
+           
             recievedData = recievedData + buffer;
             if (bytesRead < 10000)
                 break;
         }
 
         (void)bytesRead;
+        std::cout << "zabi       --------\n";
         std::cout << recievedData;
          std::cout << "-------------\n";
         /////// request parse begin 

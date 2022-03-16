@@ -4,16 +4,22 @@ HttpRequest::HttpRequest(std::string const &request)
     : _requestIndex(0), _request(request), _requestStatus(0), _bodyExist(false)
 {
     this->parseStartLine();
-    this->checkRequestStartLine();
+
     this->parseHeaders();
-    this->parseRequestBody();
+    if (_method == "POST")
+        this->parseRequestBody();
 }
 HttpRequest::~HttpRequest()
 {
 }
 
+/*
+ *   Request header
+ */
 void HttpRequest::parseStartLine()
 {
+    std::string startLine = _request.substr(0,_request.find("\r\n"));
+
     int methodEndPostion = _request.find(" ");
     _method = _request.substr(0, methodEndPostion);
     methodEndPostion++;
@@ -22,17 +28,21 @@ void HttpRequest::parseStartLine()
     pathEndPostion++;
     int httpVersionEndPostion = _request.find("\r\n", pathEndPostion);
     _httpVersion = _request.substr(pathEndPostion, httpVersionEndPostion - pathEndPostion);
-    
+    this->checkRequestStartLine(startLine);
     if (_path.find("?") != std::string::npos)
     {
         /// get queries and change path
         int pathEnd = _path.find("?");
-        _queriesData = _path.substr(pathEnd + 1);
-        std::string newPath = _path.substr(0,pathEnd);
-        _path = newPath;
+        _quereyData = _path.substr(pathEnd + 1);
+        std::string newPath = _path.substr(0, pathEnd);
         _path = newPath;
         // get queries
-        std::cout << "queries : " << _queriesData<< "\n";
+        if (_quereyData.find("=") != std::string::npos)
+            _querey[_quereyData.substr(0, _quereyData.find("="))] = _quereyData.substr(_quereyData.find("=") + 1);
+        else
+            _querey[_quereyData] = std::string("");
+        std::map<std::string, std::string>::iterator it = _querey.begin();
+        std::cout << "querey : " << it->first << " : " << it->second << "\n";
     }
     _requestIndex = httpVersionEndPostion + 2; // +2 : \r\n end of line
 }
@@ -54,18 +64,21 @@ void HttpRequest::parseHeaders()
         _requestStatus = 400;                                                               // bad request
 }
 
-void HttpRequest::checkRequestStartLine()
+void HttpRequest::checkRequestStartLine(std::string const &startLine)
 {
+    // check 3 parameters of starline exist
+    std::cout << "startline : {" << startLine << "}";
+    if (startLine.length() != (_method.length() + _httpVersion.length() + _path.length() + 2)) // +2 for the spaces between parameters 
+        std::cout << "{{{{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}";
     if (_method != "GET" && _method != "DELETE" && _method != "POST")
         _requestStatus = 501; // 501 Not Implemented
     if (_httpVersion != "HTTP/1.1" && _httpVersion != "HTTP/1.1")
         _requestStatus = 505; // 505 HTTP Version Not Supported
-    if (_method.size() != 3)
-        _requestStatus = 400; // 400 Bad Request
 }
 
 void HttpRequest::checkRequestkHeaders(std::string const &headerKey)
 {
+    // check if Host header  exist or duplicated LOL
     if (headerKey == "Host")
         if (_headers.find("Host") != _headers.end())
             _requestStatus = 400; // bad request
@@ -74,6 +87,10 @@ void HttpRequest::checkRequestkHeaders(std::string const &headerKey)
             _requestStatus = 400;
 }
 
+/*
+ *   Request Body
+ */
+
 void HttpRequest::parseRequestBody()
 {
     _requestBody = _request.c_str() + _requestIndex; // skip + 4 : /r/n/r/n
@@ -81,38 +98,56 @@ void HttpRequest::parseRequestBody()
     std::cout << _requestBody << "\n";
     std::cout << "\n-------------------------  BODY END -------------------------\n";
 
-    if (_requestBody == "\r\n")
-        _bodyExist = false;
-    else
-        _bodyExist = true;
+    _bodyExist = _requestBody == "\r\n" ? false : true;
+    if (_method == "POST")
+    {
+        if (_headers.find("Content-Length") == _headers.end()) // content-type not exist
+            _requestStatus = 400;
+        if (_bodyExist)
+        {
+            if (_headers.find("Content-Type") == _headers.end())
+                _bodyDataType = "undifined";
+            else
+            {
+                if (_headers["Content-Type"].find("multipart/form-data") != std::string::npos)
+                {
+                    _bodyDataType = "multipart/form-data";
+                    _boundary = _headers["Content-Type"].substr(_headers["Content-Type"].find("=") + 1);
+                    std::cout << "Boundery : " << _boundary << "\n";
+                    std::string beginBoundary = "--" + _boundary + "\r\n";
+
+                    int found = 0, count = 0;
+                    
+                    // count how many dataform sent
+                    while (_requestBody.find(beginBoundary, found) != std::string::npos)
+                    {
+                        found = _requestBody.find(beginBoundary, found) + beginBoundary.length();
+                        count++;
+                    }
+                    int i = 0;
+                    found = 0;
+                    while (i < count)
+                    {
+                        
+                    }
+                    
+                    std::cout << "CCCCCCC       : "  << count << "\n";
+                }
+                else
+                {
+                    _bodyDataType = _headers["Content-Type"];
+                }
+            }
+        }
+    }
 }
 
 /*
-**  getters
+**  request
 */
-std::string HttpRequest::getMethod() const
-{
-    return _method;
-}
-std::string HttpRequest::getHttpVersion() const
-{
-    return _httpVersion;
-}
-std::string HttpRequest::getPath() const
-{
-    return _path;
-}
 int HttpRequest::getRequestStatus() const
 {
     return _requestStatus;
-}
-std::map<std::string, std::string> HttpRequest::getHedaers() const
-{
-    return _headers;
-}
-std::map<std::string, std::string> HttpRequest::getQueries() const
-{
-    return _queries;
 }
 
 void HttpRequest::print() const
@@ -129,6 +164,5 @@ void HttpRequest::print() const
     {
         std::cout << "{" << it->first << "} : {" << it->second << "}\n";
     }
-
     std::cout << "-------------------------  REQUEST END   -------------------------\n";
 }
