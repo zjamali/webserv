@@ -8,8 +8,28 @@
 #include "HttpRequest.hpp"
 
 
+
+
+
+
 class HttpResponse
 {
+private:
+    /*
+    *   RESPONSE HEDAER
+    */
+    //// start line
+    std::string __http;
+    std::string __statusCode;
+    std::string __statusDesciption;
+    //// hedaers
+    std::string __connection;
+    std::string __contentLength;
+    std::string __contentType ;
+    std::string __Date;
+    std::string __server ;
+
+    std::map<int, std::string> __codes;
 private:
     HttpRequest const &_request;
     std::string _generatedResponse;

@@ -54,8 +54,8 @@ int main()
             std::cout << buffer << std::endl;
            
             recievedData = recievedData + buffer;
-            if (bytesRead < 10000)
-                break;
+            if (recievedData.find("\r\n\r\n") != std::string::npos) // if we get the end of request 
+                    break;
         }
 
         (void)bytesRead;

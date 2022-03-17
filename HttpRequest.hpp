@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <utility>
+#include <ctype.h>
 
 class bodyPart
 {
@@ -47,13 +48,14 @@ private:
     std::string _httpVersion;
     std::string _path;
     int _requestStatus;
-    std::string _quereyData;
+    std::string _quereyData; // raw data
     std::map<std::string, std::string> _querey;
     std::map<std::string, std::string> _headers;
     void parseStartLine();
     void parseHeaders();
-    void checkRequestStartLine(std::string const &startLine);
-    void checkRequestkHeaders(std::string const &headerKey);
+    bool checkRequestStartLine(std::string const &startLine);
+    bool checkHostHeader();
+    bool checkRequestkHeaders();
 
 public:
     std::string getMethod() const { return _method;};
@@ -66,16 +68,19 @@ public:
      *   Request Body
      */
 private:
+    std::string _requestBody;
     bool _bodyExist;
+    
     std::string _bodyDataType;
     std::string _boundary;
-    std::string _requestBody;
     std::vector<bodyPart> bodyParts();
     void parseRequestBody();
     void parseBodyparts();
 
+
 public:
     std::string getRequestBody() const;
+    
     std::vector<bodyPart> getBodyParts() const;
 
 public:

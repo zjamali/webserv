@@ -2,15 +2,88 @@
 
 HttpResponse::HttpResponse(HttpRequest const &request) : _request(request)
 {
+    __http = "";
+    __statusCode = "";
+    __statusDesciption = "";
+    
+    __connection = "Closed";
+    __contentLength = "";
+    __contentType = "text/html";
+    __Date = "";
+    __server = "Webserv/1.0";
+
+
+
+    //// Successful responses
+    __codes[200] = "OK";
+    __codes[201] = "Created";
+    __codes[202] = "Accepted";
+    __codes[203] = "Non-Authoritative Information";
+    __codes[204] = "No Content";
+    __codes[205] = "Reset Content";
+    __codes[206] = "Partial Content";
+    __codes[207] = "Multi-Status";
+    __codes[208] = "208 Already Reported";
+    __codes[226] = "226 IM Used";
+    //// Redirection messages
+    __codes[300] = "Multiple Choice";
+    __codes[301] = "Moved Permanently";
+    __codes[302] = "Found";
+    __codes[303] = "See Other";
+    __codes[304] = "Not Modified";
+    __codes[305] = "Use Proxy";
+    __codes[306] = "unused";
+    __codes[307] = "Temporary Redirect";
+    __codes[308] = "Permanent Redirect";
+    //// Client error responses
+    __codes[400] = "Bad Request";
+    __codes[401] = "Unauthorized";
+    __codes[402] = "Payment Required";
+    __codes[403] = "Forbidden";
+    __codes[404] = "Not Found";
+    __codes[405] = "Method Not Allowed";
+    __codes[406] = "Not Acceptable";
+    __codes[407] = "Proxy Authentication Required";
+    __codes[408] = "Request Timeout";
+    __codes[409] = "Conflict";
+    __codes[410] = "Gone";
+    __codes[411] = "Length Required";
+    __codes[412] = "Precondition Failed";
+    __codes[413] = "Payload Too Large";
+    __codes[414] = "URI Too Long";
+    __codes[415] = "Unsupported Media Type";
+    __codes[416] = "Range Not Satisfiable";
+    __codes[417] = "Expectation Failed";
+    __codes[418] = "I'm a Teapot";
+    __codes[421] = "Misdirected Request";
+    __codes[422] = "Unprocessable Entity";
+    __codes[423] = "Locked";
+    __codes[424] = "Failed Dependency";
+    __codes[425] = "Too Early";
+    __codes[426] = "Upgrade Required";
+    __codes[428] = "Precondition Required";
+    __codes[429] = "Too Many Requests";
+    __codes[431] = "Request Header Fields Too Large";
+    __codes[451] = "Unavailable For Legal Reasons";
+    //// Server error responses
+    __codes[500] = "Internal Server Error";
+    __codes[501] = "Not Implemented";
+    __codes[502] = "Bad Gateway";
+    __codes[503] = "Service Unavailable";
+    __codes[504] = "Gateway Timeout";
+    __codes[505] = "HTTP Version Not Supported";
+    __codes[506] = "Variant Also Negotiates";
+    __codes[507] = "Insufficient Storage";
+    __codes[508] = "Loop Detected";
+    __codes[510] = "Not Extended";
+    __codes[511] = "Network Authentication Required";
+
     _responseStatus = _request.getRequestStatus();
-    _responseHeaders["Server"] = "webserv/1.0";
-    //_responseHeaders["Content-Type"] = "text/html";
-    //_responseHeaders["Content-Length"] = "150";
-    _responseHeaders["Connection"] = "close";
     _method = _request.getMethod();
     _httpVersion = _request.getHttpVersion();
     _path = request.getPath();
     // generate response
+
     generateResponse();
 }
 
@@ -116,7 +189,7 @@ std::string HttpResponse::getBody()
     }
     else if (_responseStatus == 0 && _path != "/")
     {
-         std::ifstream file("serverPages/404.html");
+        std::ifstream file("serverPages/404.html");
         if (file.is_open())
         {
 
