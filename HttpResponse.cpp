@@ -7,7 +7,7 @@ HttpResponse::HttpResponse(HttpRequest const &request) : _request(request)
     __statusDesciption = "";
     
     __connection = "Closed";
-    __contentLength = "200";
+    __contentLength = "150";
     __contentType = "text/html";
     __Date = "";
     __server = "Webserv/1.0";
