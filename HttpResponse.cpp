@@ -7,7 +7,7 @@ HttpResponse::HttpResponse(HttpRequest const &request) : _request(request)
     __statusDesciption = "";
     
     __connection = "Closed";
-    __contentLength = "";
+    __contentLength = "200";
     __contentType = "text/html";
     __Date = "";
     __server = "Webserv/1.0";
@@ -112,7 +112,6 @@ std::string HttpResponse::getStartLine()
     }
     else if (_responseStatus == 501)
     {
-
         return "HTTP/1.1 501 Not Implemented\r\n";
     }
     else if (_responseStatus == 505)
@@ -215,6 +214,9 @@ std::string HttpResponse::generateResponse()
     response += getStartLine();
     response += getHeaders();
     // response += getLocalTime();
+    response += "Content-Type: " + __contentType + "\r\n";
+    response += "Content-Lenght: " + __contentLength + "\r\n";
+    response += "Server: " + __server + "\r\n";
     response += "\r\n";
     response += getBody();
     // add body

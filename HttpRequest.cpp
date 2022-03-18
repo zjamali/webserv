@@ -62,34 +62,31 @@ void HttpRequest::parseStartLine()
         int queriesStart = 0;
         while (i < static_cast<int>(_quereyData.length()))
         {
-
+            int quereyend;
+            // get the endex where query end
             if (_quereyData.find("&", queriesStart) != std::string::npos)
+                quereyend = _quereyData.find("&", queriesStart);
+            else
+                quereyend = static_cast<int>(_quereyData.length());
+
+            if (_quereyData.find("=", queriesStart) != std::string::npos 
+                && static_cast<int>(_quereyData.find("=", queriesStart)) < quereyend)
             {
-                int quereyend = _quereyData.find("&", queriesStart);
-                if (_quereyData.find("=", queriesStart) != std::string::npos)
-                {
-                    _querey[_quereyData.substr(queriesStart, _quereyData.find("=", queriesStart) - queriesStart)] =
-                     _quereyData.substr(_quereyData.find("=", queriesStart) + 1, quereyend - _quereyData.find("=", queriesStart) - 1); // dont
-                }
-                else
-                {
-                    _querey[_quereyData.substr(queriesStart, quereyend - queriesStart)] = "";
-                }
-                queriesStart = quereyend + 1;
+                _querey[_quereyData.substr(queriesStart, _quereyData.find("=", queriesStart) - queriesStart)] =
+                    _quereyData.substr(_quereyData.find("=", queriesStart) + 1, quereyend - _quereyData.find("=", queriesStart) - 1); // dont
             }
             else
-            {
-                _querey[_quereyData.substr(queriesStart)] = std::string("");
-                break;
-            }
+                _querey[_quereyData.substr(queriesStart, quereyend - queriesStart)] = "";
+            queriesStart = quereyend + 1;
+            i = queriesStart;
         }
     }
     std::cout << "\n================================================================\n";
     for (std::map<std::string, std::string>::iterator it = _querey.begin(); it != _querey.end(); it++)
     {
-        std::cout << it->first << " : " <<  it->second << std::endl; 
+        std::cout << it->first << " : " << it->second << std::endl;
     }
-    
+
     std::cout << "\n================================================================\n";
     _requestIndex = httpVersionEndPostion + 2; // +2 : \r\n end of line
 }
