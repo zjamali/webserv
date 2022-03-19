@@ -2,6 +2,7 @@
 #define HTTPREQUEST_HPP
 #include <iostream>
 #include <string>
+#include <vector>
 #include <map>
 #include <utility>
 #include <ctype.h>
@@ -11,6 +12,7 @@ class bodyPart
 private:
     std::string _conDisposition;
     std::string _contType;
+    std::string _name;
     std::string _data;
     std::string _filename;
 
@@ -18,7 +20,7 @@ public:
     bodyPart(){};
     bodyPart(std::string const conDispo, std::string const conType,std::string const data, std::string const filename):
     _conDisposition(conDispo), _contType(conType), _data(data), _filename(filename) {}
-    ~bodyPart();
+    ~bodyPart(){};
 
     std::string getContentDispostion() const { return _conDisposition;};
     std::string getContentType() const { return _contType;};
@@ -55,6 +57,7 @@ private:
     void parseHeaders();
     bool checkRequestStartLine(std::string const &startLine);
     bool checkHostHeader();
+    std::map<std::string, std::string> parseQueries(std::string const &queries);
     bool checkRequestkHeaders();
 
 public:
@@ -73,7 +76,7 @@ private:
     
     std::string _bodyDataType;
     std::string _boundary;
-    std::vector<bodyPart> bodyParts();
+    std::vector<bodyPart> _bodyParts;
     void parseRequestBody();
     void parseBodyparts();
 

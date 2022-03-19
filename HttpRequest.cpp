@@ -56,30 +56,8 @@ void HttpRequest::parseStartLine()
         // get correct path without queries
         std::string newPath = _path.substr(0, pathEnd);
         _path = newPath;
-
-        // get queries
-        int i = 0;
-        int queriesStart = 0;
-        while (i < static_cast<int>(_quereyData.length()))
-        {
-            int quereyend;
-            // get the endex where query end
-            if (_quereyData.find("&", queriesStart) != std::string::npos)
-                quereyend = _quereyData.find("&", queriesStart);
-            else
-                quereyend = static_cast<int>(_quereyData.length());
-
-            if (_quereyData.find("=", queriesStart) != std::string::npos 
-                && static_cast<int>(_quereyData.find("=", queriesStart)) < quereyend)
-            {
-                _querey[_quereyData.substr(queriesStart, _quereyData.find("=", queriesStart) - queriesStart)] =
-                    _quereyData.substr(_quereyData.find("=", queriesStart) + 1, quereyend - _quereyData.find("=", queriesStart) - 1); // dont
-            }
-            else
-                _querey[_quereyData.substr(queriesStart, quereyend - queriesStart)] = "";
-            queriesStart = quereyend + 1;
-            i = queriesStart;
-        }
+         // get queries
+        _querey = parseQueries(_quereyData);
     }
     std::cout << "\n================================================================\n";
     for (std::map<std::string, std::string>::iterator it = _querey.begin(); it != _querey.end(); it++)
@@ -89,6 +67,34 @@ void HttpRequest::parseStartLine()
 
     std::cout << "\n================================================================\n";
     _requestIndex = httpVersionEndPostion + 2; // +2 : \r\n end of line
+}
+std::map<std::string, std::string> HttpRequest::parseQueries(std::string const &queries)
+{
+    int i = 0;
+    int queriesStart = 0;
+    std::map<std::string, std::string> mapedQueries;
+
+   
+    while (i < static_cast<int>(queries.length()))
+    {
+        int quereyend;
+        // get the endex where query end
+        if (queries.find("&", queriesStart) != std::string::npos)
+            quereyend = queries.find("&", queriesStart);
+        else
+            quereyend = static_cast<int>(queries.length());
+
+        if (queries.find("=", queriesStart) != std::string::npos && static_cast<int>(queries.find("=", queriesStart)) < quereyend)
+        {
+            mapedQueries[queries.substr(queriesStart, queries.find("=", queriesStart) - queriesStart)] =
+                queries.substr(queries.find("=", queriesStart) + 1, quereyend - queries.find("=", queriesStart) - 1); // dont
+        }
+        else
+            mapedQueries[queries.substr(queriesStart, quereyend - queriesStart)] = "";
+        queriesStart = quereyend + 1;
+        i = queriesStart;
+    }
+    return mapedQueries;
 }
 
 void HttpRequest::parseHeaders()
@@ -230,22 +236,39 @@ void HttpRequest::parseRequestBody()
                     _boundary = _headers["Content-Type"].substr(_headers["Content-Type"].find("=") + 1);
                     std::cout << "Boundery : " << _boundary << "\n";
                     std::string beginBoundary = "--" + _boundary + "\r\n";
+                    std::string endBoundary = "--" + _boundary + "--";
 
-                    int found = 0, count = 0;
-
+                    int beginData = 0, endData = 0; 
                     // count how many dataform sent
-                    while (_requestBody.find(beginBoundary, found) != std::string::npos)
+                    while (_requestBody.find(beginBoundary, beginData) != std::string::npos)
                     {
-                        found = _requestBody.find(beginBoundary, found) + beginBoundary.length();
-                        count++;
-                    }
-                    int i = 0;
-                    found = 0;
-                    while (i < count)
-                    {
+                        beginData = _requestBody.find(beginBoundary, beginData) + beginBoundary.length();
+                        
+                        if (_requestBody.find(beginBoundary, beginData) != std::string::npos)
+                            endData = _requestBody.find(beginBoundary, beginData) - 2 ; // \r\n
+                        else
+                            endData = _requestBody.find(endBoundary, beginData) - 2;
+                        std::string data = _requestBody.substr(beginData, endData - beginData);
+                        
+                        int begin = data.find(":") + 2;
+                        int end =  data.find(";");
+                        std::string dispo = data.substr( begin, end - begin);
+                        begin = data.find("=",end) + 2; // =""
+                        if (data.find("filename") == std::string::npos)
+                            end = data.find("\r\n") - 1; // "
+                        else
+                        {
+                            end = data.find(";",end + 1) - 1; // -1: "
+                        }
+                        std::string name = data.substr( begin, end - begin);
+                        std::string type;
+                        std::string rawData = data.substr(data.find("\r\n\r\n") + 4);
+                        std::cout << "->{" << rawData << "}<-\n";
+                        // bodyPart part();
+                        // _bodyParts.push_back()
                     }
 
-                    std::cout << "CCCCCCC       : " << count << "\n";
+
                 }
                 else
                 {

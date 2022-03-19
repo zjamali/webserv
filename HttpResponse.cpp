@@ -5,7 +5,6 @@ HttpResponse::HttpResponse(HttpRequest const &request) : _request(request)
     __http = "";
     __statusCode = "";
     __statusDesciption = "";
-    
     __connection = "Closed";
     __contentLength = "150";
     __contentType = "text/html";
