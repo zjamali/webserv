@@ -7,6 +7,7 @@
 #include <utility>
 #include <ctype.h>
 
+#define CRLF "\r\n"
 typedef struct s_bodyPart
 {
     std::string _conDisposition;

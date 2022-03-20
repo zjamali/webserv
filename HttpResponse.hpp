@@ -8,10 +8,6 @@
 #include "HttpRequest.hpp"
 
 
-
-
-
-
 class HttpResponse
 {
 private:

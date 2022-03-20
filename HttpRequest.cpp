@@ -1,3 +1,4 @@
+
 #include "HttpRequest.hpp"
 
 HttpRequest::HttpRequest(std::string const &request)
@@ -38,7 +39,7 @@ void HttpRequest::parseStartLine()
 
     // get http vertion
     pathEndPostion++;
-    int httpVersionEndPostion = _request.find("\r\n", pathEndPostion);
+    int httpVersionEndPostion = _request.find(CRLF, pathEndPostion);
     _httpVersion = _request.substr(pathEndPostion, httpVersionEndPostion - pathEndPostion);
 
     // check start line parameters
@@ -59,13 +60,6 @@ void HttpRequest::parseStartLine()
         // get queries
         _querey = parseQueries(_quereyData);
     }
-    std::cout << "\n================================================================\n";
-    for (std::map<std::string, std::string>::iterator it = _querey.begin(); it != _querey.end(); it++)
-    {
-        std::cout << it->first << " : " << it->second << std::endl;
-    }
-
-    std::cout << "\n================================================================\n";
     _requestIndex = httpVersionEndPostion + 2; // +2 : \r\n end of line
 }
 std::map<std::string, std::string> HttpRequest::parseQueries(std::string const &queries)
@@ -116,7 +110,7 @@ void HttpRequest::parseHeaders()
             _requestStatus = 400;
             return;
         }
-        int endLine = _request.find("\r\n", _requestIndex);
+        int endLine = _request.find(CRLF, _requestIndex);
         std::string headerKey = _request.substr(_requestIndex, separator - _requestIndex);
         if (headerKey == "Host" || headerKey == "host" || headerKey == "HOST")
             if (!this->checkHostHeader())
@@ -214,11 +208,7 @@ bool HttpRequest::checkRequestkHeaders()
 void HttpRequest::parseRequestBody()
 {
     _requestBody = _request.c_str() + _requestIndex; // skip + 4 : /r/n/r/n
-    std::cout << "\n-------------------------  BODY BEGIN -------------------------\n";
-    std::cout << _requestBody << "\n";
-    std::cout << "\n-------------------------  BODY END -------------------------\n";
-
-    _bodyExist = _requestBody == "\r\n" ? false : true;
+    _bodyExist = _requestBody == CRLF ? false : true;
     if (_headers.find("Content-Length") == _headers.end()) // content-type not exist
     {
         _requestStatus = 400;
@@ -234,7 +224,7 @@ void HttpRequest::parseRequestBody()
         }
         else
         {
-            
+
             _bodyDataType = _headers["Content-Type"];
             if (_headers["Content-Type"].find("multipart/form-data") != std::string::npos)
             {
@@ -252,12 +242,6 @@ void HttpRequest::parseRequestBody()
                 _bodyParts.push_back(data);
             }
         }
-        std::cout << "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\n";
-        for (std::vector<t_bodyPart>::iterator it = _bodyParts.begin(); it != _bodyParts.end(); it++)
-        {
-            std::cout << "|" << it->_conDisposition << "|" << it->_name  << "|" << it->_filename << "|" << it->_contType << "|" << it->_data << "|\n";  
-        }
-        std::cout << "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\n";
     }
 }
 
@@ -266,7 +250,7 @@ void HttpRequest::parseDataFormat()
     // get boundery begin boundary and end boundary
     _bodyDataType = "multipart/form-data";
     _boundary = _headers["Content-Type"].substr(_headers["Content-Type"].find("=") + 1);
-    std::string beginBoundary = "--" + _boundary + "\r\n";
+    std::string beginBoundary = "--" + _boundary + CRLF;
     std::string endBoundary = "--" + _boundary + "--";
 
     int begin = 0, end = 0;
@@ -290,7 +274,7 @@ void HttpRequest::parseDataFormat()
         begin = rawData.find("=", end) + 2; // 2: ="
         if (rawData.find("filename") == std::string::npos)
         {
-            end = rawData.find("\r\n") - 1; // 1 : "
+            end = rawData.find(CRLF) - 1; // 1 : "
             bodyPart._name = rawData.substr(begin, end - begin);
             bodyPart._filename = ""; // not file exist
         }
@@ -299,7 +283,7 @@ void HttpRequest::parseDataFormat()
             end = rawData.find(";", end + 1) - 1; // -1: "
             bodyPart._name = rawData.substr(begin, end - begin);
             begin = rawData.find("filename=") + static_cast<int>(strlen("filename=\""));
-            end = rawData.find("\r\n") - 1; // 1 : "
+            end = rawData.find(CRLF) - 1; // 1 : "
             bodyPart._filename = rawData.substr(begin, end - begin);
         }
         // get content:type
@@ -308,7 +292,7 @@ void HttpRequest::parseDataFormat()
         else
         {
             begin = rawData.find("Content-Type") + static_cast<int>(strlen("Content-Type:\""));
-            end = rawData.find("\r\n", begin);
+            end = rawData.find(CRLF, begin);
             bodyPart._contType = rawData.substr(begin, end - begin);
         }
         // get data
