@@ -67,6 +67,7 @@ private:
     void parseRequestBody();
     void parseBodyparts();
     void parseDataFormat();
+    void parseformUrlencoded();
 
 public:
     std::string getRequestBody() const;

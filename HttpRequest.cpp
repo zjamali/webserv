@@ -226,6 +226,7 @@ void HttpRequest::parseRequestBody()
     }
     if (_bodyExist)
     {
+
         if (_headers.find("Content-Type") == _headers.end())
         {
             _requestStatus = 400;
@@ -233,28 +234,41 @@ void HttpRequest::parseRequestBody()
         }
         else
         {
+            
+            _bodyDataType = _headers["Content-Type"];
             if (_headers["Content-Type"].find("multipart/form-data") != std::string::npos)
             {
                 this->parseDataFormat();
             }
+            else if (_headers["Content-Type"].find("x-www-form-urlencoded") != std::string::npos)
+            {
+                this->parseformUrlencoded();
+            }
             else
             {
-                _bodyDataType = _headers["Content-Type"];
+                t_bodyPart data;
+                data._contType = _bodyDataType;
+                data._data = _requestBody.substr(2); // skip \r\n
+                _bodyParts.push_back(data);
             }
         }
+        std::cout << "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\n";
+        for (std::vector<t_bodyPart>::iterator it = _bodyParts.begin(); it != _bodyParts.end(); it++)
+        {
+            std::cout << "|" << it->_conDisposition << "|" << it->_name  << "|" << it->_filename << "|" << it->_contType << "|" << it->_data << "|\n";  
+        }
+        std::cout << "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\n";
     }
 }
 
 void HttpRequest::parseDataFormat()
 {
-    // get boundery begin boundary and end boundary 
+    // get boundery begin boundary and end boundary
     _bodyDataType = "multipart/form-data";
     _boundary = _headers["Content-Type"].substr(_headers["Content-Type"].find("=") + 1);
-    std::cout << "Boundery : " << _boundary << "\n";
     std::string beginBoundary = "--" + _boundary + "\r\n";
     std::string endBoundary = "--" + _boundary + "--";
 
-    std::cout << "\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
     int begin = 0, end = 0;
     int beginData = 0, endData = 0;
     std::string rawData;
@@ -276,11 +290,11 @@ void HttpRequest::parseDataFormat()
         begin = rawData.find("=", end) + 2; // 2: ="
         if (rawData.find("filename") == std::string::npos)
         {
-            end = rawData.find("\r\n") - 1; //1 : "
+            end = rawData.find("\r\n") - 1; // 1 : "
             bodyPart._name = rawData.substr(begin, end - begin);
             bodyPart._filename = ""; // not file exist
         }
-        else 
+        else
         {
             end = rawData.find(";", end + 1) - 1; // -1: "
             bodyPart._name = rawData.substr(begin, end - begin);
@@ -294,22 +308,29 @@ void HttpRequest::parseDataFormat()
         else
         {
             begin = rawData.find("Content-Type") + static_cast<int>(strlen("Content-Type:\""));
-            end = rawData.find("\r\n",begin); 
-            bodyPart._contType = rawData.substr(begin,end - begin);
+            end = rawData.find("\r\n", begin);
+            bodyPart._contType = rawData.substr(begin, end - begin);
         }
         // get data
         bodyPart._data = rawData.substr(rawData.find("\r\n\r\n") + 4);
         _bodyParts.push_back(bodyPart);
     }
-    for (std::vector<t_bodyPart>::iterator it = _bodyParts.begin(); it != _bodyParts.end(); it++)
-    {
-        std::cout << "\n|" <<it->_conDisposition << "|" << it->_name << "|" << it->_filename 
-            <<"|" << it->_contType << "|" << it->_data << "}\n";
-    }
-    
-    std::cout << "\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
 }
 
+void HttpRequest::parseformUrlencoded()
+{
+    std::map<std::string, std::string> data = parseQueries(_requestBody);
+    for (std::map<std::string, std::string>::iterator it = data.begin(); it != data.end(); it++)
+    {
+        t_bodyPart formUrlencoded;
+        formUrlencoded._name = it->first;
+        formUrlencoded._data = it->second;
+        formUrlencoded._contType = "x-www-form-urlencoded";
+        formUrlencoded._conDisposition = "";
+        formUrlencoded._filename = "";
+        _bodyParts.push_back(formUrlencoded);
+    }
+}
 /*
 **  request
 */
