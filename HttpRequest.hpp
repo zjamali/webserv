@@ -7,27 +7,14 @@
 #include <utility>
 #include <ctype.h>
 
-class bodyPart
+typedef struct s_bodyPart
 {
-private:
     std::string _conDisposition;
-    std::string _contType;
     std::string _name;
-    std::string _data;
     std::string _filename;
-
-public:
-    bodyPart(){};
-    bodyPart(std::string const conDispo, std::string const conType,std::string const data, std::string const filename):
-    _conDisposition(conDispo), _contType(conType), _data(data), _filename(filename) {}
-    ~bodyPart(){};
-
-    std::string getContentDispostion() const { return _conDisposition;};
-    std::string getContentType() const { return _contType;};
-    std::string getData() const { return _data;};
-    std::string getFilename() const { return _filename;};
-
-};
+    std::string _contType;
+    std::string _data;
+}t_bodyPart;
 
 class HttpRequest
 {
@@ -76,15 +63,15 @@ private:
     
     std::string _bodyDataType;
     std::string _boundary;
-    std::vector<bodyPart> _bodyParts;
+    std::vector<t_bodyPart> _bodyParts;
     void parseRequestBody();
     void parseBodyparts();
-
+    void parseDataFormat();
 
 public:
     std::string getRequestBody() const;
     
-    std::vector<bodyPart> getBodyParts() const;
+    std::vector<t_bodyPart> getBodyParts() const;
 
 public:
     HttpRequest(std::string const &request);

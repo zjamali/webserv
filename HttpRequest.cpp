@@ -56,7 +56,7 @@ void HttpRequest::parseStartLine()
         // get correct path without queries
         std::string newPath = _path.substr(0, pathEnd);
         _path = newPath;
-         // get queries
+        // get queries
         _querey = parseQueries(_quereyData);
     }
     std::cout << "\n================================================================\n";
@@ -74,7 +74,6 @@ std::map<std::string, std::string> HttpRequest::parseQueries(std::string const &
     int queriesStart = 0;
     std::map<std::string, std::string> mapedQueries;
 
-   
     while (i < static_cast<int>(queries.length()))
     {
         int quereyend;
@@ -220,63 +219,95 @@ void HttpRequest::parseRequestBody()
     std::cout << "\n-------------------------  BODY END -------------------------\n";
 
     _bodyExist = _requestBody == "\r\n" ? false : true;
-    if (_method == "POST")
+    if (_headers.find("Content-Length") == _headers.end()) // content-type not exist
     {
-        if (_headers.find("Content-Length") == _headers.end()) // content-type not exist
-            _requestStatus = 400;
-        if (_bodyExist)
+        _requestStatus = 400;
+        return;
+    }
+    if (_bodyExist)
+    {
+        if (_headers.find("Content-Type") == _headers.end())
         {
-            if (_headers.find("Content-Type") == _headers.end())
-                _bodyDataType = "undifined";
+            _requestStatus = 400;
+            return;
+        }
+        else
+        {
+            if (_headers["Content-Type"].find("multipart/form-data") != std::string::npos)
+            {
+                this->parseDataFormat();
+            }
             else
             {
-                if (_headers["Content-Type"].find("multipart/form-data") != std::string::npos)
-                {
-                    _bodyDataType = "multipart/form-data";
-                    _boundary = _headers["Content-Type"].substr(_headers["Content-Type"].find("=") + 1);
-                    std::cout << "Boundery : " << _boundary << "\n";
-                    std::string beginBoundary = "--" + _boundary + "\r\n";
-                    std::string endBoundary = "--" + _boundary + "--";
-
-                    int beginData = 0, endData = 0; 
-                    // count how many dataform sent
-                    while (_requestBody.find(beginBoundary, beginData) != std::string::npos)
-                    {
-                        beginData = _requestBody.find(beginBoundary, beginData) + beginBoundary.length();
-                        
-                        if (_requestBody.find(beginBoundary, beginData) != std::string::npos)
-                            endData = _requestBody.find(beginBoundary, beginData) - 2 ; // \r\n
-                        else
-                            endData = _requestBody.find(endBoundary, beginData) - 2;
-                        std::string data = _requestBody.substr(beginData, endData - beginData);
-                        
-                        int begin = data.find(":") + 2;
-                        int end =  data.find(";");
-                        std::string dispo = data.substr( begin, end - begin);
-                        begin = data.find("=",end) + 2; // =""
-                        if (data.find("filename") == std::string::npos)
-                            end = data.find("\r\n") - 1; // "
-                        else
-                        {
-                            end = data.find(";",end + 1) - 1; // -1: "
-                        }
-                        std::string name = data.substr( begin, end - begin);
-                        std::string type;
-                        std::string rawData = data.substr(data.find("\r\n\r\n") + 4);
-                        std::cout << "->{" << rawData << "}<-\n";
-                        // bodyPart part();
-                        // _bodyParts.push_back()
-                    }
-
-
-                }
-                else
-                {
-                    _bodyDataType = _headers["Content-Type"];
-                }
+                _bodyDataType = _headers["Content-Type"];
             }
         }
     }
+}
+
+void HttpRequest::parseDataFormat()
+{
+    // get boundery begin boundary and end boundary 
+    _bodyDataType = "multipart/form-data";
+    _boundary = _headers["Content-Type"].substr(_headers["Content-Type"].find("=") + 1);
+    std::cout << "Boundery : " << _boundary << "\n";
+    std::string beginBoundary = "--" + _boundary + "\r\n";
+    std::string endBoundary = "--" + _boundary + "--";
+
+    std::cout << "\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
+    int begin = 0, end = 0;
+    int beginData = 0, endData = 0;
+    std::string rawData;
+    while (_requestBody.find(beginBoundary, beginData) != std::string::npos)
+    {
+        t_bodyPart bodyPart;
+        // get rawData betwwen boundaries
+        beginData = _requestBody.find(beginBoundary, beginData) + beginBoundary.length();
+        if (_requestBody.find(beginBoundary, beginData) != std::string::npos)
+            endData = _requestBody.find(beginBoundary, beginData) - 2; // \r\n
+        else
+            endData = _requestBody.find(endBoundary, beginData) - 2;
+        rawData = _requestBody.substr(beginData, endData - beginData);
+
+        // get body part form rawData
+        begin = rawData.find(":") + 2;
+        end = rawData.find(";");
+        bodyPart._conDisposition = rawData.substr(begin, end - begin);
+        begin = rawData.find("=", end) + 2; // 2: ="
+        if (rawData.find("filename") == std::string::npos)
+        {
+            end = rawData.find("\r\n") - 1; //1 : "
+            bodyPart._name = rawData.substr(begin, end - begin);
+            bodyPart._filename = ""; // not file exist
+        }
+        else 
+        {
+            end = rawData.find(";", end + 1) - 1; // -1: "
+            bodyPart._name = rawData.substr(begin, end - begin);
+            begin = rawData.find("filename=") + static_cast<int>(strlen("filename=\""));
+            end = rawData.find("\r\n") - 1; // 1 : "
+            bodyPart._filename = rawData.substr(begin, end - begin);
+        }
+        // get content:type
+        if (rawData.find("Content-Type") == std::string::npos)
+            bodyPart._contType = "";
+        else
+        {
+            begin = rawData.find("Content-Type") + static_cast<int>(strlen("Content-Type:\""));
+            end = rawData.find("\r\n",begin); 
+            bodyPart._contType = rawData.substr(begin,end - begin);
+        }
+        // get data
+        bodyPart._data = rawData.substr(rawData.find("\r\n\r\n") + 4);
+        _bodyParts.push_back(bodyPart);
+    }
+    for (std::vector<t_bodyPart>::iterator it = _bodyParts.begin(); it != _bodyParts.end(); it++)
+    {
+        std::cout << "\n|" <<it->_conDisposition << "|" << it->_name << "|" << it->_filename 
+            <<"|" << it->_contType << "|" << it->_data << "}\n";
+    }
+    
+    std::cout << "\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
 }
 
 /*
