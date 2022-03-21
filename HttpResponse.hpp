@@ -61,7 +61,7 @@ public:
     std::string generateResponse();
     std::string const &getResponse() const { return _finaleResponse;};
     void print();
-    friend bool createFile(std::string const &path, std::string const &filename, std::string const &data);
+    friend bool upload(std::string const &path, std::string const &filename, std::string const &data);
 };
 
 #endif

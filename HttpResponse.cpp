@@ -219,10 +219,11 @@ std::string HttpResponse::getBody()
 std::string HttpResponse::generateResponse()
 {
     std::string response;
-/*
+
     response += getStartLine();
     //response += getHeaders();
     // response += getLocalTime();
+    __contentLength = "186";
     response += "Content-Type: " + __contentType + "\r\n";
     response += "Content-Lenght: " + __contentLength + "\r\n";
     response += "Server: " + __server + "\r\n";
@@ -233,12 +234,12 @@ std::string HttpResponse::generateResponse()
     // end the body
     response += "\r\n";
     _finaleResponse = response;
-    */
+    
    _finaleResponse = ResponseOK();
     return (response);
 }
 
-bool createFile(std::string const &path, std::string const &filename, std::string const &data)
+bool upload(std::string const &path, std::string const &filename, std::string const &data)
 {
     struct stat stats;
 
@@ -251,14 +252,16 @@ bool createFile(std::string const &path, std::string const &filename, std::strin
     }
     else
     {
-        std::cout << "file not created\n";
+        std::cout << "file not created" << std::endl;
+        
         return 1;
     }
 }
 
 std::string HttpResponse::ResponseOK() const
 {
-    std::string const body = "<!DOCTYPE html>\n<html>\n<head>\n<title>Welcome to webserv!</title>\n</ head>\n<body><center><h1>Welcome to webserv</h1></center><hr><center><p>webserv/1.0</p></center></body></html>";
+    //std::string const body = "<!DOCTYPE html>\n<html>\n<head>\n<title>Welcome to webserv!</title>\n</head>\n<body>\n<center>\n<h1>Welcome to webserv</h1>\n</center>\n<hr>\n<center>\n<p>webserv/1.0</p>\n</center>\n</body>\n</html>\n";
+    std::string body = "<!DOCTYPE html>\r\n<html>\r\n<head>\r\n<title>Welcome to webserv!</title> \r\n</head> \r\n<body>\r\n<center><h1>Welcome to webserv</h1></center>\r\n<hr><center><p>webserv/1.0</p></center>\r\n</body>\r\n</html>\r\n";
     std::string const header = getStartLine() + "Content-Type: text/html\r\nContent-Length: " + std::to_string(body.length()) + "\r\nConnection: Closed\r\nServer: webserv/1.0\r\nDate: " + getLocalTime();
 
     return (header + "\r\n\r\n" + body);
