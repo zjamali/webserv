@@ -9,7 +9,9 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <sys/stat.h>
 #include <map>
+
 #include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
 

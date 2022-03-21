@@ -2,19 +2,17 @@
 #include "HttpRequest.hpp"
 
 HttpRequest::HttpRequest(std::string const &request)
-    : _requestIndex(0), _request(request), _requestStatus(0), _bodyExist(false)
+    : _requestIndex(0), _request(request), _requestStatus(OK), _bodyExist(false)
 {
     this->parseStartLine();
-    if (_requestStatus != 0)
+    if (_requestStatus != OK)
         return;
     this->parseHeaders();
-    if (_requestStatus != 0)
+    if (_requestStatus != OK)
         return;
 
     if (_method == "POST")
         this->parseRequestBody();
-    if (_requestStatus != 0)
-        return;
 }
 HttpRequest::~HttpRequest()
 {

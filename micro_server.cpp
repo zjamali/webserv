@@ -1,7 +1,6 @@
 #include "micro_server.hpp"
 
 
-
 int main()
 {
 
@@ -87,7 +86,7 @@ int main()
         free(indexData);*/
         response.print();
         // send(connection, response1.c_str(), response1.size(), 0);
-        send(connection, response.generateResponse().c_str(), response.generateResponse().length() , 0);
+        send(connection, response.getResponse().c_str(), response.generateResponse().length() , 0);
         close(connection);
     }
     close(sockfd);

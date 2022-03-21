@@ -1,7 +1,28 @@
 #include "HttpResponse.hpp"
 
-HttpResponse::HttpResponse(HttpRequest const &request) : _request(request)
+HttpResponse::HttpResponse(HttpRequest const &request)
 {
+    // init servers 
+    init_response();
+    if (_responseStatus == 405 && __errorPages.find(405) == __errorPages.end())
+    {
+        std::cout << "\n---<kkkkkkkkkkkkkkkkkkkkkkkkkkkk\n";
+        _finaleResponse = ResponseMethodNotAllowed();
+        return;
+    }
+
+    _responseStatus = request.getRequestStatus();
+    _method = request.getMethod();
+    _httpVersion = request.getHttpVersion();
+    _path = request.getPath();
+    // generate response
+
+    generateResponse();
+}
+
+void HttpResponse::init_response()
+{
+    CRLF_Combination = std::string(CRLF);
     __http = "";
     __statusCode = "";
     __statusDesciption = "";
@@ -10,8 +31,6 @@ HttpResponse::HttpResponse(HttpRequest const &request) : _request(request)
     __contentType = "text/html";
     __Date = "";
     __server = "Webserv/1.0";
-
-
 
     //// Successful responses
     __codes[200] = "OK";
@@ -76,21 +95,13 @@ HttpResponse::HttpResponse(HttpRequest const &request) : _request(request)
     __codes[508] = "Loop Detected";
     __codes[510] = "Not Extended";
     __codes[511] = "Network Authentication Required";
-
-    _responseStatus = _request.getRequestStatus();
-    _method = _request.getMethod();
-    _httpVersion = _request.getHttpVersion();
-    _path = request.getPath();
-    // generate response
-
-    generateResponse();
 }
 
 HttpResponse::~HttpResponse()
 {
 }
 
-std::string HttpResponse::getLocalTime()
+std::string HttpResponse::getLocalTime() const
 {
     time_t rawtime;
     struct tm *timeinfo;
@@ -99,13 +110,13 @@ std::string HttpResponse::getLocalTime()
     timeinfo = localtime(&rawtime);
     memset(buffer, '\0', 80);
     strftime(buffer, 80, "%a, %d %h %Y %T GMT", timeinfo);
-    return ("Date: " + std::string(buffer) + "\r\n");
+    return (std::string(buffer));
 }
 
-std::string HttpResponse::getStartLine()
+std::string HttpResponse::getStartLine() const
 {
 
-    if (_responseStatus == 400) // bad request
+    if (_responseStatus == BAD_REQUEST) // bad request
     {
         return "HTTP/1.1 400 Bad Request\r\n";
     }
@@ -118,7 +129,7 @@ std::string HttpResponse::getStartLine()
 
         return ("HTTP/1.1 505 HTTP Version Not Supported\r\n");
     }
-    else if (_responseStatus == 0 && _path == "/")
+    else if (_responseStatus == 200 && _path == "/")
     {
         return ("HTTP/1.1 200 OK\r\n");
     }
@@ -126,10 +137,10 @@ std::string HttpResponse::getStartLine()
         return ("HTTP/1.1 404 Not Found\r\n");
 }
 
-std::string HttpResponse::getHeaders()
+std::string HttpResponse::getHeaders() const
 {
     std::string res;
-    for (std::map<std::string, std::string>::iterator it = _responseHeaders.begin(); it != _responseHeaders.end(); it++)
+    for (std::map<std::string, std::string>::const_iterator it = _responseHeaders.begin(); it != _responseHeaders.end(); it++)
     {
         res += it->first;
         res += ": ";
@@ -143,7 +154,7 @@ std::string HttpResponse::getHeaders()
 void HttpResponse::print()
 {
     std::cout << "+++++++++++++++++++++ Responce BEGIN ++++++++++++++++++++\n";
-    std::cout << _generatedResponse << std::endl;
+    std::cout << _finaleResponse << std::endl;
     std::cout << "+++++++++++++++++++++ Responce END ++++++++++++++++++++\n";
 }
 
@@ -167,7 +178,7 @@ std::string HttpResponse::getBody()
             delete[] buffer;
         }
     }
-    else if (_responseStatus == 0 && _path == "/")
+    else if (_responseStatus == 200 && _path == "/")
     {
         std::ifstream file("serverPages/200.html");
         if (file.is_open())
@@ -185,12 +196,11 @@ std::string HttpResponse::getBody()
             //_responseHeaders["Content-Length"] = std::to_string(size);
         }
     }
-    else if (_responseStatus == 0 && _path != "/")
+    else if (_responseStatus == 200 && _path != "/")
     {
         std::ifstream file("serverPages/404.html");
         if (file.is_open())
         {
-
             int size = 1500;
             char *buffer = new char[size];
             memset(buffer, '\0', size);
@@ -209,9 +219,9 @@ std::string HttpResponse::getBody()
 std::string HttpResponse::generateResponse()
 {
     std::string response;
-
+/*
     response += getStartLine();
-    response += getHeaders();
+    //response += getHeaders();
     // response += getLocalTime();
     response += "Content-Type: " + __contentType + "\r\n";
     response += "Content-Lenght: " + __contentLength + "\r\n";
@@ -222,6 +232,58 @@ std::string HttpResponse::generateResponse()
 
     // end the body
     response += "\r\n";
-    _generatedResponse = response;
+    _finaleResponse = response;
+    */
+   _finaleResponse = ResponseOK();
     return (response);
+}
+
+bool createFile(std::string const &path, std::string const &filename, std::string const &data)
+{
+    struct stat stats;
+
+    if (stat(path.c_str(), &stats) == 0 && S_ISDIR(stats.st_mode))
+    {
+        std::ofstream outfile(path + "/" + filename);
+        outfile << data;
+        outfile.close();
+        return 0;
+    }
+    else
+    {
+        std::cout << "file not created\n";
+        return 1;
+    }
+}
+
+std::string HttpResponse::ResponseOK() const
+{
+    std::string const body = "<!DOCTYPE html>\n<html>\n<head>\n<title>Welcome to webserv!</title>\n</ head>\n<body><center><h1>Welcome to webserv</h1></center><hr><center><p>webserv/1.0</p></center></body></html>";
+    std::string const header = getStartLine() + "Content-Type: text/html\r\nContent-Length: " + std::to_string(body.length()) + "\r\nConnection: Closed\r\nServer: webserv/1.0\r\nDate: " + getLocalTime();
+
+    return (header + "\r\n\r\n" + body);
+}
+std::string const HttpResponse::ResponseBadRequest() const
+{
+    std::string const body = "<!DOCTYPE html>\n<html><head><title>400 Bad Request</title></ head><body><center><h1>400 Bad Request</h1></center><hr><center><p>webserv/1.0</p></center></body></html>";
+    std::string const header = "HTTP/1.1 400 Bad Request" + CRLF_Combination + "Content-Type: text/html" + CRLF_Combination + "Content-Length: " + std::to_string(body.length()) + CRLF_Combination + "Connection: Closed" + CRLF_Combination + "Server: webserv/1.0" + CRLF_Combination + "Date: " + getLocalTime() + CRLF_Combination;
+    return (header + CRLF_Combination + body);
+}
+std::string const HttpResponse::ResponseNotFound() const
+{
+    std::string const body = "<!DOCTYPE html><html><head><title>404 Not Found</title></ head><body><center><h1>404 Not Found</h1></center><hr><center><p>webserv/1.0</p></center></body></html>";
+    std::string const header = "HTTP/1.1 404 Not Found" + CRLF_Combination + "Content-Type: text/html" + CRLF_Combination + "Content-Length: " + std::to_string(body.length()) + CRLF_Combination + "Connection: Closed" + CRLF_Combination + "Server: webserv/1.0" + CRLF_Combination + "Date: " + getLocalTime() + CRLF_Combination;
+    return (header + CRLF_Combination + body);
+}
+std::string const HttpResponse::ResponseMethodNotAllowed() const
+{
+    std::string const body = "<!DOCTYPE html>\n<html>\n<head>\n<title>405 Method Not Allowed</title>\n</ head><body><center><h1>405 Method Not Allowed</h1></center><hr><center><p>webserv/1.0</p></center></body></html>";
+    std::string const header = "HTTP/1.1 405 Method Not Allowed" + CRLF_Combination + "Content-Type: text/html" + CRLF_Combination + "Content-Length: " + std::to_string(body.length()) + CRLF_Combination + "Connection: Closed" + CRLF_Combination + "Server: webserv/1.0" + CRLF_Combination + "Date: " + getLocalTime() + CRLF_Combination;
+    return (header + CRLF_Combination + body);
+}
+std::string const HttpResponse::ResponseHttpVersionNotSupported() const
+{
+    std::string const body = "<!DOCTYPE html><html><head><title>505 HTTP Version Not Supported</title></ head><body><center><h1>505 HTTP Version Not Supported</h1></center><hr><center><p>webserv/1.0</p></center></body></html>";
+    std::string const header = "HTTP/1.1 505 HTTP Version Not Supported" + CRLF_Combination + "Content-Type: text/html" + CRLF_Combination + "Content-Length: " + std::to_string(body.length()) + CRLF_Combination + "Connection: Closed" + CRLF_Combination + "Server: webserv/1.0" + CRLF_Combination + "Date: " + getLocalTime() + CRLF_Combination;
+    return (header + CRLF_Combination + body);
 }

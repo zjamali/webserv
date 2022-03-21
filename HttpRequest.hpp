@@ -5,9 +5,25 @@
 #include <vector>
 #include <map>
 #include <utility>
+#include <fstream>
 #include <ctype.h>
 
 #define CRLF "\r\n"
+/// 
+#define OK 200
+#define CREATED 201
+#define ACCEPTED 202
+#define NO_CONTENT 204
+#define MOVEd_PERMANENTLY 301
+#define FOUND 302
+#define TEMPORARY_REDIRECT 307
+#define PERMANENT_REDIRECT 308
+#define BAD_REQUEST 400
+#define NOT_FOUND 404
+#define METHOD_NOT_ALLOWED 405
+#define NOT_IMPLLIMENTED
+#define HTTP VERSION NOT SUPPORTED 505
+
 typedef struct s_bodyPart
 {
     std::string _conDisposition;
