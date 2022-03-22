@@ -1,0 +1,41 @@
+@import "./variables";
+
+header {
+    background-color: white;
+    position: relative;
+    z-index:100;
+    padding: 0.5em 0;
+    .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    #logo {
+        display: inline;
+    }
+    nav {
+        display: inline-block;
+        font-family: $Karla-font-family;
+        font-weight: 600;
+        ul {
+            display:inline-block;
+            list-style : none;
+            color : $Dark-Grayish-Violet;
+            text-transform: uppercase;
+            li {
+                padding: 1em;
+                display: inline-block;
+                a {
+                    color: $Dark-Grayish-Violet;
+                }
+                :hover {
+                    color: $Very-Dark-Violet;
+                }
+            }
+        }
+    }
+    #hamburger {
+        display: none;
+    }
+}
+

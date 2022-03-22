@@ -1,0 +1,46 @@
+@import "./variables";
+
+.we-are-diff {
+    height: 950px;
+    hr{
+        width: 10em;
+        margin-left: 0;
+        padding-top: 18em;
+        border-bottom: 0.1em solid $Dark-Grayish-Violet;
+        border-top: none;
+        border-right: none;
+        border-left: none;
+        margin: 0;
+        margin-bottom: 3em;
+    }
+    h1 {
+        line-height: 1em;
+        font-family: $DM-font-family;
+        font-weight: 700;
+        font-size: 3.9rem;
+        color: $Very-Dark-Violet;
+        margin-bottom: 0.4em;
+    }
+
+    .cards {
+        margin-top: 7em;
+        display: flex;
+        justify-content: center;
+        gap: 4em;
+        .card {
+            h3{
+                font-family: $DM-font-family;
+                font-weight: 700;
+                font-size: 2rem;
+                color: $Dark-Violet;
+            }
+            p {
+                font-size: 1rem;
+                line-height: 1.5em;
+                font-family: $Karla-font-family;
+                color: $Dark-Grayish-Violet;
+            }
+        }
+    }
+
+}

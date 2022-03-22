@@ -1,0 +1,58 @@
+@import "./variables";
+
+footer {
+    font-size: 16px;
+    font-weight: 400;
+    position: relative;
+    z-index: 2;
+    padding: 4em 0em;
+    background-color: $Very-Light-Gray;
+    .logo-and-social-media {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+    .social-media {
+        a:hover {
+            img {
+                filter: brightness(0.4);
+            }
+        }
+    }
+    hr {
+        color: $Very-Dark-Violet;
+    }
+    #pattern-footer-desktop {
+        z-index: 1;
+        position:absolute;
+        top: 0;
+        left: 0;
+    }
+    .map {
+        padding-bottom: 2em;
+        position: relative;
+        z-index: 2;
+        display: flex;
+        justify-content: right;
+        gap: 8em;
+        .links{
+            line-height: 2em;
+            font-family: $Karla-font-family;
+            text-transform: uppercase;
+            color: $Dark-Grayish-Violet;
+            h4 {
+                color: Grayis-Blue;
+            }
+            a {
+                text-decoration: none;
+                color: $Dark-Violet;
+                display: block;
+                font-weight: 500;
+            }
+            a:hover{
+                text-decoration: underline;
+            }
+        }
+    }
+    
+}

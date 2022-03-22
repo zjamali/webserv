@@ -1,0 +1,1219 @@
+@import url(/Users/zouhair/Desktop/insure-landing-page/style/variables.css);
+header {
+  background-color: white;
+  position: relative;
+  z-index: 100;
+  padding: 0.5em 0;
+}
+
+header .container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+header #logo {
+  display: inline;
+}
+
+header nav {
+  display: inline-block;
+  font-family: "Karla", sans-serif;
+  font-weight: 600;
+}
+
+header nav ul {
+  display: inline-block;
+  list-style: none;
+  color: #837d87;
+  text-transform: uppercase;
+}
+
+header nav ul li {
+  padding: 1em;
+  display: inline-block;
+}
+
+header nav ul li a {
+  color: #837d87;
+}
+
+header nav ul li :hover {
+  color: #2b272f;
+}
+
+header #hamburger {
+  display: none;
+}
+
+.hero {
+  height: 650px;
+  background-color: #2d2640;
+  color: white;
+}
+
+.hero .container {
+  position: relative;
+}
+
+.hero hr {
+  width: 10em;
+  margin-left: 0;
+  padding-top: 6em;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  margin: 0;
+}
+
+.hero h1 {
+  line-height: 1em;
+  font-family: "DM Serif Display", serif;
+  font-weight: 700;
+  font-size: 4rem;
+  color: #fafafa;
+  margin-bottom: 0.4em;
+}
+
+.hero p {
+  margin-bottom: 3em;
+  font-size: 16px;
+  font-family: "Karla", sans-serif;
+  font-weight: 100;
+  line-height: 1.6em;
+  color: #fafafa;
+  max-width: 30em;
+}
+
+.hero .btn {
+  background-color: #2d2640;
+  color: white;
+  border-color: white;
+}
+
+.hero .btn:hover {
+  background-color: white;
+  color: #2d2640;
+}
+
+.hero #intro-image {
+  position: absolute;
+  top: 6em;
+  right: 4em;
+}
+
+.we-are-diff {
+  height: 950px;
+}
+
+.we-are-diff hr {
+  width: 10em;
+  margin-left: 0;
+  padding-top: 18em;
+  border-bottom: 0.1em solid #837d87;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  margin: 0;
+  margin-bottom: 3em;
+}
+
+.we-are-diff h1 {
+  line-height: 1em;
+  font-family: "DM Serif Display", serif;
+  font-weight: 700;
+  font-size: 3.9rem;
+  color: #2b272f;
+  margin-bottom: 0.4em;
+}
+
+.we-are-diff .cards {
+  margin-top: 7em;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  gap: 4em;
+}
+
+.we-are-diff .cards .card h3 {
+  font-family: "DM Serif Display", serif;
+  font-weight: 700;
+  font-size: 2rem;
+  color: #2d2640;
+}
+
+.we-are-diff .cards .card p {
+  font-size: 1rem;
+  line-height: 1.5em;
+  font-family: "Karla", sans-serif;
+  color: #837d87;
+}
+
+.find-more {
+  padding-bottom: 10em;
+}
+
+.find-more .container {
+  height: 250px;
+}
+
+.find-more .container h2 {
+  line-height: 1em;
+  font-family: "DM Serif Display", serif;
+  font-weight: 700;
+  font-size: 3rem;
+  color: #fafafa;
+}
+
+.find-more .container .how-we-work {
+  position: relative;
+  position: relative;
+  padding: 0 3em;
+  background-color: #2d2640;
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.find-more .container .how-we-work img {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+}
+
+.find-more .container .btn {
+  position: relative;
+  z-index: 3;
+  height: 1em;
+  text-transform: uppercase;
+  color: #fafafa;
+  border-color: #fafafa;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.find-more .container .btn:hover {
+  color: #2d2640;
+  background-color: #fafafa;
+}
+
+footer {
+  font-size: 16px;
+  font-weight: 400;
+  position: relative;
+  z-index: 2;
+  padding: 4em 0em;
+  background-color: #fafafa;
+}
+
+footer .logo-and-social-media {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+footer .social-media a:hover img {
+  -webkit-filter: brightness(0.4);
+          filter: brightness(0.4);
+}
+
+footer hr {
+  color: #2b272f;
+}
+
+footer #pattern-footer-desktop {
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+footer .map {
+  padding-bottom: 2em;
+  position: relative;
+  z-index: 2;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: right;
+      -ms-flex-pack: right;
+          justify-content: right;
+  gap: 8em;
+}
+
+footer .map .links {
+  line-height: 2em;
+  font-family: "Karla", sans-serif;
+  text-transform: uppercase;
+  color: #837d87;
+}
+
+footer .map .links h4 {
+  color: Grayis-Blue;
+}
+
+footer .map .links a {
+  text-decoration: none;
+  color: #2d2640;
+  display: block;
+  font-weight: 500;
+}
+
+footer .map .links a:hover {
+  text-decoration: underline;
+}
+
+main {
+  position: relative;
+}
+
+.ham-nav {
+  height: 100vh;
+  width: 100vw;
+  background-color: #2b272f;
+  position: absolute;
+  z-index: 100;
+  top: 0;
+}
+
+.ham-nav ul {
+  padding: 1em;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 3em;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  font-size: 1.5rem;
+  list-style: none;
+  font-family: "Karla", sans-serif;
+  text-transform: uppercase;
+  color: white;
+}
+
+.ham-nav ul li:nth-child(4) {
+  margin-top: 1em;
+}
+
+.ham-nav ul li a {
+  color: white;
+}
+
+.ham-nav ul li .btn {
+  background-color: #2b272f;
+  border-color: white;
+  padding: 1em 5em;
+}
+
+.ham-nav ul li .btn:hover {
+  background-color: white;
+  border-color: white;
+  color: #2b272f;
+}
+
+.ham-nav img {
+  position: absolute;
+  bottom: 5.4em;
+  left: 0;
+  z-index: 1;
+  -webkit-transform: scale(1.8);
+          transform: scale(1.8);
+}
+
+@media (min-width: 320px) and (max-width: 435px) {
+  .ham-nav ul li .btn {
+    padding: 1em 2em;
+  }
+}
+
+a {
+  text-decoration: none;
+}
+
+main > div {
+  display: none;
+}
+
+.btn {
+  color: #2b272f;
+  padding: 1em 3em;
+  font-family: "Karla", sans-serif;
+  font-weight: 600;
+  background-color: white;
+  border: 0.18em solid #2b272f;
+  text-transform: uppercase;
+}
+
+.btn:hover {
+  color: white;
+  background-color: #2b272f;
+}
+
+.container {
+  max-width: 1200px;
+  padding: 0em 3em;
+  margin: 0 auto;
+}
+
+#pattern1 {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+}
+
+#pattern2 {
+  position: absolute;
+  top: 35em;
+  left: 0;
+  z-index: 1;
+}
+
+#intro-image2 {
+  display: none;
+}
+
+.hide {
+  display: none;
+}
+
+.display {
+  display: initial;
+}
+
+@media (min-width: 1187px) {
+  #hamburger-nav {
+    display: none;
+  }
+  #bg-pattern-footer-mobile {
+    display: none;
+  }
+  #pattern1-mobile {
+    display: none;
+  }
+  #pattern2-mobile {
+    display: none;
+  }
+  #mobile-card-pattern {
+    display: none;
+  }
+}
+
+@media (min-width: 1125px) and (max-width: 1186px) {
+  .hero #intro-image {
+    position: absolute;
+    top: 6em;
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    right: 0;
+  }
+  #pattern1-mobile {
+    display: none;
+  }
+  #pattern2-mobile {
+    display: none;
+  }
+  #bg-pattern-footer-mobile {
+    display: none;
+  }
+  #hamburger-nav {
+    display: none;
+  }
+  #mobile-card-pattern {
+    display: none;
+  }
+}
+
+@media (min-width: 820px) and (max-width: 1125px) {
+  .hero #intro-image {
+    position: absolute;
+    top: 19em;
+    -webkit-transform: scale(0.8);
+            transform: scale(0.8);
+    right: 0;
+  }
+  #pattern1-mobile {
+    display: none;
+  }
+  #pattern2-mobile {
+    display: none;
+  }
+  #bg-pattern-footer-mobile {
+    display: none;
+  }
+  #hamburger-nav {
+    display: none;
+  }
+  #mobile-card-pattern {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 819px) {
+  .hero #intro-image {
+    position: absolute;
+    top: 18em;
+    -webkit-transform: scale(0.7);
+            transform: scale(0.7);
+    right: 0;
+  }
+  .find-more .container .btn {
+    position: relative;
+    z-index: 3;
+    height: 2em;
+    text-align: center;
+    text-transform: uppercase;
+    color: #fafafa;
+    border-color: #fafafa;
+    background-color: rgba(0, 0, 0, 0);
+  }
+  header nav ul {
+    padding: 1em;
+  }
+  header nav ul li {
+    padding-right: 0;
+  }
+  header nav ul li .btn {
+    margin-left: 1em;
+  }
+  footer .map {
+    gap: 4em;
+  }
+  #pattern1-mobile {
+    display: none;
+  }
+  #pattern2-mobile {
+    display: none;
+  }
+  #bg-pattern-footer-mobile {
+    display: none;
+  }
+  #hamburger-nav {
+    display: none;
+  }
+  #mobile-card-pattern {
+    display: none;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 767px) {
+  header {
+    padding: 2em 0;
+  }
+  header nav ul {
+    display: none;
+  }
+  header #hamburger {
+    display: block;
+  }
+  .hero {
+    position: relative;
+    height: 1360px;
+    background-color: white;
+  }
+  .hero hr {
+    display: none;
+  }
+  .hero .container {
+    width: 100vw;
+    padding: 0;
+    background-color: white;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: reverse;
+        -ms-flex-direction: column-reverse;
+            flex-direction: column-reverse;
+  }
+  .hero .content {
+    width: 100vw;
+    background-color: #2d2640;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    height: 650px;
+  }
+  .hero #intro-image {
+    position: relative;
+    z-index: 2;
+    width: 100vw;
+    position: initial;
+    top: 0;
+    right: 0;
+  }
+  footer .map {
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    gap: 2em;
+  }
+  footer #pattern-footer-desktop {
+    position: absolute;
+    top: 0;
+    left: -10em;
+  }
+  #pattern1 {
+    position: absolute;
+    z-index: 1;
+    top: 40em;
+    right: 0;
+  }
+  #pattern2 {
+    position: absolute;
+    z-index: 1;
+    top: 80em;
+  }
+  .we-are-diff {
+    text-align: center;
+    height: 1550px;
+  }
+  .we-are-diff hr {
+    margin: 0 auto;
+  }
+  .we-are-diff .cards {
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+  }
+  .find-more {
+    height: 300px;
+  }
+  .find-more .container .how-we-work {
+    height: 300px;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+  }
+  .find-more .container .how-we-work img {
+    height: 300px;
+  }
+  #pattern1-mobile {
+    display: none;
+  }
+  #pattern2-mobile {
+    display: none;
+  }
+  #bg-pattern-footer-mobile {
+    display: none;
+  }
+  header nav > a > img {
+    display: initial;
+  }
+}
+
+@media (min-width: 425px) and (max-width: 599px) {
+  header {
+    padding: 2em 0;
+  }
+  header nav ul {
+    display: none;
+  }
+  header #hamburger {
+    display: block;
+  }
+  .hero {
+    position: relative;
+    height: 1112px;
+    background-color: white;
+  }
+  .hero hr {
+    display: none;
+  }
+  .hero .container {
+    width: 100vw;
+    padding: 0;
+    background-color: white;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: reverse;
+        -ms-flex-direction: column-reverse;
+            flex-direction: column-reverse;
+  }
+  .hero .content {
+    text-align: center;
+    width: 100vw;
+    background-color: #2d2640;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    height: 600px;
+  }
+  .hero .content h1 {
+    font-size: 3.5rem;
+    margin: 0;
+    margin-bottom: 0.5em;
+    max-width: 25em;
+  }
+  .hero .content p {
+    max-width: 25em;
+  }
+  .hero #intro-image {
+    position: relative;
+    z-index: 2;
+    width: 100vw;
+    position: initial;
+    top: 0;
+    right: 0;
+  }
+  #pattern1 {
+    display: none;
+  }
+  #pattern2 {
+    display: none;
+  }
+  .we-are-diff {
+    height: 1470px;
+    text-align: center;
+    height: 1470px;
+  }
+  .we-are-diff hr {
+    padding: 5em;
+    width: 2em;
+    margin: 0 auto;
+    margin-bottom: 4em;
+  }
+  .we-are-diff h1 {
+    font-size: 3rem;
+  }
+  .we-are-diff .cards {
+    margin-top: 6em;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    text-align: center;
+  }
+  .find-more {
+    height: 240px;
+  }
+  .find-more .container {
+    height: 325px;
+  }
+  .find-more .container .how-we-work {
+    text-align: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    height: 325px;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+  }
+  .find-more .container .how-we-work h2 {
+    margin-top: 0;
+    font-size: 2.3rem;
+  }
+  .find-more .container .how-we-work img {
+    display: none;
+  }
+  #intro-image {
+    display: none;
+  }
+  #intro-image2 {
+    display: initial;
+  }
+  footer .map {
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    gap: 0.5em;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    text-align: center;
+  }
+  footer #pattern-footer-desktop {
+    display: none;
+  }
+  #pattern1-mobile {
+    position: absolute;
+    top: 66em;
+    right: 0;
+    z-index: 1;
+  }
+  #pattern2-mobile {
+    position: absolute;
+    top: 38.2em;
+    left: 0;
+    z-index: 1;
+  }
+  #mobile-card-pattern {
+    display: initial;
+  }
+  #bg-pattern-footer-mobile {
+    display: initial;
+    position: absolute;
+    top: 0;
+  }
+  header nav > a > img {
+    display: initial;
+  }
+}
+
+@media (min-width: 375px) and (max-width: 424px) {
+  header {
+    padding: 2em 0;
+  }
+  header nav ul {
+    display: none;
+  }
+  header #hamburger {
+    display: block;
+  }
+  .hero {
+    position: relative;
+    height: 1112px;
+    background-color: white;
+  }
+  .hero hr {
+    display: none;
+  }
+  .hero .container {
+    width: 100vw;
+    padding: 0;
+    background-color: white;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: reverse;
+        -ms-flex-direction: column-reverse;
+            flex-direction: column-reverse;
+  }
+  .hero .content {
+    text-align: center;
+    width: 100vw;
+    background-color: #2d2640;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    height: 600px;
+  }
+  .hero .content h1 {
+    font-size: 3.5rem;
+    margin: 0;
+    margin-bottom: 0.5em;
+    max-width: 25em;
+  }
+  .hero .content p {
+    max-width: 25em;
+  }
+  .hero #intro-image {
+    position: relative;
+    z-index: 2;
+    width: 100vw;
+    position: initial;
+    top: 0;
+    right: 0;
+  }
+  #pattern1 {
+    display: none;
+  }
+  #pattern2 {
+    display: none;
+  }
+  .we-are-diff {
+    height: 1470px;
+    text-align: center;
+    height: 1470px;
+  }
+  .we-are-diff hr {
+    padding: 5em;
+    width: 2em;
+    margin: 0 auto;
+    margin-bottom: 4em;
+  }
+  .we-are-diff h1 {
+    font-size: 3rem;
+  }
+  .we-are-diff .cards {
+    margin-top: 6em;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    text-align: center;
+  }
+  .find-more {
+    height: 240px;
+  }
+  .find-more .container {
+    height: 325px;
+  }
+  .find-more .container .how-we-work {
+    text-align: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    height: 325px;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+  }
+  .find-more .container .how-we-work h2 {
+    margin-top: 0;
+    font-size: 2.3rem;
+  }
+  .find-more .container .how-we-work img {
+    display: none;
+  }
+  .find-more .container .how-we-work .btn {
+    height: 2em;
+  }
+  #intro-image {
+    display: none;
+  }
+  #intro-image2 {
+    display: initial;
+  }
+  footer .map {
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    gap: 0.5em;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    text-align: center;
+  }
+  footer #pattern-footer-desktop {
+    display: none;
+  }
+  #pattern1-mobile {
+    position: absolute;
+    top: 66em;
+    right: 0;
+    z-index: 1;
+  }
+  #pattern2-mobile {
+    position: absolute;
+    top: 34.2em;
+    left: 0;
+    z-index: 1;
+  }
+  #mobile-card-pattern {
+    display: initial;
+  }
+  #bg-pattern-footer-mobile {
+    display: initial;
+    position: absolute;
+    top: 0;
+  }
+  header nav > a > img {
+    display: initial;
+  }
+}
+
+@media (min-width: 320px) and (max-width: 374px) {
+  header {
+    padding: 0.6em 0;
+  }
+  header nav ul {
+    display: none;
+  }
+  header #hamburger {
+    display: block;
+  }
+  header .container {
+    padding: 1em;
+  }
+  .hero {
+    position: relative;
+    height: 950px;
+    background-color: white;
+  }
+  .hero hr {
+    display: none;
+  }
+  .hero .container {
+    width: 100vw;
+    padding: 0;
+    background-color: white;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: reverse;
+        -ms-flex-direction: column-reverse;
+            flex-direction: column-reverse;
+  }
+  .hero .content {
+    text-align: center;
+    width: 100vw;
+    background-color: #2d2640;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    height: 600px;
+  }
+  .hero .content h1 {
+    font-size: 3.5rem;
+    margin: 0;
+    margin-bottom: 0.5em;
+    max-width: 25em;
+  }
+  .hero .content p {
+    max-width: 25em;
+  }
+  .hero #intro-image {
+    position: relative;
+    z-index: 2;
+    width: 100vw;
+    position: initial;
+    top: 0;
+    right: 0;
+  }
+  #pattern1 {
+    display: none;
+  }
+  #pattern2 {
+    display: none;
+  }
+  .we-are-diff {
+    text-align: center;
+    height: 1633px;
+  }
+  .we-are-diff hr {
+    padding: 5em;
+    width: 2em;
+    margin: 0 auto;
+    margin-bottom: 4em;
+  }
+  .we-are-diff h1 {
+    font-size: 3rem;
+  }
+  .we-are-diff .cards {
+    margin-top: 6em;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    text-align: center;
+  }
+  .find-more {
+    height: 240px;
+  }
+  .find-more .container {
+    height: 325px;
+  }
+  .find-more .container .how-we-work {
+    padding: 0 1em;
+    text-align: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    height: 325px;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+  }
+  .find-more .container .how-we-work h2 {
+    margin-top: 0;
+    font-size: 2.3rem;
+  }
+  .find-more .container .how-we-work img {
+    display: none;
+  }
+  .find-more .container .how-we-work .btn {
+    height: 1em;
+    padding: 1em 0.5em;
+  }
+  #intro-image {
+    display: none;
+  }
+  #intro-image2 {
+    display: initial;
+  }
+  footer .map {
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    gap: 0.5em;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    text-align: center;
+  }
+  footer #pattern-footer-desktop {
+    display: none;
+  }
+  #pattern1-mobile {
+    position: absolute;
+    top: 57em;
+    right: 0;
+    z-index: 1;
+  }
+  #pattern2-mobile {
+    position: absolute;
+    top: 29.4em;
+    left: 0;
+    z-index: 1;
+  }
+  #mobile-card-pattern {
+    display: initial;
+  }
+  #bg-pattern-footer-mobile {
+    display: initial;
+    position: absolute;
+    top: -1.5em;
+    left: -4em;
+    -webkit-transform: scale(0.7);
+            transform: scale(0.7);
+  }
+  header nav > a > img {
+    display: initial;
+  }
+}
+/*# sourceMappingURL=main.css.map */

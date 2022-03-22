@@ -52,22 +52,33 @@ int main()
         while ((bytesRead = recv(connection, buffer, 10000, 0)) > 0)
         {
             buffer[bytesRead] = '\0';
-            recievedData = recievedData + buffer;
+            recievedData += buffer;
             // read the all request
-            if (i && recievedData.find("Content-Length:") != std::string::npos)
+            if (recievedData.find("POST") != std::string::npos)
             {
-                i = 0;
-                int begin = recievedData.find("Content-Length:") + strlen("Content-Length: ");
-                int end = recievedData.find("\r\n", begin);
-                std::string contentLength = recievedData.substr(begin, end - begin);
-                std::string header= recievedData.substr(0, recievedData.find("\r\n\r\n"));
-                request_lenght = (header.length()) + atoi(contentLength.c_str()) + strlen("\r\n\r\n");
+                // read the all request
+                if (i && recievedData.find("Content-Length:") != std::string::npos)
+                {
+                    i = 0;
+                    int begin = recievedData.find("Content-Length:") + strlen("Content-Length: ");
+                    int end = recievedData.find("\r\n", begin);
+                    std::string contentLength = recievedData.substr(begin, end - begin);
+                    std::string header = recievedData.substr(0, recievedData.find("\r\n\r\n"));
+                    request_lenght = (header.length()) + atoi(contentLength.c_str()) + strlen("\r\n\r\n");
+                }
+                if (request_lenght < 900000000)
+                {
+                    if (recievedData.length() >= request_lenght)
+                        break;
+                }
             }
-            std::cout << "\nreaded " << recievedData.length() << " | " << request_lenght << "|" << bytesRead << "\n";
-            if (request_lenght < 900000000)
+            else
             {
-                if (recievedData.length() >= request_lenght)
+                if (recievedData.find("\r\n\r\n") != std::string::npos)
+                {
+                    std::cout << "***************** -> request stops <- *****************\n"; 
                     break;
+                }
             }
         }
 
@@ -93,7 +104,7 @@ int main()
 
 
         free(indexData);*/
-        response.print();
+        //response.print();
         // send(connection, response1.c_str(), response1.size(), 0);
         send(connection, response.getResponse().c_str(), response.getResponse().length(), 0);
         close(connection);

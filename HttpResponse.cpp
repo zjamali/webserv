@@ -2,26 +2,24 @@
 
 HttpResponse::HttpResponse(HttpRequest const &request)
 {
-    // init servers 
+    // init servers
     init_response();
-    if (_responseStatus == 405 && __errorPages.find(405) == __errorPages.end())
-    {
-        std::cout << "\n---<kkkkkkkkkkkkkkkkkkkkkkkkkkkk\n";
-        _finaleResponse = ResponseMethodNotAllowed();
-        return;
-    }
-
     _responseStatus = request.getRequestStatus();
     _method = request.getMethod();
     _httpVersion = request.getHttpVersion();
     _path = request.getPath();
+
+    std::map<std::string, std::string> _headers = request.getHedaers(); 
+    if (_headers.find("Content-Type:") != _headers.end())
+        __contentType = request.getHedaers()["Content-Type:"];
     // generate response
 
-    generateResponse();
+    _finaleResponse = generateResponse("/Users/zjamali/Desktop/webserv/www", "upload"); // get config obj ; root
 }
 
 void HttpResponse::init_response()
 {
+    _errorHtml = false;
     CRLF_Combination = std::string(CRLF);
     __http = "";
     __statusCode = "";
@@ -113,23 +111,23 @@ std::string HttpResponse::getLocalTime() const
     return (std::string(buffer));
 }
 
-std::string HttpResponse::getStartLine() const
+std::string HttpResponse::generateStartLine(unsigned int status_code) const
 {
 
-    if (_responseStatus == BAD_REQUEST) // bad request
+    if (status_code == BAD_REQUEST) // bad request
     {
         return "HTTP/1.1 400 Bad Request\r\n";
     }
-    else if (_responseStatus == 501)
+    else if (status_code == NOT_IMPLLIMENTED)
     {
         return "HTTP/1.1 501 Not Implemented\r\n";
     }
-    else if (_responseStatus == 505)
+    else if (status_code == HTTP_VERSION_NOT_SUPPORTED)
     { // 505 HTTP Version Not Supported
 
         return ("HTTP/1.1 505 HTTP Version Not Supported\r\n");
     }
-    else if (_responseStatus == 200 && _path == "/")
+    else if (status_code == OK)
     {
         return ("HTTP/1.1 200 OK\r\n");
     }
@@ -137,18 +135,15 @@ std::string HttpResponse::getStartLine() const
         return ("HTTP/1.1 404 Not Found\r\n");
 }
 
-std::string HttpResponse::getHeaders() const
+std::string HttpResponse::generateHeader(unsigned int const status_code, unsigned int body_lenght, std::string const content_type)
 {
-    std::string res;
-    for (std::map<std::string, std::string>::const_iterator it = _responseHeaders.begin(); it != _responseHeaders.end(); it++)
-    {
-        res += it->first;
-        res += ": ";
-        res += it->second;
-        res += "\r\n";
-    }
-    res += getLocalTime();
-    return (res);
+    std::string header;
+    header += generateStartLine(status_code);
+    header += "Content-Type: " + content_type + "\r\n";
+    header += "Content-Lenght: " + std::to_string(body_lenght) + "\r\n";
+    header += "Server: " + __server + "\r\n";
+    header += "\r\n";
+    return header;
 }
 
 void HttpResponse::print()
@@ -158,85 +153,182 @@ void HttpResponse::print()
     std::cout << "+++++++++++++++++++++ Responce END ++++++++++++++++++++\n";
 }
 
-std::string HttpResponse::getBody()
+std::string HttpResponse::generateBody()
 {
-
-    if (_responseStatus == 400 || _responseStatus == 505 || _responseStatus == 501)
-    {
-        std::ifstream file("serverPages/" + std::to_string(_responseStatus) + ".html");
-        if (file.is_open())
-        {
-            _responseHeaders["Content-Type"] = "text/html";
-            _responseHeaders["Content-Length"] = "150";
-            int size = 1500;
-            char *buffer = new char[size];
-            memset(buffer, '\0', size);
-            file.read(buffer, size);
-
-            file.close();
-            _responseBody = buffer;
-            delete[] buffer;
-        }
-    }
-    else if (_responseStatus == 200 && _path == "/")
-    {
-        std::ifstream file("serverPages/200.html");
-        if (file.is_open())
-        {
-
-            int size = 1500;
-            char *buffer = new char[size];
-            memset(buffer, '\0', size);
-            file.read(buffer, size);
-            file.close();
-            _responseBody = buffer;
-            delete[] buffer;
-            _responseHeaders["Content-Type"] = "text/html";
-            _responseHeaders["Content-Length"] = "150";
-            //_responseHeaders["Content-Length"] = std::to_string(size);
-        }
-    }
-    else if (_responseStatus == 200 && _path != "/")
-    {
-        std::ifstream file("serverPages/404.html");
-        if (file.is_open())
-        {
-            int size = 1500;
-            char *buffer = new char[size];
-            memset(buffer, '\0', size);
-            file.read(buffer, size);
-            file.close();
-            _responseBody = buffer;
-            delete[] buffer;
-            _responseHeaders["Content-Type"] = "text/html";
-            _responseHeaders["Content-Length"] = "150";
-        }
-    }
-    //_responseBody = "<html><head><title>400 Bad Request</title></head><body><center><h1>400 Bad Request</h1></center><hr><center>webserv/1.0</center></body></html>";
-    return _responseBody;
+    return " ";
 }
 
-std::string HttpResponse::generateResponse()
+std::string const HttpResponse::defaultServerPages(unsigned int statusCode) const
+{
+    if (statusCode == OK)
+        return ResponseOK();
+    else if (statusCode == BAD_REQUEST)
+        return ResponseBadRequest();
+    else if (statusCode == NOT_FOUND)
+        return ResponseNotFound();
+    else if (statusCode == METHOD_NOT_ALLOWED)
+        return ResponseMethodNotAllowed();
+    else if (statusCode == HTTP_VERSION_NOT_SUPPORTED)
+        return ResponseHttpVersionNotSupported();
+    else if (statusCode == NOT_IMPLLIMENTED)
+        return ResponseMethodNotAllowed();
+    else
+        return ResponseNotFound();
+}
+
+std::string const HttpResponse::generateErrorResponse(unsigned int errorCode)
+{
+    if (_errorHtml)
+    {
+        if (__errorPages.find(errorCode) == __errorPages.end())
+            return defaultServerPages(errorCode);
+        else
+        {
+            std::string body;
+            // get Html page path
+            std::string pagePath = __errorPages[errorCode];
+            struct stat sb;
+            if (!stat(pagePath.c_str(), &sb) && S_ISREG(sb.st_mode))
+            {
+                int fd = open(pagePath.c_str(), O_RDONLY);
+                if (fd > 0)
+                {
+                    char buffer[(int)sb.st_size];
+                    int readedBytes;
+                    while ((readedBytes = read(fd, buffer, sb.st_size)) > 0)
+                    {
+                        buffer[readedBytes] = '\0';
+                        body += buffer;
+                        if (body.length() >= (unsigned int)sb.st_size)
+                            break;
+                    }
+                    close(fd);
+                }
+            }
+            return (generateHeader(errorCode, body.length(), __contentType) + CRLF_Combination + CRLF_Combination + body);
+        }
+    }
+    else
+    {
+        return defaultServerPages(errorCode);
+    }
+}
+
+std::string readFile(std::string const &pagePath)
+{
+    struct stat sb;
+    std::string body;
+    stat(pagePath.c_str(), &sb);
+    int fd = open(pagePath.c_str(), O_RDONLY);
+    if (fd > 0)
+    {
+        char buffer[(int)sb.st_size];
+        int readedBytes;
+        while ((readedBytes = read(fd, buffer, sb.st_size)) > 0)
+        {
+            buffer[readedBytes] = '\0';
+            body += buffer;
+            if (body.length() >= (unsigned int)sb.st_size)
+                break;
+        }
+        close(fd);
+    }
+    return body;
+}
+
+std::string HttpResponse::generateResponse(std::string const &root /*or location*/, std::string const &uploadPath)
 {
     std::string response;
+    std::string header;
+    std::string body;
 
-    response += getStartLine();
-    //response += getHeaders();
-    // response += getLocalTime();
-    __contentLength = "186";
-    response += "Content-Type: " + __contentType + "\r\n";
-    response += "Content-Lenght: " + __contentLength + "\r\n";
-    response += "Server: " + __server + "\r\n";
-    response += "\r\n";
-    response += getBody();
+    std::cout << "--------+ path : " << _path << "\n";
+    if (_responseStatus != 200)
+    {
+        return generateErrorResponse(_responseStatus);
+    }
+
+    (void)root;
+    (void)uploadPath;
+
+    /// check the path is correct and file request exist
+    ///
+    struct stat sb;
+    if (stat(root.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
+    {
+        /// search for index
+        if (_path == "/")
+        {
+            if (stat(std::string(root + "/" + "index.html").c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
+                body = readFile(std::string(root + "/" + "index.html")); 
+            else
+                return generateErrorResponse((_responseStatus = 404));
+        }
+        else
+        {
+            
+            if (_path.find(".") != std::string::npos)
+            {
+                std::string filetype = _path.substr(_path.find(".", _path.length() - 5));
+                if (filetype == ".css")
+                    __contentType = "text/css; charset=UTF-8";
+                if (filetype == ".js")
+                    __contentType = "text/javascript; charset=UTF-8";
+                if (filetype == ".jpg" || filetype == ".jpeg")
+                    __contentType = "image/jpeg";
+                if (filetype == ".js")
+                    __contentType = "text/javascript";
+                if (filetype == ".ico")
+                    __contentType = "image/vnd.microsoft.icon";
+                if (filetype == ".svg")
+                    __contentType = "image/svg+xml";
+
+            }
+            body = readFile(root + _path);
+        }
+    }
+    else
+        return generateErrorResponse((_responseStatus = 404));
+    ///
+    header = generateStartLine(_responseStatus);
+    header += generateHeader(_responseStatus, body.length(), __contentType);
     // add body
 
     // end the body
-    response += "\r\n";
-    _finaleResponse = response;
-    
-   _finaleResponse = ResponseOK();
-    return (response);
+
+    return (header + CRLF_Combination + CRLF_Combination + body);
+}
+
+std::string HttpResponse::ResponseOK() const
+{
+    std::string body = "<!DOCTYPE html>\r\n<html>\r\n<head>\r\n<title>Welcome to webserv!</title> \r\n</head> \r\n<body>\r\n<center><h1>Welcome to webserv</h1></center>\r\n<hr><center><p>webserv/1.0</p></center>\r\n</body>\r\n</html>\r\n";
+    std::string const header = "HTTP/1.1 200 OK" + CRLF_Combination + "Content-Type: text/html; charset=UTF-8\r\nContent-Length: " + std::to_string(body.length()) + "\r\nConnection: Closed\r\nServer: webserv/1.0\r\nDate: " + getLocalTime();
+
+    return (header + CRLF_Combination + CRLF_Combination + body);
+}
+std::string const HttpResponse::ResponseBadRequest() const
+{
+    std::string const body = "<!DOCTYPE html>\r\n<html>\r\n<head>\r\n<title>400 Bad Request</title> \r\n</head> \r\n<body>\r\n<center><h1>400 Bad Request</h1></center>\r\n<hr><center><p>webserv/1.0</p></center>\r\n</body>\r\n</html>\r\n";
+    std::string const header = "HTTP/1.1 400 Bad Request" + CRLF_Combination + "Content-Type: text/html; charset=UTF-8" + CRLF_Combination + "Content-Length: " + std::to_string(body.length()) + CRLF_Combination + "Connection: Closed" + CRLF_Combination + "Server: webserv/1.0" + CRLF_Combination + "Date: " + getLocalTime();
+    return (header + CRLF_Combination + CRLF_Combination + body);
+}
+std::string const HttpResponse::ResponseNotFound() const
+{
+    std::string const body = "<!DOCTYPE html>\r\n<html>\r\n<head>\r\n<title>404 Not Found</title> \r\n</head> \r\n<body>\r\n<center><h1>404 Not Found</h1></center>\r\n<hr><center><p>webserv/1.0</p></center>\r\n</body>\r\n</html>\r\n";
+    std::string const header = "HTTP/1.1 404 Not Found" + CRLF_Combination + "Content-Type: text/html; charset=UTF-8" + CRLF_Combination + "Content-Length: " + std::to_string(body.length()) + CRLF_Combination + "Connection: Closed" + CRLF_Combination + "Server: webserv/1.0" + CRLF_Combination + "Date: " + getLocalTime();
+    return (header + CRLF_Combination + CRLF_Combination + body);
+}
+std::string const HttpResponse::ResponseMethodNotAllowed() const
+{
+    std::string const body = "<!DOCTYPE html>\r\n<html>\r\n<head>\r\n<title>405 Method Not Allowed</title> \r\n</head> \r\n<body>\r\n<center><h1>405 Method Not Allowed</h1></center>\r\n<hr><center><p>webserv/1.0</p></center>\r\n</body>\r\n</html>\r\n";
+    std::string const header = "HTTP/1.1 405 Method Not Allowed" + CRLF_Combination + "Content-Type: text/html; charset=UTF-8" + CRLF_Combination + "Content-Length: " + std::to_string(body.length()) + CRLF_Combination + "Connection: Closed" + CRLF_Combination + "Server: webserv/1.0" + CRLF_Combination + "Date: " + getLocalTime();
+    return (header + CRLF_Combination + CRLF_Combination + body);
+}
+std::string const HttpResponse::ResponseHttpVersionNotSupported() const
+{
+    std::string const body = "<!DOCTYPE html>\r\n<html>\r\n<head>\r\n<title>505 HTTP Version Not Supported</title> \r\n</head> \r\n<body>\r\n<center><h1>505 HTTP Version Not Supported</h1></center>\r\n<hr><center><p>webserv/1.0</p></center>\r\n</body>\r\n</html>\r\n";
+    std::string const header = "HTTP/1.1 505 HTTP Version Not Supported" + CRLF_Combination + "Content-Type: text/html; charset=UTF-8" + CRLF_Combination + "Content-Length: " + std::to_string(body.length()) + CRLF_Combination + "Connection: Closed" + CRLF_Combination + "Server: webserv/1.0" + CRLF_Combination + "Date: " + getLocalTime();
+    return (header + CRLF_Combination + CRLF_Combination + body);
 }
 
 bool upload(std::string const &path, std::string const &filename, std::string const &data)
@@ -253,40 +345,7 @@ bool upload(std::string const &path, std::string const &filename, std::string co
     else
     {
         std::cout << "file not created" << std::endl;
-        
+
         return 1;
     }
-}
-
-std::string HttpResponse::ResponseOK() const
-{
-    //std::string const body = "<!DOCTYPE html>\n<html>\n<head>\n<title>Welcome to webserv!</title>\n</head>\n<body>\n<center>\n<h1>Welcome to webserv</h1>\n</center>\n<hr>\n<center>\n<p>webserv/1.0</p>\n</center>\n</body>\n</html>\n";
-    std::string body = "<!DOCTYPE html>\r\n<html>\r\n<head>\r\n<title>Welcome to webserv!</title> \r\n</head> \r\n<body>\r\n<center><h1>Welcome to webserv</h1></center>\r\n<hr><center><p>webserv/1.0</p></center>\r\n</body>\r\n</html>\r\n";
-    std::string const header = getStartLine() + "Content-Type: text/html\r\nContent-Length: " + std::to_string(body.length()) + "\r\nConnection: Closed\r\nServer: webserv/1.0\r\nDate: " + getLocalTime();
-
-    return (header + "\r\n\r\n" + body);
-}
-std::string const HttpResponse::ResponseBadRequest() const
-{
-    std::string const body = "<!DOCTYPE html>\n<html><head><title>400 Bad Request</title></ head><body><center><h1>400 Bad Request</h1></center><hr><center><p>webserv/1.0</p></center></body></html>";
-    std::string const header = "HTTP/1.1 400 Bad Request" + CRLF_Combination + "Content-Type: text/html" + CRLF_Combination + "Content-Length: " + std::to_string(body.length()) + CRLF_Combination + "Connection: Closed" + CRLF_Combination + "Server: webserv/1.0" + CRLF_Combination + "Date: " + getLocalTime() + CRLF_Combination;
-    return (header + CRLF_Combination + body);
-}
-std::string const HttpResponse::ResponseNotFound() const
-{
-    std::string const body = "<!DOCTYPE html><html><head><title>404 Not Found</title></ head><body><center><h1>404 Not Found</h1></center><hr><center><p>webserv/1.0</p></center></body></html>";
-    std::string const header = "HTTP/1.1 404 Not Found" + CRLF_Combination + "Content-Type: text/html" + CRLF_Combination + "Content-Length: " + std::to_string(body.length()) + CRLF_Combination + "Connection: Closed" + CRLF_Combination + "Server: webserv/1.0" + CRLF_Combination + "Date: " + getLocalTime() + CRLF_Combination;
-    return (header + CRLF_Combination + body);
-}
-std::string const HttpResponse::ResponseMethodNotAllowed() const
-{
-    std::string const body = "<!DOCTYPE html>\n<html>\n<head>\n<title>405 Method Not Allowed</title>\n</ head><body><center><h1>405 Method Not Allowed</h1></center><hr><center><p>webserv/1.0</p></center></body></html>";
-    std::string const header = "HTTP/1.1 405 Method Not Allowed" + CRLF_Combination + "Content-Type: text/html" + CRLF_Combination + "Content-Length: " + std::to_string(body.length()) + CRLF_Combination + "Connection: Closed" + CRLF_Combination + "Server: webserv/1.0" + CRLF_Combination + "Date: " + getLocalTime() + CRLF_Combination;
-    return (header + CRLF_Combination + body);
-}
-std::string const HttpResponse::ResponseHttpVersionNotSupported() const
-{
-    std::string const body = "<!DOCTYPE html><html><head><title>505 HTTP Version Not Supported</title></ head><body><center><h1>505 HTTP Version Not Supported</h1></center><hr><center><p>webserv/1.0</p></center></body></html>";
-    std::string const header = "HTTP/1.1 505 HTTP Version Not Supported" + CRLF_Combination + "Content-Type: text/html" + CRLF_Combination + "Content-Length: " + std::to_string(body.length()) + CRLF_Combination + "Connection: Closed" + CRLF_Combination + "Server: webserv/1.0" + CRLF_Combination + "Date: " + getLocalTime() + CRLF_Combination;
-    return (header + CRLF_Combination + body);
 }

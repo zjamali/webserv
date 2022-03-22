@@ -1,0 +1,44 @@
+@import "./variables.css";
+
+.find-more {
+    padding-bottom: 10em;
+    .container {
+        height: 250px;
+        h2 {
+            line-height: 1em;
+            font-family: $DM-font-family;
+            font-weight: 700;
+            font-size: 3rem;
+            color: $Very-Light-Gray;
+        }
+        .how-we-work {
+            position: relative;
+            position: relative;
+            padding: 0 3em;
+            background-color: $Dark-Violet;
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            img {
+                position:absolute;
+                z-index: 1;
+                top: 0;
+                right: 0;
+            }
+        }
+        .btn {
+            position: relative;
+            z-index: 3;
+            height: 1em;
+            text-transform: uppercase;
+            color: $Very-Light-Gray;
+            border-color: $Very-Light-Gray;
+            background-color: rgba($color: #000000, $alpha: 0);
+        }
+        .btn:hover {
+            color: $Dark-Violet;
+            background-color: $Very-Light-Gray;
+        }
+    }
+}

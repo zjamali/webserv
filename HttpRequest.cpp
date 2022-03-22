@@ -40,10 +40,10 @@ void HttpRequest::parseStartLine()
     int httpVersionEndPostion = _request.find(CRLF, pathEndPostion);
     _httpVersion = _request.substr(pathEndPostion, httpVersionEndPostion - pathEndPostion);
 
+    std::cout << "reqest startline    == " << _requestIndex << "\n";
     // check start line parameters
     if (!this->checkRequestStartLine(startLine)) // stop parse if start line not correct
         return;
-
     // get quesris if exist
     if (_path.find("?") != std::string::npos)
     {
@@ -59,6 +59,7 @@ void HttpRequest::parseStartLine()
         _querey = parseQueries(_quereyData);
     }
     _requestIndex = httpVersionEndPostion + 2; // +2 : \r\n end of line
+    std::cout << "reqest startline    == " << _requestIndex << "\n";
 }
 std::map<std::string, std::string> HttpRequest::parseQueries(std::string const &queries)
 {
@@ -91,12 +92,13 @@ std::map<std::string, std::string> HttpRequest::parseQueries(std::string const &
 void HttpRequest::parseHeaders()
 {
     int headerEndIndex = _request.find("\r\n\r\n"); // get the end of headers
+    std::cout << "request index        : " << _requestIndex << "\n";
     while (_requestIndex < headerEndIndex)
     {
         // if problem in headers syntax stop parse return bad request
         if (_request.find(":", _requestIndex) == std::string::npos)
         {
-            _requestStatus = 400;
+            _requestStatus = BAD_REQUEST;
             return;
         }
 
@@ -105,7 +107,7 @@ void HttpRequest::parseHeaders()
         /// check before and after separator
         if (_request[separator - 1] == ' ' || _request[separator + 1] != ' ')
         {
-            _requestStatus = 400;
+            _requestStatus = BAD_REQUEST;
             return;
         }
         int endLine = _request.find(CRLF, _requestIndex);
@@ -130,25 +132,25 @@ bool HttpRequest::checkRequestStartLine(std::string const &startLine)
     std::cout << startLine << std::endl;
     if (startLine.length() != _method.length() + _path.length() + _httpVersion.length() + 2) // + 2 for two spaces separate paramters
     {
-        _requestStatus = 400;
+        _requestStatus = BAD_REQUEST;
         return false;
     }
     if (_method.find(" ") != std::string::npos || _path.find(" ") != std::string::npos || _httpVersion.find(" ") != std::string::npos)
     {
-        _requestStatus = 400;
+        _requestStatus = BAD_REQUEST;
         return false;
     }
     if (_method != "GET" && _method != "DELETE" && _method != "POST")
     {
-        _requestStatus = 501; // 501 Not Implemented
+        _requestStatus = NOT_IMPLLIMENTED; 
         return false;
     }
     if (_httpVersion != "HTTP/1.1" && _httpVersion != "HTTP/1.1")
     {
-        _requestStatus = 505; // 505 HTTP Version Not Supported
+        _requestStatus = HTTP_VERSION_NOT_SUPPORTED; // 505 HTTP Version Not Supported
         return false;
     }
-    return (_requestStatus == 0);
+    return (_requestStatus == OK);
 }
 
 bool HttpRequest::checkHostHeader()
@@ -156,17 +158,17 @@ bool HttpRequest::checkHostHeader()
     // check if Host header  exist or duplicated
     if (_headers.find("Host") != _headers.end() || _headers.find("host") != _headers.end() || _headers.find("HOST") != _headers.end())
     {
-        _requestStatus = 400;
+        _requestStatus = BAD_REQUEST;
         return false;
     }
-    return (_requestStatus == 0);
+    return (_requestStatus == OK);
 }
 
 bool HttpRequest::checkRequestkHeaders()
 {
     if (_headers.find("Host") == _headers.end() && _headers.find("host") == _headers.end() && _headers.find("HOST") == _headers.end()) // no Host header found
     {
-        _requestStatus = 400;
+        _requestStatus = BAD_REQUEST;
         return false;
     }
     std::string hosts[3] = {"Host", "host", "HOST"};
@@ -179,7 +181,7 @@ bool HttpRequest::checkRequestkHeaders()
 
     if (_headers[hosts[i]].empty())
     {
-        _requestStatus = 400;
+        _requestStatus = BAD_REQUEST;
         return false;
     }
     std::string host = _headers[hosts[i]];
@@ -192,11 +194,11 @@ bool HttpRequest::checkRequestkHeaders()
     }
     if (i == static_cast<int>(host.length()))
     {
-        _requestStatus = 400;
+        _requestStatus = BAD_REQUEST;
         return false;
     }
 
-    return (_requestStatus == 0);
+    return (_requestStatus == OK);
 }
 
 /*
@@ -209,15 +211,15 @@ void HttpRequest::parseRequestBody()
     _bodyExist = _requestBody == CRLF ? false : true;
     if (_headers.find("Content-Length") == _headers.end()) // content-type not exist
     {
-        _requestStatus = 400;
+        std::cout << "\n--------------------------------------------------lll---------------\n";
+        _requestStatus = BAD_REQUEST;
         return;
     }
     if (_bodyExist)
     {
-
         if (_headers.find("Content-Type") == _headers.end())
         {
-            _requestStatus = 400;
+            _requestStatus = BAD_REQUEST;
             return;
         }
         else
@@ -323,6 +325,11 @@ int HttpRequest::getRequestStatus() const
 
 void HttpRequest::print() const
 {
+    
+    std::cout << "\n==================  REQUEST BEGIN ==================\n";
+    std::cout << _request ;
+    std::cout << "\n==================  REQUEST END   ==================\n";
+    
     std::cout << "\n-------------------------  REQUEST BEGIN -------------------------\n";
     std::cout << "request status " << _requestStatus << "\n";
     std::cout << "method  :  {" << _method << "}\n";
@@ -336,4 +343,5 @@ void HttpRequest::print() const
         std::cout << "{" << it->first << "} : {" << it->second << "}\n";
     }
     std::cout << "-------------------------  REQUEST END   -------------------------\n";
+
 }

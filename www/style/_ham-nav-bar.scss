@@ -1,0 +1,64 @@
+@import "./variables";
+
+main {
+    position: relative;
+}
+.ham-nav {
+    height: 100vh;
+    width: 100vw;
+    background-color: $Very-Dark-Violet;
+    position:absolute;
+    z-index: 100;
+    top : 0;
+
+    ul {
+        padding: 1em;
+        display: flex;
+        flex-direction: column;
+        gap: 3em;
+        align-items: center;
+        font-size: 1.5rem;
+        list-style: none;
+        font-family:  $Karla-font-family;
+        text-transform: uppercase;
+        color: white;
+        li:nth-child(4) 
+        {
+            margin-top: 1em;
+        }
+        li {
+            a {
+                color: white;
+            }
+            .btn {
+                background-color: $Very-Dark-Violet;
+                border-color: white;
+                padding: 1em 5em;
+            }
+            .btn:hover {
+                background-color: white;
+                border-color: white;
+                color: $Very-Dark-Violet;
+            }
+        }
+    }
+    img {
+        position: absolute;
+        bottom: 5.4em;
+        left: 0;
+        z-index: 1;
+        transform: scale(1.8);
+    }
+}
+
+@media (min-width: 320px) and (max-width: 435px) {
+    .ham-nav {
+        ul {
+            li {
+                .btn {
+                    padding: 1em 2em;
+                }
+            }
+        }
+    }
+}

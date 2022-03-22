@@ -1,0 +1,50 @@
+@import "./variables";
+
+.hero {
+    height: 650px;
+    background-color: $Dark-Violet;
+    color: white;
+    .container {
+        position: relative;
+    }
+    hr{
+       width: 10em;
+       margin-left: 0;
+       padding-top: 6em;
+       border-top: none;
+       border-right: none;
+       border-left: none;
+       margin: 0;
+    }
+    h1 {
+        line-height: 1em;
+        font-family: $DM-font-family;
+        font-weight: 700;
+        font-size: 4rem;
+        color: $Very-Light-Gray;
+        margin-bottom: 0.4em;
+    }
+    p {
+        margin-bottom: 3em;
+        font-size: 16px;
+        font-family: $Karla-font-family;
+        font-weight: 100;
+        line-height: 1.6em;
+        color: $Very-Light-Gray;
+        max-width: 30em;
+    }
+    .btn{
+        background-color: $Dark-Violet;
+        color: white;
+        border-color: white;
+    }
+    .btn:hover {
+        background-color: white;
+        color: $Dark-Violet;
+    }
+    #intro-image {
+        position:absolute;
+        top: 6em;
+        right: 4em;
+    }
+}

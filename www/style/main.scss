@@ -1,0 +1,57 @@
+@import "./nav-bar";
+@import "./hero";
+@import "./we-are-diff";
+@import "./find-more";
+@import "./footer";
+@import "./ham-nav-bar";
+a {
+    text-decoration: none;
+}
+
+main > div {
+    display: none;
+}
+.btn  
+{
+   color: $Very-Dark-Violet;
+   padding: 1em 3em;
+   font-family: $Karla-font-family;
+   font-weight: 600;
+   background-color: white;
+   border: 0.18em solid $Very-Dark-Violet;
+   text-transform: uppercase;
+}
+
+.btn:hover {
+    color: white;
+    background-color: $Very-Dark-Violet;
+}
+.container {
+    max-width: 1200px;
+    padding: 0em 3em;
+    margin: 0 auto;
+}
+#pattern1 {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+
+}
+#pattern2 {
+    position: absolute;
+    top: 35em;
+    left: 0;
+    z-index: 1;
+}
+#intro-image2 {
+    display: none;
+}
+
+.hide {
+    display: none;
+}
+.display {
+    display: initial;
+}
+@import "./media_query";

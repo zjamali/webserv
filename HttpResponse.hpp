@@ -5,7 +5,10 @@
 #include <string>
 #include <map>
 #include <utility>
+#include <unistd.h>
 #include <sys/stat.h>
+#include <fcntl.h>
+#include <sstream>
 #include "HttpRequest.hpp"
 
 class HttpResponse
@@ -26,29 +29,32 @@ private:
     std::string __Date;
     std::string __server;
 
-    std::map<int, std::string> __codes;
+    std::map<unsigned int, std::string> __codes;
 
-    std::map<int, std::string> __errorPages;
+    std::map<unsigned int, std::string> __errorPages;
 
 private:
     //HttpRequest const &_request;
+    unsigned int _responseStatus;
     std::string _finaleResponse;
-    int _responseStatus;
+
+
     std::string _method;
     std::string _path;
     std::string _httpVersion;
-    std::map<std::string, std::string> _responseHeaders;
-
-    std::string _responseBody;
 
     void init_response();
     std::string getLocalTime() const;
-    std::string getStartLine() const;
-    std::string getHeaders() const;
-    std::string getBody();
+    std::string generateStartLine(unsigned int status_code) const;
+    std::string generateHeader(unsigned int const status_code, unsigned int const body_lenght, std::string const content_type);
+    std::string generateBody();
 
 private:
     std::string ResponseOK() const;
+    
+    bool _errorHtml;
+    std::string const defaultServerPages(unsigned int statusCode) const;
+    std::string const generateErrorResponse(unsigned int errorCode);
     std::string const ResponseBadRequest() const;
     std::string const ResponseNotFound() const;
     std::string const ResponseMethodNotAllowed() const;
@@ -58,9 +64,10 @@ public:
     HttpResponse(HttpRequest const &request);
     ~HttpResponse();
 
-    std::string generateResponse();
+    std::string generateResponse(std::string const &root/*or location*/,std::string const &uploadPath);
     std::string const &getResponse() const { return _finaleResponse;};
     void print();
+    friend std::string readFile(std::string const &pagePath);
     friend bool upload(std::string const &path, std::string const &filename, std::string const &data);
 };
 
