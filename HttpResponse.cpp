@@ -8,14 +8,15 @@ HttpResponse::HttpResponse(HttpRequest const &request)
     _method = request.getMethod();
     _httpVersion = request.getHttpVersion();
     _path = request.getPath();
-
+    
+        _postRequestData = request.getBodyParts();
     std::map<std::string, std::string> _headers = request.getHedaers();
     if (_headers.find("Content-Type:") != _headers.end())
         __contentType = request.getHedaers()["Content-Type:"];
     // generate response
     _errorPagesExist = true;
     __errorPages[NOT_FOUND] = "/Users/zjamali/Desktop/webserv/www/404.html";
-    _finaleResponse = generateResponse("/Users/zjamali/Desktop/webserv/www", "/Users/zjamali/Desktop/webserv/www/upload"); // get config obj ; root
+    _finaleResponse = generateResponse("/Users/zjamali/Desktop/webserv/www", "/Users/zjamali/Desktop/webserv/www/upload/"); // get config obj ; root
 }
 
 void HttpResponse::init_response()
@@ -248,55 +249,83 @@ std::string HttpResponse::generateResponse(std::string const &root /*or location
     std::string header;
     std::string body;
 
-    std::cout << "--------+ path : " << _path << "\n";
     if (_responseStatus != 200)
     {
         return generateErrorResponse(_responseStatus);
     }
-
-    (void)root;
-    (void)uploadPath;
-
-    /// check the path is correct and file request exist
     ///
-    struct stat sb;
-    if (stat(root.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
+    if (_method == "GET")
     {
-        /// search for index
-        if (_path == "/")
+        /// check the path is correct and file request exist
+        struct stat sb;
+        if (stat(root.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
         {
-            if (stat(std::string(root + "/" + "index.html").c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
-                body = readFile(std::string(root + "/" + "index.html"));
-            else
-                return generateErrorResponse((_responseStatus = NOT_FOUND));
-        }
-        else
-        {
-            struct stat sb;
-            std::string filePath = root + _path;
-            if (stat(filePath.c_str(), &sb) == 0 && S_ISREG(sb.st_mode) && access(filePath.c_str(), R_OK) == 0)
+            /// search for index
+            if (_path == "/")
             {
-                if (_path.find(".") != std::string::npos)
-                {
-                    std::string filetype = _path.substr(_path.find(".", _path.length() - 5));
-                    if (__contentTypesList.find(filetype) != __contentTypesList.end())
-                        __contentType = __contentTypesList[filetype];
-                    body = readFile(filePath);
-                }
+                if (stat(std::string(root + "/" + "index.html").c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
+                    body = readFile(std::string(root + "/" + "index.html"));
+                else
+                    return generateErrorResponse((_responseStatus = NOT_FOUND));
             }
             else
-                return generateErrorResponse((_responseStatus = NOT_FOUND));
+            {
+                struct stat sb;
+                std::string filePath = root + _path;
+                if (stat(filePath.c_str(), &sb) == 0 && S_ISREG(sb.st_mode) && access(filePath.c_str(), R_OK) == 0)
+                {
+                    if (_path.find(".") != std::string::npos)
+                    {
+                        std::string filetype = _path.substr(_path.find(".", _path.length() - 5));
+                        if (__contentTypesList.find(filetype) != __contentTypesList.end())
+                            __contentType = __contentTypesList[filetype];
+                        body = readFile(filePath);
+                    }
+                }
+                else
+                    return generateErrorResponse((_responseStatus = NOT_FOUND));
+            }
         }
+        else
+            return generateErrorResponse((_responseStatus = NOT_FOUND));
+        ///
+        header += generateHeader(_responseStatus, body.length(), __contentType);
+        // add body
+
+        // end the body
+
+        return (header + CRLF_Combination + CRLF_Combination + body);
+    }
+    else if (_method == "POST")
+    {
+        // check if upload location exist
+        struct stat sb;
+        if (stat(uploadPath.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode)/* && access(uploadPath.c_str(), W_OK)*/)
+        {
+            std::cout << "POST POST POSTPOSTPOSTPOSTPOSTPOSTPOST\n";
+            for (std::vector<t_bodyPart>::iterator it = _postRequestData.begin(); it != _postRequestData.end(); it++)
+            {
+                if (!(it->_filename.empty())) // a filename exist
+                {
+                    std::ofstream outFile(uploadPath + it->_filename);
+                    if (outFile)
+                    {
+                        outFile << it->_data;
+                    }
+                    outFile.close();
+                }
+            }
+            return ResponseOK();
+        }
+        else
+            return generateErrorResponse((_responseStatus == NOT_FOUND));
+    }
+    else if (_method == "DELETE")
+    {
+        return "DELETE";
     }
     else
-        return generateErrorResponse((_responseStatus = NOT_FOUND));
-    ///
-    header += generateHeader(_responseStatus, body.length(), __contentType);
-    // add body
-
-    // end the body
-
-    return (header + CRLF_Combination + CRLF_Combination + body);
+        return generateErrorResponse((_responseStatus == NOT_IMPLLIMENTED));
 }
 
 std::string HttpResponse::ResponseOK() const

@@ -42,6 +42,7 @@ private:
     std::string _method;
     std::string _path;
     std::string _httpVersion;
+    std::vector<t_bodyPart> _postRequestData;
 
     void init_response();
     std::string getLocalTime() const;

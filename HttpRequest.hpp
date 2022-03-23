@@ -89,7 +89,7 @@ private:
 public:
     std::string getRequestBody() const;
     
-    std::vector<t_bodyPart> getBodyParts() const;
+    std::vector<t_bodyPart> getBodyParts() const {return _bodyParts;};
 
 public:
     HttpRequest(std::string const &request);
