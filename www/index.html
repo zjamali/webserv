@@ -1,893 +1,562 @@
-<!doctype html>
-<!--
-	The7 by TEMPLATE STOCK
-	templatestock.co @templatestock
-	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
--->
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-        <title>The7 Free HTML5 Responsive Template | Template Stock</title>
-        
-        <!-- CSS -->
-        <link rel="stylesheet" href="css/reset.css">
-        <link rel="stylesheet" href="css/simplegrid.css">
-        <link rel="stylesheet" href="css/icomoon.css">
-        <link rel="stylesheet" href="css/lightcase.css">
-        <link rel="stylesheet" href="js/owl-carousel/owl.carousel.css" />
-        <link rel="stylesheet" href="js/owl-carousel/owl.theme.css" />
-        <link rel="stylesheet" href="js/owl-carousel/owl.transitions.css" />
-        <link rel="stylesheet" href="style.css">
+<!DOCTYPE html>
+<html lang="en">
 
-        <!-- Google Fonts -->
-        <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,900' rel='stylesheet' type='text/css'>
-        <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+<head>
+    <meta charset="utf-8">
+    <title>SEO Master - SEO Agency Website Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"> 
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
 
 
-        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-           <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-           <!--[if lt IE 9]>
-             <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-             <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-           <![endif]-->
-        </head>
-        <body id="home">
-            <!-- Header -->
-            <header id="top-header" class="header-home">
-                <div class="grid">
-                    <div class="col-1-1">
-                        <div class="content">
-                            <div class="logo-wrap">
-                                <a href="#0" class="logo">The7</a>
+        <!-- Navbar & Hero Start -->
+        <div class="container-xxl position-relative p-0">
+            <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
+                <a href="" class="navbar-brand p-0">
+                    <h1 class="m-0"><i class="fa fa-search me-2"></i>SEO<span class="fs-5">Master</span></h1>
+                    <!-- <img src="img/logo.png" alt="Logo"> -->
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav ms-auto py-0">
+                        <a href="index.html" class="nav-item nav-link active">Home</a>
+                        <a href="about.html" class="nav-item nav-link">About</a>
+                        <a href="service.html" class="nav-item nav-link">Service</a>
+                        <a href="project.html" class="nav-item nav-link">Project</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                            <div class="dropdown-menu m-0">
+                                <a href="team.html" class="dropdown-item">Our Team</a>
+                                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
+                                <a href="404.html" class="dropdown-item">404 Page</a>
                             </div>
-                            <nav class="navigation">
-                                <input type="checkbox" id="nav-button">
-                                <label for="nav-button" onclick></label>
-                                <ul class="nav-container">
-                                    <li><a href="#home" class="current">Home</a></li>
-                                    <li><a href="#services">Services</a></li>
-                                    <li><a href="#work">Work</a></li>
-                                    <li><a href="#blog">Blog</a></li>
-                                    <li><a href="#pricing">Pricing</a></li>
-                                    <li><a href="#team">Team</a></li>
-                                    <li><a href="#contact">Contact</a></li>
-                                </ul>
-                            </nav>
                         </div>
+                        <a href="contact.html" class="nav-item nav-link">Contact</a>
                     </div>
+                    <butaton type="button" class="btn text-secondary ms-3" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fa fa-search"></i></butaton>
+                    <a href="https://htmlcodex.com/startup-company-website-template" class="btn btn-secondary text-light rounded-pill py-2 px-4 ms-3">Pro Version</a>
                 </div>
-            </header>
-            <!-- End Header -->
+            </nav>
 
-            <!-- Parallax Section -->
-            <div class="parallax-section parallax1">
-                <div class="grid grid-pad">
-                    <div class="col-1-1">
-                         <div class="content content-header" >
-                            <h2>We Are Creative Design Agency</h2>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum, fuga, consectetur sequi consequuntur nisi placeat ullam maiores perferendis. Quod, nihil reiciendis saepe optio libero minus et beatae ipsam reprehenderit sequi.</p>
-                            <a target="_blank" class="btn btn-ghost" href="#">Find Out More</a>
+            <div class="container-xxl py-5 bg-primary hero-header mb-5">
+                <div class="container my-5 py-5 px-lg-5">
+                    <div class="row g-5 py-5">
+                        <div class="col-lg-6 text-center text-lg-start">
+                            <h1 class="text-white mb-4 animated zoomIn">All in one SEO tool need to grow your business rapidly</h1>
+                            <p class="text-white pb-3 animated zoomIn">Tempor rebum no at dolore lorem clita rebum rebum ipsum rebum stet dolor sed justo kasd. Ut dolor sed magna dolor sea diam. Sit diam sit justo amet ipsum vero ipsum clita lorem</p>
+                            <a href="" class="btn btn-light py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft">Free Quote</a>
+                            <a href="" class="btn btn-outline-light py-sm-3 px-sm-5 rounded-pill animated slideInRight">Contact Us</a>
+                        </div>
+                        <div class="col-lg-6 text-center text-lg-start">
+                            <img class="img-fluid" src="img/hero.png" alt="">
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- End Parallax Section -->
+        </div>
+        <!-- Navbar & Hero End -->
 
-            <!-- CurveUp -->
-            <svg class="curveUpColor" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <path d="M0 100 C 20 0 50 0 100 100 Z"></path>
-            </svg>
 
-            <!-- Services Section -->
-            <div class="wrap services-wrap" id="services">
-                <section class="grid grid-pad services">
-                    <h2>Our Services</h2>
-                    <div class="col-1-4 service-box service-1" >
-                        <div class="content">
-                            <div class="service-icon">
-                                <i class="circle-icon icon-heart4"></i>
-                            </div>
-                            <div class="service-entry">
-                                <h3>Lovely Design</h3>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat tellus eget libero pretium, sollicitudin feugiat libero.</p>
-                                <a class="btn read-more" href="#0">Read More</a>
-                            </div>
+        <!-- Full Screen Search Start -->
+        <div class="modal fade" id="searchModal" tabindex="-1">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content" style="background: rgba(29, 29, 39, 0.7);">
+                    <div class="modal-header border-0">
+                        <button type="button" class="btn bg-white btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex align-items-center justify-content-center">
+                        <div class="input-group" style="max-width: 600px;">
+                            <input type="text" class="form-control bg-transparent border-light p-3" placeholder="Type search keyword">
+                            <button class="btn btn-light px-4"><i class="bi bi-search"></i></button>
                         </div>
                     </div>
-                    <div class="col-1-4 service-box service-2" >
-                        <div class="content">
-                            <div class="service-icon">
-                                <i class="circle-icon icon-star4"></i>
-                            </div>
-                            <div class="service-entry">
-                                <h3>Great Concept</h3>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat tellus eget libero pretium, sollicitudin feugiat libero.</p>
-                                <a class="btn read-more" href="#0">Read More</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-1-4 service-box service-3">
-                        <div class="content">
-                            <div class="service-icon">
-                                <i class="circle-icon icon-display"></i>
-                            </div>
-                            <div class="service-entry">
-                                <h3>Development</h3>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat tellus eget libero pretium, sollicitudin feugiat libero.</p>
-                                <a class="btn read-more" href="#0">Read More</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-1-4 service-box service-4" >
-                        <div class="content">
-                            <div class="service-icon">
-                                <i class="circle-icon icon-user6"></i>
-                            </div>
-                            <div class="service-entry">
-                                <h3>User Friendly</h3>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat tellus eget libero pretium, sollicitudin feugiat libero.</p>
-                                <a class="btn read-more" href="#0">Read More</a>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                </div>
             </div>
-            <!-- End Services Section -->
-            
-            <!-- CurveDown -->
-            <svg class="curveDownColor" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <path d="M0 0 C 50 100 80 100 100 0 Z"></path>
-            </svg>
+        </div>
+        <!-- Full Screen Search End -->
 
-            <!-- Work Section -->
-            <div class="wrap grey recent-wrap" id="work">
-                <section class="grid grid-pad">
-                    <h2>Recent Work</h2>
-                    <!-- Start of Filter section -->
-                    <div class="col-1-1 mix">
-                        <ul class="filters" >
-                            <li class="filter active" data-filter="all">All</li>
-                            <li class="filter" data-filter=".illustration">Illustration</li>
-                            <li class="filter" data-filter=".web-design">Web Design</li>
-                            <li class="filter" data-filter=".photography">Photography</li>
+
+        <!-- About Start -->
+        <div class="container-xxl py-5">
+            <div class="container px-lg-5">
+                <div class="row g-5">
+                    <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="section-title position-relative mb-4 pb-2">
+                            <h6 class="position-relative text-primary ps-4">About Us</h6>
+                            <h2 class="mt-2">The best SEO solution with 10 years of experience</h2>
+                        </div>
+                        <p class="mb-4">Tempor erat elitr rebum at clita. Diam dolor diam ipsum et tempor sit. Aliqu diam amet diam et eos labore. Clita erat ipsum et lorem et sit, sed stet no labore lorem sit. Sanctus clita duo justo et tempor eirmod magna dolore erat amet</p>
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <h6 class="mb-3"><i class="fa fa-check text-primary me-2"></i>Award Winning</h6>
+                                <h6 class="mb-0"><i class="fa fa-check text-primary me-2"></i>Professional Staff</h6>
+                            </div>
+                            <div class="col-sm-6">
+                                <h6 class="mb-3"><i class="fa fa-check text-primary me-2"></i>24/7 Support</h6>
+                                <h6 class="mb-0"><i class="fa fa-check text-primary me-2"></i>Fair Prices</h6>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mt-4">
+                            <a class="btn btn-primary rounded-pill px-4 me-3" href="">Read More</a>
+                            <a class="btn btn-outline-primary btn-square me-3" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-primary btn-square me-3" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-primary btn-square me-3" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-outline-primary btn-square" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <img class="img-fluid wow zoomIn" data-wow-delay="0.5s" src="img/about.jpg">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- About End -->
+
+
+        <!-- Newsletter Start -->
+        <div class="container-xxl bg-primary newsletter my-5 wow fadeInUp" data-wow-delay="0.1s">
+            <div class="container px-lg-5">
+                <div class="row align-items-center" style="height: 250px;">
+                    <div class="col-12 col-md-6">
+                        <h3 class="text-white">Ready to get started</h3>
+                        <small class="text-white">Diam elitr est dolore at sanctus nonumy.</small>
+                        <div class="position-relative w-100 mt-3">
+                            <input class="form-control border-0 rounded-pill w-100 ps-4 pe-5" type="text" placeholder="Enter Your Email" style="height: 48px;">
+                            <button type="button" class="btn shadow-none position-absolute top-0 end-0 mt-1 me-2"><i class="fa fa-paper-plane text-primary fs-4"></i></button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-center mb-n5 d-none d-md-block">
+                        <img class="img-fluid mt-5" style="height: 250px;" src="img/newsletter.png">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Newsletter End -->
+
+
+        <!-- Service Start -->
+        <div class="container-xxl py-5">
+            <div class="container px-lg-5">
+                <div class="section-title position-relative text-center mb-5 pb-2 wow fadeInUp" data-wow-delay="0.1s">
+                    <h6 class="position-relative d-inline text-primary ps-4">Our Services</h6>
+                    <h2 class="mt-2">What Solutions We Provide</h2>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.1s">
+                        <div class="service-item d-flex flex-column justify-content-center text-center rounded">
+                            <div class="service-icon flex-shrink-0">
+                                <i class="fa fa-home fa-2x"></i>
+                            </div>
+                            <h5 class="mb-3">SEO Optimization</h5>
+                            <p>Erat ipsum justo amet duo et elitr dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</p>
+                            <a class="btn px-3 mt-auto mx-auto" href="">Read More</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.3s">
+                        <div class="service-item d-flex flex-column justify-content-center text-center rounded">
+                            <div class="service-icon flex-shrink-0">
+                                <i class="fa fa-home fa-2x"></i>
+                            </div>
+                            <h5 class="mb-3">Web Design</h5>
+                            <p>Erat ipsum justo amet duo et elitr dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</p>
+                            <a class="btn px-3 mt-auto mx-auto" href="">Read More</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.6s">
+                        <div class="service-item d-flex flex-column justify-content-center text-center rounded">
+                            <div class="service-icon flex-shrink-0">
+                                <i class="fa fa-home fa-2x"></i>
+                            </div>
+                            <h5 class="mb-3">Social Media Marketing</h5>
+                            <p>Erat ipsum justo amet duo et elitr dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</p>
+                            <a class="btn px-3 mt-auto mx-auto" href="">Read More</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.1s">
+                        <div class="service-item d-flex flex-column justify-content-center text-center rounded">
+                            <div class="service-icon flex-shrink-0">
+                                <i class="fa fa-home fa-2x"></i>
+                            </div>
+                            <h5 class="mb-3">Email Marketing</h5>
+                            <p>Erat ipsum justo amet duo et elitr dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</p>
+                            <a class="btn px-3 mt-auto mx-auto" href="">Read More</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.3s">
+                        <div class="service-item d-flex flex-column justify-content-center text-center rounded">
+                            <div class="service-icon flex-shrink-0">
+                                <i class="fa fa-home fa-2x"></i>
+                            </div>
+                            <h5 class="mb-3">PPC Advertising</h5>
+                            <p>Erat ipsum justo amet duo et elitr dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</p>
+                            <a class="btn px-3 mt-auto mx-auto" href="">Read More</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.6s">
+                        <div class="service-item d-flex flex-column justify-content-center text-center rounded">
+                            <div class="service-icon flex-shrink-0">
+                                <i class="fa fa-home fa-2x"></i>
+                            </div>
+                            <h5 class="mb-3">App Development</h5>
+                            <p>Erat ipsum justo amet duo et elitr dolor, est duo duo eos lorem sed diam stet diam sed stet lorem.</p>
+                            <a class="btn px-3 mt-auto mx-auto" href="">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Service End -->
+
+
+        <!-- Portfolio Start -->
+        <div class="container-xxl py-5">
+            <div class="container px-lg-5">
+                <div class="section-title position-relative text-center mb-5 pb-2 wow fadeInUp" data-wow-delay="0.1s">
+                    <h6 class="position-relative d-inline text-primary ps-4">Our Projects</h6>
+                    <h2 class="mt-2">Recently Launched Projects</h2>
+                </div>
+                <div class="row mt-n2 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="col-12 text-center">
+                        <ul class="list-inline mb-5" id="portfolio-flters">
+                            <li class="btn px-3 pe-4 active" data-filter="*">All</li>
+                            <li class="btn px-3 pe-4" data-filter=".first">Design</li>
+                            <li class="btn px-3 pe-4" data-filter=".second">Development</li>
                         </ul>
                     </div>
-                    <!-- End of Filter section -->
-                    <div class="portfolio-items" >
-                        <div class="col-1-3 mix illustration">
-                            <div class="content">
-                                <div class="recent-work">
-                                    <img src="images/work/1-small.jpg" alt="">                                    
-                                    <div class="overlay">
-                                        <span>Illustration</span>
-                                        <h2><a class="img-wrap" data-rel="lightcase:illustration" title="Asian tourist - Illustration" href="images/work/1-big.jpg">Asian tourist</a></h2>
-                                    </div>
-                                    
+                </div>
+                <div class="row g-4 portfolio-container">
+                    <div class="col-lg-4 col-md-6 portfolio-item first wow zoomIn" data-wow-delay="0.1s">
+                        <div class="position-relative rounded overflow-hidden">
+                            <img class="img-fluid w-100" src="img/portfolio-1.jpg" alt="">
+                            <div class="portfolio-overlay">
+                                <a class="btn btn-light" href="img/portfolio-1.jpg" data-lightbox="portfolio"><i class="fa fa-plus fa-2x text-primary"></i></a>
+                                <div class="mt-auto">
+                                    <small class="text-white"><i class="fa fa-folder me-2"></i>Web Design</small>
+                                    <a class="h5 d-block text-white mt-1 mb-0" href="">Project Name</a>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-1-3 mix photography">
-                            <div class="content">
-                                <div class="recent-work">
-                                    <img src="images/work/5-small.jpg" alt="">
-                                    <div class="overlay">
-                                        <span>Photography</span>
-                                        <h2><a class="img-wrap" data-rel="lightcase:photography" title="Blue flowers - Photography" href="images/work/5-big.jpg">Blue flowers</a></h2>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-1-3 mix illustration">
-                            <div class="content">
-                                <div class="recent-work">
-                                    <img src="images/work/2-small.jpg" alt="">
-                                    <div class="overlay">
-                                        <span>Illustration</span>
-                                        <h2><a class="img-wrap" data-rel="lightcase:illustration" title="Batman Wannabe - Illustration" href="images/work/2-big.jpg">Batman Wannabe</a></h2>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-1-3 mix photography">
-                            <div class="content">
-                                <div class="recent-work">
-                                    <img src="images/work/8-small.jpg" alt="">
-                                    <div class="overlay">
-                                        <span>Photography</span>
-                                        <h2><a class="img-wrap" data-rel="lightcase:photography" title="Big city and dreams - Photography" href="images/work/8-big.jpg">Big city and dreams</a></h2>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-1-3 mix web-design">
-                            <div class="content">
-                                <div class="recent-work">
-                                    <img src="images/work/6-small.jpg" alt="">
-                                    <div class="overlay">
-                                        <span>Web Design</span>
-                                        <h2><a class="img-wrap" data-rel="lightcase:webdesign" title="Minimal nature - Web Design" href="images/work/6-big.jpg">Minimal nature</a></h2>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            <div class="col-1-3 mix web-design">
-                            <div class="content">
-                                <div class="recent-work">
-                                    <img src="images/work/3-small.jpg" alt="">
-                                    <div class="overlay">
-                                        <span>Illustration</span>
-                                        <h2><a class="img-wrap" data-rel="lightcase:illustration" title="Jack the sailor - Illustration" href="images/work/3-big.jpg">Jack the sailor</a></h2>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            <div class="col-1-3 mix photography">
-                            <div class="content">
-                                <div class="recent-work">
-                                    <img src="images/work/7-small.jpg" alt="">
-                                    <div class="overlay">
-                                        <span>Photography</span>
-                                        <h2><a class="img-wrap" data-rel="lightcase:photography" title="Enjoy live - Photography" href="images/work/7-big.jpg">Enjoy live</a></h2>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            <div class="col-1-3 mix illustration">
-                            <div class="content">
-                                <div class="recent-work">
-                                    <img src="images/work/4-small.jpg" alt="">
-                                    <div class="overlay">
-                                        <span>Illustration</span>
-                                        <h2><a class="img-wrap" data-rel="lightcase:illustration" title="Run kitty run - Photography" href="images/work/4-big.jpg">Run kitty run</a></h2>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            <div class="col-1-3 mix illustration">
-                            <div class="content">
-                                <div class="recent-work">
-                                    <img src="images/work/9-small.jpg" alt="">
-                                    <div class="overlay">
-                                        <span>Web Design</span>
-                                        <h2><a class="img-wrap" data-rel="lightcase:webdesign" title="Would you? - Web Design" href="images/work/9-big.jpg">Would you?</a></h2>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
-                      
-                        <div class="col-1-1"><a class="btn" href="#0">View More</a></div>
-
-                </section>  
-            </div>
-            <!-- End Work Section -->
-
-            <!-- CurveUp -->
-            <svg class="curveUpColor" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <path d="M0 100 C 20 0 50 0 100 100 Z"></path>
-            </svg>
-
-              <!-- Quotes Section -->
-            <div class="wrap services-wrap" >
-                <section class="grid grid-pad">
-                    <div class="col-1-1 service-box cl-client-carousel-container">
-                        <div class="content">
-                            <div class="cl-client-carousel">
-                                
-                                <div class="item client-carousel-item"><!-- Start of item -->
-                                <div class="quotes-icon">
-                                    <i class="icon-quotes-left"></i>
-                                </div>
-                                <p>The7 is an extraordinary, awesome Theme, I would recommend this Theme to anyone for their next project. Go ahead and download it now!</p>
-                                <h4>-David Bell</h4>
-                                </div><!-- End of item -->
-                                
-                                <div class="item client-carousel-item"><!-- Start of item -->
-                                <div class="quotes-icon">
-                                    <i class="icon-quotes-left"></i>
-                                </div>
-                                <p>The good times are for those who take action. The7 is a simple and easy to use template for creative people. Download this theme and give it a try!</p>
-                                <h4>-Eve Stinger</h4>
-                                </div><!-- End of item -->
-                                <div class="item client-carousel-item"><!-- Start of item -->
-                                <div class="quotes-icon">
-                                    <i class="icon-quotes-left"></i>
-                                </div>
-                                <p>Awesome theme! Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus incidunt possimus eveniet aperiam, minus deleniti iure ipsa praesentium amet, labore voluptatum fugit earum, porro non sequi sint soluta reprehenderit ad?</p>
-                                <h4>-Will Peters</h4>
-                                </div><!-- End of item -->
-                                
                             </div>
                         </div>
                     </div>
-                </section>
+                    <div class="col-lg-4 col-md-6 portfolio-item second wow zoomIn" data-wow-delay="0.3s">
+                        <div class="position-relative rounded overflow-hidden">
+                            <img class="img-fluid w-100" src="img/portfolio-2.jpg" alt="">
+                            <div class="portfolio-overlay">
+                                <a class="btn btn-light" href="img/portfolio-2.jpg" data-lightbox="portfolio"><i class="fa fa-plus fa-2x text-primary"></i></a>
+                                <div class="mt-auto">
+                                    <small class="text-white"><i class="fa fa-folder me-2"></i>Web Design</small>
+                                    <a class="h5 d-block text-white mt-1 mb-0" href="">Project Name</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 portfolio-item first wow zoomIn" data-wow-delay="0.6s">
+                        <div class="position-relative rounded overflow-hidden">
+                            <img class="img-fluid w-100" src="img/portfolio-3.jpg" alt="">
+                            <div class="portfolio-overlay">
+                                <a class="btn btn-light" href="img/portfolio-3.jpg" data-lightbox="portfolio"><i class="fa fa-plus fa-2x text-primary"></i></a>
+                                <div class="mt-auto">
+                                    <small class="text-white"><i class="fa fa-folder me-2"></i>Web Design</small>
+                                    <a class="h5 d-block text-white mt-1 mb-0" href="">Project Name</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 portfolio-item second wow zoomIn" data-wow-delay="0.1s">
+                        <div class="position-relative rounded overflow-hidden">
+                            <img class="img-fluid w-100" src="img/portfolio-4.jpg" alt="">
+                            <div class="portfolio-overlay">
+                                <a class="btn btn-light" href="img/portfolio-4.jpg" data-lightbox="portfolio"><i class="fa fa-plus fa-2x text-primary"></i></a>
+                                <div class="mt-auto">
+                                    <small class="text-white"><i class="fa fa-folder me-2"></i>Web Design</small>
+                                    <a class="h5 d-block text-white mt-1 mb-0" href="">Project Name</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 portfolio-item first wow zoomIn" data-wow-delay="0.3s">
+                        <div class="position-relative rounded overflow-hidden">
+                            <img class="img-fluid w-100" src="img/portfolio-5.jpg" alt="">
+                            <div class="portfolio-overlay">
+                                <a class="btn btn-light" href="img/portfolio-5.jpg" data-lightbox="portfolio"><i class="fa fa-plus fa-2x text-primary"></i></a>
+                                <div class="mt-auto">
+                                    <small class="text-white"><i class="fa fa-folder me-2"></i>Web Design</small>
+                                    <a class="h5 d-block text-white mt-1 mb-0" href="">Project Name</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 portfolio-item second wow zoomIn" data-wow-delay="0.6s">
+                        <div class="position-relative rounded overflow-hidden">
+                            <img class="img-fluid w-100" src="img/portfolio-6.jpg" alt="">
+                            <div class="portfolio-overlay">
+                                <a class="btn btn-light" href="img/portfolio-6.jpg" data-lightbox="portfolio"><i class="fa fa-plus fa-2x text-primary"></i></a>
+                                <div class="mt-auto">
+                                    <small class="text-white"><i class="fa fa-folder me-2"></i>Web Design</small>
+                                    <a class="h5 d-block text-white mt-1 mb-0" href="">Project Name</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <!-- End Quotes Section -->
+        </div>
+        <!-- Portfolio End -->
 
-             <!-- CurveDown -->
-            <svg class="curveDownColor" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <path d="M0 0 C 50 100 80 100 100 0 Z"></path>
-            </svg>
 
-            <!-- Blog Section -->
-            <div class="wrap blog-grid grey" id="blog">
-                <div class="grid grid-pad">
-                    <div class="content" >
-                        <h2>Our Blog</h2>
-                        <div class="col-1-2" >
-                            <article class="post-wrap">
-                                <div class="post-img">
-                                    <a href="#0"><img src="images/post/post-n1.jpg" alt=""></a>
-                                </div>
-                                <div class="post">
-                                    <h2 class="entry-title"><a href="#0">Drawing hour</a></h2>
-                                    <div class="post-meta">
-                                        <a href="#0">15 Januar, 2015</a> <span class="mid-sep">·</span> <a href="#0">Graphic Design</a>
-                                    </div>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, sequi, quas, assumenda harum nam reiciendis obcaecati maxime <a href="#0">suscipit</a> quibusdam.
-                                    </p>
-                                    <a class="btn read-more" href="#0">Read More</a>
-                                </div>
-                            </article>
+        <!-- Testimonial Start -->
+        <div class="container-xxl bg-primary testimonial py-5 my-5 wow fadeInUp" data-wow-delay="0.1s">
+            <div class="container py-5 px-lg-5">
+                <div class="owl-carousel testimonial-carousel">
+                    <div class="testimonial-item bg-transparent border rounded text-white p-4">
+                        <i class="fa fa-quote-left fa-2x mb-3"></i>
+                        <p>Dolor et eos labore, stet justo sed est sed. Diam sed sed dolor stet amet eirmod eos labore diam</p>
+                        <div class="d-flex align-items-center">
+                            <img class="img-fluid flex-shrink-0 rounded-circle" src="img/testimonial-1.jpg" style="width: 50px; height: 50px;">
+                            <div class="ps-3">
+                                <h6 class="text-white mb-1">Client Name</h6>
+                                <small>Profession</small>
+                            </div>
                         </div>
-                        <div class="col-1-2" >
-                            <article class="post-wrap">
-                                <div class="post-img">
-                                    <a href="#0"><img src="images/post/post-n2.jpg" alt=""></a>
-                                </div>
-                                <div class="post">
-                                    <h2 class="entry-title"><a href="#0">Photography workshop</a></h2>
-                                    <div class="post-meta">
-                                        <a href="#0">2 Februar, 2014</a> <span class="mid-sep">·</span> <a href="#0">Photography</a>
-                                    </div>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, sequi, quas, assumenda harum nam reiciendis obcaecati maxime <a href="#0">suscipit</a> quibusdam.
-                                    </p>
-                                    <a class="btn read-more" href="#0">Read More</a>
-                                </div>
-                            </article>
+                    </div>
+                    <div class="testimonial-item bg-transparent border rounded text-white p-4">
+                        <i class="fa fa-quote-left fa-2x mb-3"></i>
+                        <p>Dolor et eos labore, stet justo sed est sed. Diam sed sed dolor stet amet eirmod eos labore diam</p>
+                        <div class="d-flex align-items-center">
+                            <img class="img-fluid flex-shrink-0 rounded-circle" src="img/testimonial-2.jpg" style="width: 50px; height: 50px;">
+                            <div class="ps-3">
+                                <h6 class="text-white mb-1">Client Name</h6>
+                                <small>Profession</small>
+                            </div>
                         </div>
-                        <div class="col-1-2" >
-                            <article class="post-wrap">
-                                <div class="post-img">
-                                    <a href="#0"><img src="images/post/post-n3.jpg" alt=""></a>
-                                </div>
-                                <div class="post">
-                                    <h2 class="entry-title"><a href="#0">On vacation</a></h2>
-                                    <div class="post-meta">
-                                        <a href="#0">26 March, 2014</a> <span class="mid-sep">·</span> <a href="#0">Graphic Design</a>
-                                    </div>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, sequi, quas, assumenda harum nam reiciendis obcaecati maxime <a href="#0">suscipit</a> quibusdam.
-                                    </p>
-                                    <a class="btn read-more" href="#0">Read More</a>
-                                </div>
-                            </article>
+                    </div>
+                    <div class="testimonial-item bg-transparent border rounded text-white p-4">
+                        <i class="fa fa-quote-left fa-2x mb-3"></i>
+                        <p>Dolor et eos labore, stet justo sed est sed. Diam sed sed dolor stet amet eirmod eos labore diam</p>
+                        <div class="d-flex align-items-center">
+                            <img class="img-fluid flex-shrink-0 rounded-circle" src="img/testimonial-3.jpg" style="width: 50px; height: 50px;">
+                            <div class="ps-3">
+                                <h6 class="text-white mb-1">Client Name</h6>
+                                <small>Profession</small>
+                            </div>
                         </div>
-                        <div class="col-1-2" >
-                            <article class="post-wrap">
-                                <div class="post-img">
-                                    <a href="#0"><img src="images/post/post-n4.jpg" alt=""></a>
-                                </div>
-                                <div class="post">
-                                    <h2 class="entry-title"><a href="#0">You have to take breaks</a></h2>
-                                    <div class="post-meta">
-                                        <a href="#0">19 June, 2014</a> <span class="mid-sep">·</span> <a href="#0">Graphic Design</a>
-                                    </div>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla, sequi, quas, assumenda harum nam reiciendis obcaecati maxime <a href="#0">suscipit</a> quibusdam.
-                                    </p>
-                                    <a class="btn read-more" href="#0">Read More</a>
-                                </div>
-                            </article>
+                    </div>
+                    <div class="testimonial-item bg-transparent border rounded text-white p-4">
+                        <i class="fa fa-quote-left fa-2x mb-3"></i>
+                        <p>Dolor et eos labore, stet justo sed est sed. Diam sed sed dolor stet amet eirmod eos labore diam</p>
+                        <div class="d-flex align-items-center">
+                            <img class="img-fluid flex-shrink-0 rounded-circle" src="img/testimonial-4.jpg" style="width: 50px; height: 50px;">
+                            <div class="ps-3">
+                                <h6 class="text-white mb-1">Client Name</h6>
+                                <small>Profession</small>
+                            </div>
                         </div>
-                        <div class="col-1-1"><a class="btn" href="#0">View All</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Testimonial End -->
+
+
+        <!-- Team Start -->
+        <div class="container-xxl py-5">
+            <div class="container px-lg-5">
+                <div class="section-title position-relative text-center mb-5 pb-2 wow fadeInUp" data-wow-delay="0.1s">
+                    <h6 class="position-relative d-inline text-primary ps-4">Our Team</h6>
+                    <h2 class="mt-2">Meet Our Team Members</h2>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="team-item">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0 d-flex flex-column align-items-center mt-4 pt-5" style="width: 75px;">
+                                    <a class="btn btn-square text-primary bg-white my-1" href=""><i class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-square text-primary bg-white my-1" href=""><i class="fab fa-twitter"></i></a>
+                                    <a class="btn btn-square text-primary bg-white my-1" href=""><i class="fab fa-instagram"></i></a>
+                                    <a class="btn btn-square text-primary bg-white my-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                                </div>
+                                <img class="img-fluid rounded w-100" src="img/team-1.jpg" alt="">
+                            </div>
+                            <div class="px-4 py-3">
+                                <h5 class="fw-bold m-0">Jhon Doe</h5>
+                                <small>CEO</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                        <div class="team-item">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0 d-flex flex-column align-items-center mt-4 pt-5" style="width: 75px;">
+                                    <a class="btn btn-square text-primary bg-white my-1" href=""><i class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-square text-primary bg-white my-1" href=""><i class="fab fa-twitter"></i></a>
+                                    <a class="btn btn-square text-primary bg-white my-1" href=""><i class="fab fa-instagram"></i></a>
+                                    <a class="btn btn-square text-primary bg-white my-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                                </div>
+                                <img class="img-fluid rounded w-100" src="img/team-2.jpg" alt="">
+                            </div>
+                            <div class="px-4 py-3">
+                                <h5 class="fw-bold m-0">Emma William</h5>
+                                <small>Manager</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.6s">
+                        <div class="team-item">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0 d-flex flex-column align-items-center mt-4 pt-5" style="width: 75px;">
+                                    <a class="btn btn-square text-primary bg-white my-1" href=""><i class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-square text-primary bg-white my-1" href=""><i class="fab fa-twitter"></i></a>
+                                    <a class="btn btn-square text-primary bg-white my-1" href=""><i class="fab fa-instagram"></i></a>
+                                    <a class="btn btn-square text-primary bg-white my-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                                </div>
+                                <img class="img-fluid rounded w-100" src="img/team-3.jpg" alt="">
+                            </div>
+                            <div class="px-4 py-3">
+                                <h5 class="fw-bold m-0">Noah Michael</h5>
+                                <small>Designer</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Team End -->
+        
+
+        <!-- Footer Start -->
+        <div class="container-fluid bg-primary text-light footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
+            <div class="container py-5 px-lg-5">
+                <div class="row g-5">
+                    <div class="col-md-6 col-lg-3">
+                        <h5 class="text-white mb-4">Get In Touch</h5>
+                        <p><i class="fa fa-map-marker-alt me-3"></i>123 Street, New York, USA</p>
+                        <p><i class="fa fa-phone-alt me-3"></i>+012 345 67890</p>
+                        <p><i class="fa fa-envelope me-3"></i>info@example.com</p>
+                        <div class="d-flex pt-2">
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <h5 class="text-white mb-4">Popular Link</h5>
+                        <a class="btn btn-link" href="">About Us</a>
+                        <a class="btn btn-link" href="">Contact Us</a>
+                        <a class="btn btn-link" href="">Privacy Policy</a>
+                        <a class="btn btn-link" href="">Terms & Condition</a>
+                        <a class="btn btn-link" href="">Career</a>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <h5 class="text-white mb-4">Project Gallery</h5>
+                        <div class="row g-2">
+                            <div class="col-4">
+                                <img class="img-fluid" src="img/portfolio-1.jpg" alt="Image">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid" src="img/portfolio-2.jpg" alt="Image">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid" src="img/portfolio-3.jpg" alt="Image">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid" src="img/portfolio-4.jpg" alt="Image">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid" src="img/portfolio-5.jpg" alt="Image">
+                            </div>
+                            <div class="col-4">
+                                <img class="img-fluid" src="img/portfolio-6.jpg" alt="Image">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <h5 class="text-white mb-4">Newsletter</h5>
+                        <p>Lorem ipsum dolor sit amet elit. Phasellus nec pretium mi. Curabitur facilisis ornare velit non vulpu</p>
+                        <div class="position-relative w-100 mt-3">
+                            <input class="form-control border-0 rounded-pill w-100 ps-4 pe-5" type="text" placeholder="Your Email" style="height: 48px;">
+                            <button type="button" class="btn shadow-none position-absolute top-0 end-0 mt-1 me-2"><i class="fa fa-paper-plane text-primary fs-4"></i></button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <!-- End Blog Section -->
-
-            <!-- CurveUp -->
-            <svg class="curveUpColor" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <path d="M0 100 C 20 0 50 0 100 100 Z"></path>
-            </svg>
-            
-            <!-- Pricing Section -->
-            <div class="wrap" id="pricing">
-                <div class="grid grid-pad">
-                    <div class="content" >
-                        <div class="col-1-1">
-                            <section id="price-tables">
-                                <h2>Pricing Tables</h2>
-                                <ul id="plans">
-                                    <li class="plan" >
-                                        <ul class="plan-wrap">
-                                            <li class="title"><h2>Economy</h2></li>
-                                            <li class="price"><p>$10/m</p></li>
-                                            <li>
-                                                <ul class="options">
-                                                    <li>1GB <span>Storage</span></li>
-                                                    <li>2 <span>Clients</span></li>
-                                                    <li>5 <span>Active Projects</span></li>
-                                                    <li><span>Free Goodies</span></li>
-                                                    <li>24/7 <span>Email support</span></li>
-                                                </ul>
-                                            </li>
-                                            <li><a class="btn btn-price" href="#0">Purchase</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="plan best-plan" >
-                                        <ul class="plan-wrap">
-                                            <li class="title"><h2 class="best-plan-title">Personal</h2></li>
-                                            <li class="price"><p class="best-plan-price">$20/m</p></li>
-                                            <li>
-                                                <ul class="options">
-                                                    <li>5GB <span>Storage</span></li>
-                                                    <li>10 <span>Clients</span></li>
-                                                    <li>10 <span>Active Projects</span></li>
-                                                    <li><span>Free Goodies</span></li>
-                                                    <li>24/7 <span>Email support</span></li>
-                                                </ul>
-                                            </li>
-                                            <li><a class="btn btn-price btn-best-plan" href="#0">Purchase</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="plan" >
-                                        <ul class="plan-wrap">
-                                            <li class="title"><h2>Business</h2></li>
-                                            <li class="price"><p>$30/m</p></li>
-                                            <li>
-                                                <ul class="options">
-                                                    <li>15GB <span>Storage</span></li>
-                                                    <li>15 <span>Clients</span></li>
-                                                    <li>15 <span>Active Projects</span></li>
-                                                    <li><span>Free Goodies</span></li>
-                                                    <li>24/7 <span>Email support</span></li>
-                                                </ul>
-                                            </li>
-                                            <li><a class="btn btn-price" href="#0">Purchase</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="plan" >
-                                        <ul class="plan-wrap">
-                                            <li class="title"><h2>Profesional</h2></li>
-                                            <li class="price"><p>$40/m</p></li>
-                                            <li>
-                                                <ul class="options">
-                                                    <li>Unlimited <span>Storage</span></li>
-                                                    <li>Unlimited <span>Clients</span></li>
-                                                    <li>Unlimited <span>Active Projects</span></li>
-                                                    <li><span>Free Goodies</span></li>
-                                                    <li>24/7 <span>Email support</span></li>
-                                                </ul>
-                                            </li>
-                                            <li><a class="btn btn-price" href="#0">Purchase</a></li>
-                                        </ul>
-                                    </li>
-                                    </ul>
-                                </section>
+            <div class="container px-lg-5">
+                <div class="copyright">
+                    <div class="row">
+                        <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                            &copy; <a class="border-bottom" href="#">Your Site Name</a>, All Right Reserved. 
+							
+							<!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
+							Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a>
+                            <br>Distributed By: <a class="border-bottom" href="https://themewagon.com" target="_blank">ThemeWagon</a>
+                        </div>
+                        <div class="col-md-6 text-center text-md-end">
+                            <div class="footer-menu">
+                                <a href="">Home</a>
+                                <a href="">Cookies</a>
+                                <a href="">Help</a>
+                                <a href="">FQAs</a>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- End Pricing Section -->
+            </div>
+        </div>
+        <!-- Footer End -->
 
-                <!-- CurveDown -->
-                <svg class="curveDownColor" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <path d="M0 0 C 50 100 80 100 100 0 Z"></path>
-                </svg>
 
-                <!-- Parallax Section - Counter -->
-                <div class="parallax-section parallax2">                    
-                    <div class="wrap">
-                        <section class="grid grid-pad callout">
-                            <div class="col-1-3">
-                                <div class="content" >
-                                <div class="info-counter">
-                                        <div class="info-counter-row">
-                                            <i class="info-counter-icon icon-mug"></i>
-                                        </div>
-                                        <div class="info-counter-content">
-                                            <h5 class="info-counter-number">
-                                            <span class="counter">55</span>
-                                            <span class="info-counter-units">Cups</span>
-                                            </h5>
-                                        <div class="info-counter-text">Average weekly coffee drank</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-1-3">
-                                <div class="content" >
-                                <div class="info-counter">
-                                        <div class="info-counter-row">
-                                            <i class="info-counter-icon icon-embed"></i>
-                                        </div>
-                                        <div class="info-counter-content">
-                                            <h5 class="info-counter-number">
-                                            <span class="counter">9000</span>
-                                            <span class="info-counter-units">Lines</span>
-                                            </h5>
-                                        <div class="info-counter-text">Average weekly lines of code</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top pt-2"><i class="bi bi-arrow-up"></i></a>
+    </div>
 
-                            <div class="col-1-3">
-                                <div class="content" >
-                                <div class="info-counter">
-                                        <div class="info-counter-row">
-                                            <i class="info-counter-icon icon-trophy"></i>
-                                        </div>
-                                        <div class="info-counter-content">
-                                            <h5 class="info-counter-number">
-                                            <span class="counter">400</span>
-                                            <span class="info-counter-units">Customers</span>
-                                            </h5>
-                                        <div class="info-counter-text">Average yearly happy clients</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-                </div>
-                <!-- End Parallax Section -->
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/isotope/isotope.pkgd.min.js"></script>
+    <script src="lib/lightbox/js/lightbox.min.js"></script>
 
-                <!-- CurveUp -->
-                <svg class="curveUpColor curveGrey" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <path d="M0 100 C 20 0 50 0 100 100 Z"></path>
-                </svg>
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+</body>
 
-                <!-- Team Section -->
-                <div class="wrap team-wrap grey" id="team">
-                    <div class="grid grid-pad">
-                        <div class="content" >
-                            <h2>Our Team</h2>
-                            <div class="col-1-4" >
-                                <div class="content staff-content">
-                                    <div class="recent-work staff-img">
-                                        <div class="img-wrap staff-img">
-                                            <img src="images/team/user2.png" alt="">
-                                            <div class="team-social">
-                                                <a class="sl-fb" href="#"><i class="icon-facebook"></i></a>
-                                                <a class="sl-tw" href="#"><i class="icon-twitter"></i></a>
-                                                <a class="sl-gp" href="#"><i class="icon-googleplus2"></i></a>
-                                                <a class="sl-ln" href="#"><i class="icon-linkedin"></i></a>
-                                            </div>
-                                        </div>
-                                        <div class="work-info staff-info">
-                                            <h5>Tim Malkovic</h5>
-                                            <span>CEO</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-1-4" >
-                                <div class="content staff-content">
-                                    <div class="recent-work staff-img">
-                                        <div class="img-wrap staff-img">
-                                            <img src="images/team/user1.png" alt="">
-                                            <div class="team-social">
-                                                <a class="sl-fb" href="#"><i class="icon-facebook"></i></a>
-                                                <a class="sl-tw" href="#"><i class="icon-twitter"></i></a>
-                                                <a class="sl-gp" href="#"><i class="icon-googleplus2"></i></a>
-                                                <a class="sl-ln" href="#"><i class="icon-linkedin"></i></a>
-                                            </div>
-                                        </div>
-                                        <div class="work-info staff-info">
-                                            <h5>David Bell</h5>
-                                            <span>Creative Designer</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                            </div>
-                            <div class="col-1-4" >
-                                <div class="content staff-content">
-                                    <div class="recent-work staff-img">
-                                        <div class="img-wrap staff-img">
-                                            <img src="images/team/user3.png" alt="">
-                                            <div class="team-social">
-                                                <a class="sl-fb" href="#"><i class="icon-facebook"></i></a>
-                                                <a class="sl-tw" href="#"><i class="icon-twitter"></i></a>
-                                                <a class="sl-gp" href="#"><i class="icon-googleplus2"></i></a>
-                                                <a class="sl-ln" href="#"><i class="icon-linkedin"></i></a>
-                                            </div>
-                                        </div>
-                                        <div class="work-info staff-info">
-                                            <h5>Eve Stinger</h5>
-                                            <span>Sales Manager</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                            </div>
-                            <div class="col-1-4" >
-                                <div class="content staff-content">
-                                    <div class="recent-work staff-img">
-                                        <div class="img-wrap staff-img">
-                                            <img src="images/team/user4.png" alt="">
-                                            <div class="team-social">
-                                                <a class="sl-fb" href="#"><i class="icon-facebook"></i></a>
-                                                <a class="sl-tw" href="#"><i class="icon-twitter"></i></a>
-                                                <a class="sl-gp" href="#"><i class="icon-googleplus2"></i></a>
-                                                <a class="sl-ln" href="#"><i class="icon-linkedin"></i></a>
-                                            </div>
-                                        </div>
-                                        <div class="work-info staff-info">
-                                            <h5>Will Peters</h5>
-                                            <span>Developer</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- End Team Section -->
-
-                <!-- CurveUp -->
-                <svg class="curveUpColor" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <path d="M0 100 C 20 0 50 0 100 100 Z"></path>
-                </svg>
-
-                <!-- Clients Logos Section -->
-                <div class="wrap" >
-                    <div class="grid grid-pad">
-                        <div class="col-1-1">
-                            <div class="content">
-                                <!-- Start of Carousel Container -->
-                                <div class="cl-logo-carousel col-sm-12">
-                                    
-                                    <div class="item"><!-- Start of item -->
-                                    <a href="#">
-                                        <figure>
-                                            <img src="images/clients/1.png" alt="" />
-                                        </figure>
-                                    </a>
-                                    </div><!-- End of item -->
-                                    
-                                    <div class="item"><!-- Start of item -->
-                                    <a href="#">
-                                        <figure>
-                                            <img src="images/clients/2.png" alt="" />
-                                        </figure>
-                                    </a>
-                                    </div><!-- End of item -->
-                                    
-                                    <div class="item"><!-- Start of item -->
-                                    <a href="#">
-                                        <figure>
-                                            <img src="images/clients/3.png" alt="" />
-                                        </figure>
-                                    </a>
-                                    </div><!-- End of item -->
-                                    
-                                    <div class="item"><!-- Start of item -->
-                                    <a href="#">
-                                        <figure>
-                                            <img src="images/clients/4.png" alt="" />
-                                        </figure>
-                                    </a>
-                                    </div><!-- End of item -->
-                                    
-                                    <div class="item"><!-- Start of item -->
-                                    <a href="#">
-                                        <figure>
-                                            <img src="images/clients/5.png" alt="" />
-                                        </figure>
-                                    </a>
-                                    </div><!-- End of item -->
-                                    
-                                    <div class="item"><!-- Start of item -->
-                                    <a href="#">
-                                        <figure>
-                                            <img src="images/clients/1.png" alt="" />
-                                        </figure>
-                                    </a>
-                                    </div><!-- End of item -->
-                                    
-                                    <div class="item"><!-- Start of item -->
-                                    <a href="#">
-                                        <figure>
-                                            <img src="images/clients/2.png" alt="" />
-                                        </figure>
-                                    </a>
-                                    </div><!-- End of item -->
-                                    
-                                    <div class="item"><!-- Start of item -->
-                                    <a href="#">
-                                        <figure>
-                                            <img src="images/clients/3.png" alt="" />
-                                        </figure>
-                                    </a>
-                                    </div><!-- End of item -->
-                                    
-                                </div>
-                                <!-- End of Carousel Container -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- End Clients Logos Section -->
-
-                <!-- CurveDown -->
-                <svg class="curveDownColor curveMapUp" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <path d="M0 0 C 50 100 80 100 100 0 Z"></path>
-                </svg>
-                
-                <!-- Parallax Section -->
-                <div class="map">                    
-                    <div class="wrap">
-                        <section id="cd-google-map">
-                            <div id="google-container"></div>
-                            <div id="cd-zoom-in"></div>
-                            <div id="cd-zoom-out"></div>
-                        </section>
-                    </div>
-                </div>
-                <!-- End Parallax Section -->
-
-                <!-- CurveUp -->
-                <svg class="curveUpColor curveMapDown" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <path d="M0 100 C 20 0 50 0 100 100 Z"></path>
-                </svg>
-
-                <!-- Contact Section -->
-                <div class="wrap contact" id="contact">
-                    <div class="grid grid-pad" >
-                        <h2>Contact</h2>
-                        <div class="col-1-2" >
-                            <div class="content address">
-                                <h3>Talk to us</h3>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolores iusto fugit esse soluta quae debitis quibusdam harum voluptatem, maxime, aliquam sequi. Tempora ipsum magni unde velit corporis fuga, necessitatibus blanditiis.</p>
-                                <address>
-                                    <div>
-                                        <div class="box-icon">
-                                            <i class="icon-location"></i>
-                                        </div>
-                                        <span>Address:</span>
-                                        <p>9983 City name, Street name, 232 Apartment C</p>
-                                    </div>
-                                    
-                                    <div>
-                                        <div class="box-icon">
-                                            <i class="icon-clock"></i>
-                                        </div>
-                                        <span>Work Time:</span>
-                                        <p>Monday - Friday from 9am to 5pm</p>
-                                    </div>
-                                    
-                                    <div>
-                                        <div class="box-icon">
-                                            <i class="icon-phone"></i>
-                                        </div>
-                                        <span>Phone:</span>
-                                        <p>595 12 34 567</p>
-                                    </div>                                  
-                                </address>
-                            </div>
-                        </div>
-                         <div class="col-1-2 pleft-25" >
-                            <div class="content contact-form">
-                                <form class="form">
-                                    <input type="text" class="comment-name" placeholder="Name*" required>
-                                    <input type="email" class="comment-email" placeholder="Email*" required>
-                                    <input type="text" class="comment-subject" placeholder="Subject">
-                                    <textarea class="required comment-text" placeholder="Message..." required></textarea>
-                                    <input type="submit" value="Send Message" class="btn submit comment-submit">
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- End Contact Section -->
-
-                <!-- CurveDown -->
-                <svg class="curveDownColor" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <path d="M0 0 C 50 100 80 100 100 0 Z"></path>
-                </svg>
-
-                <!-- Footer -->
-                <footer class="wrap">
-                    <div class="grid grid-pad" >
-                        <div class="col-1-4">
-                            <div class="content">
-                                <div class="footer-widget">
-                                    <h3>About</h3>
-                                    <div class="textwidget">
-                                        <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore.</p><br>
-                                        <p>Et dolore magna aliquyam erat sed diam voluptua.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-1-4" >
-                            <div class="content">
-                                <div class="footer-widget">
-                                    <h3>Recent Posts</h3>
-                                    <div class="fwidget">
-                                        <ul>
-                                            <li><a href="#0">Suspendisse nec lectus non</a></li>
-                                            <li><a href="#0">Phasellus euismod pulvinar</a></li>
-                                            <li><a href="#0">Aliquam erat volutpat</a></li>
-                                            <li><a href="#0">Phasellus euismod pulvinar</a></li>
-                                            <li><a href="#0">Aliquam erat volutpat</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-1-4" >
-                            <div class="content">
-                                <div class="footer-widget">
-                                    <h3>More info</h3>
-                                    <div class="textwidget">
-                                        <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore.</p>
-                                        <br>
-                                        <p>At vero eos et accusam et justo duo dolores et ea rebum.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-1-4" >
-                            <div class="content">
-                                <div class="footer-widget">
-                                    <h3>Flickr Feed</h3>
-                                    <div class="flickr-widget">
-                                        <ul class="flickr-list">
-                                            <li><a href="#0"><img src="images/flickr-widget/flickr1.jpg" alt=""></a></li>
-                                            <li><a href="#0"><img src="images/flickr-widget/flickr2.jpg" alt=""></a></li>
-                                            <li><a href="#0"><img src="images/flickr-widget/flickr3.jpg" alt=""></a></li>
-                                            <li><a href="#0"><img src="images/flickr-widget/flickr4.jpg" alt=""></a></li>
-                                            <li><a href="#0"><img src="images/flickr-widget/flickr5.jpg" alt=""></a></li>
-                                            <li><a href="#0"><img src="images/flickr-widget/flickr6.jpg" alt=""></a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="social-footer">
-                        <div class="grid grid-pad">
-                            <div class="col-1-1" >
-                                <div class="content">
-                                    <div class="social-set">
-                                        <a  href="#0"><i class="icon-facebook"></i></a>
-                                        <a  href="#0"><i class="icon-twitter"></i></a>
-                                        <a  href="#0"><i class="icon-linkedin2"></i></a>
-                                        <a  href="#0"><i class="icon-dribbble4"></i></a>
-                                        <a  href="#0"><i class="icon-instagram"></i></a>
-                                    </div>
-                                    <p class="source-org copyright">© 2016 | All Rights Reserved Created By <a href="http://templatestock.co">Template Stock</a></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
-                <!-- End Footer -->
-
-                <div class="loader-overlay">
-                    <div class="loader">
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                    </div>
-                </div>
-
-                <!-- JS -->
-                <script src="js/jquery.js"></script>
-                <script src="js/main.js"></script>
-                <script src="js/mixitup.js"></script>
-                <script src="js/smoothscroll.js"></script>
-                <script src="js/jquery.nav.js"></script>
-                <script src="js/owl-carousel/owl.carousel.min.js"></script>
-                <script src="https://maps.googleapis.com/maps/api/js"></script>
-                <script src="http://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
-                <script src="js/jquery.counterup.min.js"></script>
-                <script src="js/lightcase.min.js"></script>
-            </body>
-        </html>
+</html>

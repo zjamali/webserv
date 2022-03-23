@@ -13,13 +13,14 @@ HttpResponse::HttpResponse(HttpRequest const &request)
     if (_headers.find("Content-Type:") != _headers.end())
         __contentType = request.getHedaers()["Content-Type:"];
     // generate response
-
-    _finaleResponse = generateResponse("/Users/zjamali/Desktop/webserv/www", "upload"); // get config obj ; root
+    _errorPagesExist = true;
+    __errorPages[NOT_FOUND] = "/Users/zjamali/Desktop/webserv/www/404.html";
+    _finaleResponse = generateResponse("/Users/zjamali/Desktop/webserv/www", "/Users/zjamali/Desktop/webserv/www/upload"); // get config obj ; root
 }
 
 void HttpResponse::init_response()
 {
-    _errorHtml = false;
+    _errorPagesExist = false;
     CRLF_Combination = std::string(CRLF);
     __http = "";
     __statusCode = "";
@@ -32,67 +33,97 @@ void HttpResponse::init_response()
 
     //// Successful responses
     __codes[200] = "OK";
-    __codes[201] = "Created";
-    __codes[202] = "Accepted";
-    __codes[203] = "Non-Authoritative Information";
-    __codes[204] = "No Content";
-    __codes[205] = "Reset Content";
-    __codes[206] = "Partial Content";
-    __codes[207] = "Multi-Status";
-    __codes[208] = "208 Already Reported";
-    __codes[226] = "226 IM Used";
     //// Redirection messages
     __codes[300] = "Multiple Choice";
     __codes[301] = "Moved Permanently";
-    __codes[302] = "Found";
-    __codes[303] = "See Other";
-    __codes[304] = "Not Modified";
-    __codes[305] = "Use Proxy";
-    __codes[306] = "unused";
     __codes[307] = "Temporary Redirect";
     __codes[308] = "Permanent Redirect";
     //// Client error responses
     __codes[400] = "Bad Request";
-    __codes[401] = "Unauthorized";
-    __codes[402] = "Payment Required";
-    __codes[403] = "Forbidden";
     __codes[404] = "Not Found";
     __codes[405] = "Method Not Allowed";
-    __codes[406] = "Not Acceptable";
-    __codes[407] = "Proxy Authentication Required";
-    __codes[408] = "Request Timeout";
-    __codes[409] = "Conflict";
-    __codes[410] = "Gone";
-    __codes[411] = "Length Required";
-    __codes[412] = "Precondition Failed";
-    __codes[413] = "Payload Too Large";
-    __codes[414] = "URI Too Long";
-    __codes[415] = "Unsupported Media Type";
-    __codes[416] = "Range Not Satisfiable";
-    __codes[417] = "Expectation Failed";
-    __codes[418] = "I'm a Teapot";
-    __codes[421] = "Misdirected Request";
-    __codes[422] = "Unprocessable Entity";
-    __codes[423] = "Locked";
-    __codes[424] = "Failed Dependency";
-    __codes[425] = "Too Early";
-    __codes[426] = "Upgrade Required";
-    __codes[428] = "Precondition Required";
-    __codes[429] = "Too Many Requests";
-    __codes[431] = "Request Header Fields Too Large";
-    __codes[451] = "Unavailable For Legal Reasons";
     //// Server error responses
     __codes[500] = "Internal Server Error";
     __codes[501] = "Not Implemented";
-    __codes[502] = "Bad Gateway";
-    __codes[503] = "Service Unavailable";
-    __codes[504] = "Gateway Timeout";
     __codes[505] = "HTTP Version Not Supported";
-    __codes[506] = "Variant Also Negotiates";
-    __codes[507] = "Insufficient Storage";
-    __codes[508] = "Loop Detected";
-    __codes[510] = "Not Extended";
-    __codes[511] = "Network Authentication Required";
+
+    ////// conten Types list
+
+    __contentTypesList[".aac"] = "audio/aac";
+    __contentTypesList[".abw"] = "application/x-abiword";
+    __contentTypesList[".arc"] = "application/x-freearc";
+    __contentTypesList[".avif"] = "image/avif";
+    __contentTypesList[".avi"] = "video/x-msvideo";
+    __contentTypesList[".azw"] = "application/vnd.amazon.ebook";
+    __contentTypesList[".bin"] = "application/octet-stream";
+    __contentTypesList[".bmp"] = "image/bmp";
+    __contentTypesList[".bz"] = "application/x-bzip";
+    __contentTypesList[".bz2"] = "application/x-bzip2";
+    __contentTypesList[".cda"] = "application/x-cdf";
+    __contentTypesList[".csh"] = "application/x-csh";
+    __contentTypesList[".css"] = "text/css";
+    __contentTypesList[".csv"] = "text/csv";
+    __contentTypesList[".doc"] = "application/msword";
+    __contentTypesList[".docx"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    __contentTypesList[".eot"] = "application/vnd.ms-fontobject";
+    __contentTypesList[".epub"] = "application/epub+zip";
+    __contentTypesList[".gz"] = "application/gzip";
+    __contentTypesList[".gif"] = "image/gif";
+    __contentTypesList[".htm"] = "text/html";
+    __contentTypesList[".html"] = "text/html";
+    __contentTypesList[".ico"] = "image/vnd.microsoft.icon";
+    __contentTypesList[".ics"] = "text/calendar";
+    __contentTypesList[".jar"] = "application/java-archive";
+    __contentTypesList[".jpeg"] = "image/jpeg";
+    __contentTypesList[".js"] = "text/javascript ";
+    __contentTypesList[".json"] = "application/json";
+    __contentTypesList[".jsonld"] = "application/ld+json";
+    __contentTypesList[".mid"] = "audio/midi audio/x-midi";
+    __contentTypesList[".mjs"] = "text/javascript";
+    __contentTypesList[".mp3"] = "audio/mpeg";
+    __contentTypesList[".mp4"] = "video/mp4";
+    __contentTypesList[".mpeg"] = "video/mpeg";
+    __contentTypesList[".mpkg"] = "application/vnd.apple.installer+xml";
+    __contentTypesList[".odp"] = "application/vnd.oasis.opendocument.presentation";
+    __contentTypesList[".ods"] = "application/vnd.oasis.opendocument.spreadsheet";
+    __contentTypesList[".odt"] = "application/vnd.oasis.opendocument.text";
+    __contentTypesList[".oga"] = "audio/ogg";
+    __contentTypesList[".ogv"] = "video/ogg";
+    __contentTypesList[".ogx"] = "OGG	a/ogg";
+    __contentTypesList[".opus"] = "audio/opus";
+    __contentTypesList[".otf"] = "font/otf";
+    __contentTypesList[".png"] = "image/png";
+    __contentTypesList[".pdf"] = "application/pdf";
+    __contentTypesList[".php"] = "application/x-httpd-php";
+    __contentTypesList[".ppt"] = "application/vnd.ms-powerpoint";
+    __contentTypesList[".pptx"] = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+    __contentTypesList[".rar"] = "application/vnd.rar";
+    __contentTypesList[".rtf"] = "application/rtf";
+    __contentTypesList[".sh"] = "application/x-sh";
+    __contentTypesList[".svg"] = "image/svg+xml";
+    __contentTypesList[".swf"] = "application/x-shockwave-flash";
+    __contentTypesList[".tar"] = "application/x-tar";
+    __contentTypesList[".tif"] = "image/tiff";
+    __contentTypesList[".tiff"] = "image/tiff";
+    __contentTypesList[".ts"] = "video/mp2t";
+    __contentTypesList[".ttf"] = "font/ttf";
+    __contentTypesList[".txt"] = "text/plain";
+    __contentTypesList[".vsd"] = "application/vnd.visio";
+    __contentTypesList[".wav"] = "audio/wav";
+    __contentTypesList[".weba"] = "audio/webm";
+    __contentTypesList[".webm"] = "video/webm";
+    __contentTypesList[".webp"] = "image/webp";
+    __contentTypesList[".woff"] = "font/woff";
+    __contentTypesList[".woff2"] = "font/woff2";
+    __contentTypesList[".xhtml"] = "application/xhtml+xml";
+    __contentTypesList[".xls"] = "application/vnd.ms-excel";
+    __contentTypesList[".xlsx"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    __contentTypesList[".xml"] = "application/xml";
+    __contentTypesList[".xul"] = "application/vnd.mozilla.xul+xml";
+    __contentTypesList[".zip"] = "application/zip";
+    __contentTypesList[".3gp"] = "audio/video";
+    __contentTypesList[".3g2"] = "audio/video";
+    __contentTypesList[".7z"] = "application/x-7z-compressed";
 }
 
 HttpResponse::~HttpResponse()
@@ -103,7 +134,6 @@ std::string readFile(std::string const &file_path)
 {
 
     std::ifstream file(file_path);
-    // if (access(file_path.c_str(), F_OK) != 0) // Check if The file existe
     if (file)
     {
         std::ostringstream stream_string;
@@ -111,7 +141,7 @@ std::string readFile(std::string const &file_path)
         return stream_string.str();
     }
     else
-        return "";
+        return "error file not opened";
 }
 
 std::string HttpResponse::getLocalTime() const
@@ -126,36 +156,20 @@ std::string HttpResponse::getLocalTime() const
     return (std::string(buffer));
 }
 
-std::string HttpResponse::generateStartLine(unsigned int status_code) const
+std::string HttpResponse::generateStartLine(unsigned int status_code)
 {
-
-    if (status_code == BAD_REQUEST) // bad request
-    {
-        return "HTTP/1.1 400 Bad Request\r\n";
-    }
-    else if (status_code == NOT_IMPLLIMENTED)
-    {
-        return "HTTP/1.1 501 Not Implemented\r\n";
-    }
-    else if (status_code == HTTP_VERSION_NOT_SUPPORTED)
-    { // 505 HTTP Version Not Supported
-
-        return ("HTTP/1.1 505 HTTP Version Not Supported\r\n");
-    }
-    else if (status_code == OK)
-    {
-        return ("HTTP/1.1 200 OK\r\n");
-    }
+    if (__codes.find(status_code) != __codes.end())
+        return ("HTTP/1.1 " + std::to_string(status_code) + __codes[status_code]);
     else
-        return ("HTTP/1.1 404 Not Found\r\n");
+        return ("HTTP/1.1 " + std::to_string(NOT_FOUND) + __codes[NOT_FOUND]);
 }
 
 std::string HttpResponse::generateHeader(unsigned int const status_code, unsigned int body_lenght, std::string const content_type)
 {
     std::string header;
-    header += generateStartLine(status_code);
-    header += "Content-Type: " + content_type + "\r\n";
-    header += "Content-Lenght: " + std::to_string(body_lenght) + "\r\n";
+    header += generateStartLine(status_code) + CRLF_Combination;
+    header += "Content-Type: " + content_type + CRLF_Combination;
+    header += "Content-Lenght: " + std::to_string(body_lenght) + CRLF_Combination;
     header += "Server: " + __server;
     return header;
 }
@@ -192,7 +206,7 @@ std::string const HttpResponse::defaultServerPages(unsigned int statusCode) cons
 
 std::string const HttpResponse::generateErrorResponse(unsigned int errorCode)
 {
-    if (_errorHtml)
+    if (_errorPagesExist)
     {
         if (__errorPages.find(errorCode) == __errorPages.end())
             return defaultServerPages(errorCode);
@@ -254,7 +268,7 @@ std::string HttpResponse::generateResponse(std::string const &root /*or location
             if (stat(std::string(root + "/" + "index.html").c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
                 body = readFile(std::string(root + "/" + "index.html"));
             else
-                return generateErrorResponse((_responseStatus = 404));
+                return generateErrorResponse((_responseStatus = NOT_FOUND));
         }
         else
         {
@@ -265,36 +279,24 @@ std::string HttpResponse::generateResponse(std::string const &root /*or location
                 if (_path.find(".") != std::string::npos)
                 {
                     std::string filetype = _path.substr(_path.find(".", _path.length() - 5));
-                    if (filetype == ".css")
-                        __contentType = "text/css; charset=UTF-8";
-                    if (filetype == ".js")
-                        __contentType = "text/javascript; charset=UTF-8";
-                    if (filetype == ".jpg" || filetype == ".jpeg")
-                        __contentType = "image/jpeg";
-                    if (filetype == ".js")
-                        __contentType = "text/javascript";
-                    if (filetype == ".ico")
-                        __contentType = "image/vnd.microsoft.icon";
-                    if (filetype == ".svg")
-                        __contentType = "image/svg+xml";
-                    if (filetype == ".mp4")
-                        __contentType = "video/mp4";
+                    if (__contentTypesList.find(filetype) != __contentTypesList.end())
+                        __contentType = __contentTypesList[filetype];
                     body = readFile(filePath);
                 }
             }
             else
-                return generateErrorResponse((_responseStatus = 404));
+                return generateErrorResponse((_responseStatus = NOT_FOUND));
         }
     }
     else
-        return generateErrorResponse((_responseStatus = 404));
+        return generateErrorResponse((_responseStatus = NOT_FOUND));
     ///
     header += generateHeader(_responseStatus, body.length(), __contentType);
     // add body
 
     // end the body
 
-    return (header + CRLF_Combination + CRLF_Combination+ body);
+    return (header + CRLF_Combination + CRLF_Combination + body);
 }
 
 std::string HttpResponse::ResponseOK() const
@@ -343,7 +345,6 @@ bool upload(std::string const &path, std::string const &filename, std::string co
     else
     {
         std::cout << "file not created" << std::endl;
-
         return 1;
     }
 }

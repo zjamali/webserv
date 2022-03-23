@@ -1,52 +1,35 @@
-/*
-A Design by Template Stock
-Author: Template Stock
-Author URL: http://templatestock.co
-License: Creative Commons Attribution 3.0 Unported
-License URL: http://creativecommons.org/licenses/by/3.0/
-*/
-----------------------------------
-NOTE : FREQUENTLY ASKED QUESTIONS 
-----------------------------------
+ 
 
-1. What is Template Stock?
+ => FREE HTML TEMPLATE LICENSE BY HTML Codex
 
-	Template Stock is an initiative of AgileITs to provide free web designs which are cross device supported.
+ All free HTML templates by HTML Codex are licensed under a Creative Commons Attribution 4.0 International License which means you are not allowed to remove the author’s credit link/attribution link/backlink.
 
-2. Is Template Stock Templates Really Free?
-
-	Yes, all our templates free to use for both commercial and non-commercial, but you have provide a back link to Template Stock.com which is already included in footer design by Template Stock.com don’t edit or remove it.
-
-3. I want to Help Template Stock, How can I?
-
-	You can help Template Stock By
-	1. Donate Some $’s, Any Amount your wish
-	2. Contribute Design inventory like stock photos, Icons or PSD designs with full rights to Template Stock
-
-4. I want to remove Template Stock.com back link from footer?
-
-	We have two plans for that per template and unlimited.
-	Donate us $10 per template. If you want templates for multiple domains or bulk templates please contact info@templatestock.co
-
-5. Will these templates work on iPhone, Android platforms, Tabs like kindle and Ipads?
-
-	Yes, Template Stock templates work with all Smartphones and Tablets. To, support all the devices we are providing bootstrap Responisve designs WEB Template.
-
-6. What is Web Template?
-
-	WEB template is a responsive design which can be used for desktop users. Users visiting website from desktop browsers can view WEB template
+ When you download or use our free HTML templates, it will attribute the following conditions.
 
 
-7. Do I need a separate version for Smartphones and Tablets?
+ => YOU ARE ALLOWED
 
-	No, WEB Template is compatible in all web browsers, Smartphones and Tablets. 
+      1. You are allowed to use for your personal and commercial purposes.
 
-8. Do I need any database?
+      2. You are allowed to modify/customize however you like.
 
-	No, it is not necessary.
+      3. You are allowed to convert/port for use for any CMS.
+
+      4. You are allowed to share/distribute under the HTML Codex brand name.
+
+      5. You are allowed to put a screenshot or a link on your blog posts or any other websites.
 
 
-11. Under which license you are providing these templates?
+ => YOU ARE NOT ALLOWED
 
-	Template Stock templates are under Creative Commons Attribution 3.0 unported
+      1. You are not allowed to remove the author’s credit link/attribution link/backlink without purchasing Credit Removal License ( https://htmlcodex.com/credit-removal ).
 
+      2. You are not allowed to sell, resale, rent, lease, license, or sub-license.
+
+      3. You are not allowed to upload on your template websites or template collection websites or any other third party websites without our permission.
+
+ This license can be terminated if you breach any of these conditions.
+
+ Please contact us (https://htmlcodex.com/contact) if you have any query.
+
+ => PURCHASE CREDIT REMOVAL LICENSE ( https://htmlcodex.com/credit-removal )

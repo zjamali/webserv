@@ -18,7 +18,7 @@
 .epub	application/epub+zip
 .gz     application/gzip
 .gif    image/gif
-.htm   text/html
+.htm    text/html
 .html   text/html
 .ico    image/vnd.microsoft.icon
 .ics    text/calendar

@@ -30,7 +30,7 @@ private:
     std::string __server;
 
     std::map<unsigned int, std::string> __codes;
-
+    std::map<std::string, std::string> __contentTypesList;
     std::map<unsigned int, std::string> __errorPages;
 
 private:
@@ -45,14 +45,14 @@ private:
 
     void init_response();
     std::string getLocalTime() const;
-    std::string generateStartLine(unsigned int status_code) const;
+    std::string generateStartLine(unsigned int status_code);
     std::string generateHeader(unsigned int const status_code, unsigned int const body_lenght, std::string const content_type);
     std::string generateBody();
 
 private:
     std::string ResponseOK() const;
     
-    bool _errorHtml;
+    bool _errorPagesExist;
     std::string const defaultServerPages(unsigned int statusCode) const;
     std::string const generateErrorResponse(unsigned int errorCode);
     std::string const ResponseBadRequest() const;
