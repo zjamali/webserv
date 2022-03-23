@@ -67,7 +67,7 @@ public:
     std::string generateResponse(std::string const &root/*or location*/,std::string const &uploadPath);
     std::string const &getResponse() const { return _finaleResponse;};
     void print();
-    friend std::string readFile(std::string const &pagePath);
+    friend std::string readFile(std::string const &file_path);
     friend bool upload(std::string const &path, std::string const &filename, std::string const &data);
 };
 

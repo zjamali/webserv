@@ -86,7 +86,7 @@ int main()
         /////// request parse begin
         HttpRequest request(recievedData);
         ////// request parse end
-        request.print();
+
 
         HttpResponse response(request);
         /*

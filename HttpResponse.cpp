@@ -9,7 +9,7 @@ HttpResponse::HttpResponse(HttpRequest const &request)
     _httpVersion = request.getHttpVersion();
     _path = request.getPath();
 
-    std::map<std::string, std::string> _headers = request.getHedaers(); 
+    std::map<std::string, std::string> _headers = request.getHedaers();
     if (_headers.find("Content-Type:") != _headers.end())
         __contentType = request.getHedaers()["Content-Type:"];
     // generate response
@@ -99,6 +99,21 @@ HttpResponse::~HttpResponse()
 {
 }
 
+std::string readFile(std::string const &file_path)
+{
+
+    std::ifstream file(file_path);
+    // if (access(file_path.c_str(), F_OK) != 0) // Check if The file existe
+    if (file)
+    {
+        std::ostringstream stream_string;
+        stream_string << file.rdbuf();
+        return stream_string.str();
+    }
+    else
+        return "";
+}
+
 std::string HttpResponse::getLocalTime() const
 {
     time_t rawtime;
@@ -141,8 +156,7 @@ std::string HttpResponse::generateHeader(unsigned int const status_code, unsigne
     header += generateStartLine(status_code);
     header += "Content-Type: " + content_type + "\r\n";
     header += "Content-Lenght: " + std::to_string(body_lenght) + "\r\n";
-    header += "Server: " + __server + "\r\n";
-    header += "\r\n";
+    header += "Server: " + __server;
     return header;
 }
 
@@ -214,28 +228,6 @@ std::string const HttpResponse::generateErrorResponse(unsigned int errorCode)
     }
 }
 
-std::string readFile(std::string const &pagePath)
-{
-    struct stat sb;
-    std::string body;
-    stat(pagePath.c_str(), &sb);
-    int fd = open(pagePath.c_str(), O_RDONLY);
-    if (fd > 0)
-    {
-        char buffer[(int)sb.st_size];
-        int readedBytes;
-        while ((readedBytes = read(fd, buffer, sb.st_size)) > 0)
-        {
-            buffer[readedBytes] = '\0';
-            body += buffer;
-            if (body.length() >= (unsigned int)sb.st_size)
-                break;
-        }
-        close(fd);
-    }
-    return body;
-}
-
 std::string HttpResponse::generateResponse(std::string const &root /*or location*/, std::string const &uploadPath)
 {
     std::string response;
@@ -260,43 +252,49 @@ std::string HttpResponse::generateResponse(std::string const &root /*or location
         if (_path == "/")
         {
             if (stat(std::string(root + "/" + "index.html").c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
-                body = readFile(std::string(root + "/" + "index.html")); 
+                body = readFile(std::string(root + "/" + "index.html"));
             else
                 return generateErrorResponse((_responseStatus = 404));
         }
         else
         {
-            
-            if (_path.find(".") != std::string::npos)
+            struct stat sb;
+            std::string filePath = root + _path;
+            if (stat(filePath.c_str(), &sb) == 0 && S_ISREG(sb.st_mode) && access(filePath.c_str(), R_OK) == 0)
             {
-                std::string filetype = _path.substr(_path.find(".", _path.length() - 5));
-                if (filetype == ".css")
-                    __contentType = "text/css; charset=UTF-8";
-                if (filetype == ".js")
-                    __contentType = "text/javascript; charset=UTF-8";
-                if (filetype == ".jpg" || filetype == ".jpeg")
-                    __contentType = "image/jpeg";
-                if (filetype == ".js")
-                    __contentType = "text/javascript";
-                if (filetype == ".ico")
-                    __contentType = "image/vnd.microsoft.icon";
-                if (filetype == ".svg")
-                    __contentType = "image/svg+xml";
-
+                if (_path.find(".") != std::string::npos)
+                {
+                    std::string filetype = _path.substr(_path.find(".", _path.length() - 5));
+                    if (filetype == ".css")
+                        __contentType = "text/css; charset=UTF-8";
+                    if (filetype == ".js")
+                        __contentType = "text/javascript; charset=UTF-8";
+                    if (filetype == ".jpg" || filetype == ".jpeg")
+                        __contentType = "image/jpeg";
+                    if (filetype == ".js")
+                        __contentType = "text/javascript";
+                    if (filetype == ".ico")
+                        __contentType = "image/vnd.microsoft.icon";
+                    if (filetype == ".svg")
+                        __contentType = "image/svg+xml";
+                    if (filetype == ".mp4")
+                        __contentType = "video/mp4";
+                    body = readFile(filePath);
+                }
             }
-            body = readFile(root + _path);
+            else
+                return generateErrorResponse((_responseStatus = 404));
         }
     }
     else
         return generateErrorResponse((_responseStatus = 404));
     ///
-    header = generateStartLine(_responseStatus);
     header += generateHeader(_responseStatus, body.length(), __contentType);
     // add body
 
     // end the body
 
-    return (header + CRLF_Combination + CRLF_Combination + body);
+    return (header + CRLF_Combination + CRLF_Combination+ body);
 }
 
 std::string HttpResponse::ResponseOK() const
