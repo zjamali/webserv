@@ -302,9 +302,9 @@ std::string HttpResponse::generateResponse(std::string const &root /*or location
         struct stat sb;
         if (stat(uploadPath.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode)/* && access(uploadPath.c_str(), W_OK)*/)
         {
-            std::cout << "POST POST POSTPOSTPOSTPOSTPOSTPOSTPOST\n";
             for (std::vector<t_bodyPart>::iterator it = _postRequestData.begin(); it != _postRequestData.end(); it++)
             {
+                std::cout << "POST POST POSTPOSTPOSTPOSTPOSTPOSTPOST\n";
                 if (!(it->_filename.empty())) // a filename exist
                 {
                     std::ofstream outFile(uploadPath + it->_filename);
