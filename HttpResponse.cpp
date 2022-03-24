@@ -76,6 +76,7 @@ void HttpResponse::init_response()
     __contentTypesList[".ics"] = "text/calendar";
     __contentTypesList[".jar"] = "application/java-archive";
     __contentTypesList[".jpeg"] = "image/jpeg";
+    __contentTypesList[".jpg"] = "image/jpeg";
     __contentTypesList[".js"] = "text/javascript ";
     __contentTypesList[".json"] = "application/json";
     __contentTypesList[".jsonld"] = "application/ld+json";
