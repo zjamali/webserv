@@ -42,13 +42,14 @@ private:
 
     std::string _method;
     std::string _path;
+    std::string _host;
     std::string _httpVersion;
     std::vector<t_bodyPart> _postRequestData;
 
     void init_response();
     std::string getLocalTime() const;
-    std::string generateStartLine(unsigned int status_code);
-    std::string generateHeader(unsigned int const status_code, unsigned int const body_lenght, std::string const content_type);
+    std::string generateStartLine(unsigned int const &status_code);
+    std::string generateHeader(unsigned int const &status_code, unsigned int const &body_lenght, std::string const &content_type);
     std::string generateBody();
 
 private:
@@ -56,9 +57,10 @@ private:
     
     bool _errorPagesExist;
     bool _autoIndex;
-    std::string const defaultServerPages(unsigned int statusCode) const;
+    std::string const defaultServerPages(unsigned int &statusCode) const;
     std::string const generateErrorResponse(unsigned int errorCode);
     std::string const ResponseBadRequest() const;
+    std::string const ResponseForbidden() const;
     std::string const ResponseNotFound() const;
     std::string const ResponseMethodNotAllowed() const;
     std::string const ResponseHttpVersionNotSupported() const;
@@ -67,8 +69,12 @@ public:
     HttpResponse(HttpRequest const &request);
     ~HttpResponse();
 
-    std::string generateResponse(std::string const &root/*or location*/,std::string const &uploadPath);
+    std::string generateResponse(unsigned int const code_status, std::string const &root /*or location*/, std::string const &path, std::string const &uploadPath);
     std::string const &getResponse() const { return _finaleResponse;};
+    std::string handle_GET_Request(std::string const &root,std::string const &path);
+    std::string handleRedirection(std::string const &host, std::string const &location);
+    std::string handle_POST_Request(std::string const &root,std::string const &path);
+    std::string handle_DELETE_Request(std::string const &path);
     void print();
     std::string readFile(std::string const &file_path);
     std::string readDirectory(std::string const &Director_path);
