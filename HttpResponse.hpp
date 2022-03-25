@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sstream>
+#include <dirent.h>
 #include "HttpRequest.hpp"
 
 class HttpResponse
@@ -54,6 +55,7 @@ private:
     std::string ResponseOK() const;
     
     bool _errorPagesExist;
+    bool _autoIndex;
     std::string const defaultServerPages(unsigned int statusCode) const;
     std::string const generateErrorResponse(unsigned int errorCode);
     std::string const ResponseBadRequest() const;
@@ -68,8 +70,9 @@ public:
     std::string generateResponse(std::string const &root/*or location*/,std::string const &uploadPath);
     std::string const &getResponse() const { return _finaleResponse;};
     void print();
-    friend std::string readFile(std::string const &file_path);
-    friend bool upload(std::string const &path, std::string const &filename, std::string const &data);
+    std::string readFile(std::string const &file_path);
+    std::string readDirectory(std::string const &Director_path);
+    bool upload(std::string const &path, std::string const &filename, std::string const &data);
 };
 
 #endif

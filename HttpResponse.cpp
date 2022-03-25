@@ -8,13 +8,17 @@ HttpResponse::HttpResponse(HttpRequest const &request)
     _method = request.getMethod();
     _httpVersion = request.getHttpVersion();
     _path = request.getPath();
-    
-        _postRequestData = request.getBodyParts();
+
+    _postRequestData = request.getBodyParts();
     std::map<std::string, std::string> _headers = request.getHedaers();
     if (_headers.find("Content-Type:") != _headers.end())
         __contentType = request.getHedaers()["Content-Type:"];
     // generate response
+
+    ///
     _errorPagesExist = true;
+    _autoIndex = true;
+    ///
     __errorPages[NOT_FOUND] = "/Users/zjamali/Desktop/webserv/www/404.html";
     _finaleResponse = generateResponse("/Users/zjamali/Desktop/webserv/www", "/Users/zjamali/Desktop/webserv/www/upload/"); // get config obj ; root
 }
@@ -22,6 +26,7 @@ HttpResponse::HttpResponse(HttpRequest const &request)
 void HttpResponse::init_response()
 {
     _errorPagesExist = false;
+    _autoIndex = false;
     CRLF_Combination = std::string(CRLF);
     __http = "";
     __statusCode = "";
@@ -130,20 +135,6 @@ void HttpResponse::init_response()
 
 HttpResponse::~HttpResponse()
 {
-}
-
-std::string readFile(std::string const &file_path)
-{
-
-    std::ifstream file(file_path);
-    if (file)
-    {
-        std::ostringstream stream_string;
-        stream_string << file.rdbuf();
-        return stream_string.str();
-    }
-    else
-        return "error file not opened";
 }
 
 std::string HttpResponse::getLocalTime() const
@@ -264,10 +255,17 @@ std::string HttpResponse::generateResponse(std::string const &root /*or location
             /// search for index
             if (_path == "/")
             {
-                if (stat(std::string(root + "/" + "index.html").c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
-                    body = readFile(std::string(root + "/" + "index.html"));
+                if (_autoIndex)
+                {
+                    body = readDirectory(root + _path);
+                }
                 else
-                    return generateErrorResponse((_responseStatus = NOT_FOUND));
+                {
+                    if (stat(std::string(root + "/" + "index.html").c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
+                        body = readFile(std::string(root + "/" + "index.html"));
+                    else
+                        return generateErrorResponse((_responseStatus = NOT_FOUND));
+                }
             }
             else
             {
@@ -284,7 +282,12 @@ std::string HttpResponse::generateResponse(std::string const &root /*or location
                     }
                 }
                 else
-                    return generateErrorResponse((_responseStatus = NOT_FOUND));
+                {
+                    if (_autoIndex)
+                        body = readDirectory(filePath);
+                    else
+                        return generateErrorResponse((_responseStatus = NOT_FOUND));
+                }
             }
         }
         else
@@ -301,7 +304,7 @@ std::string HttpResponse::generateResponse(std::string const &root /*or location
     {
         // check if upload location exist
         struct stat sb;
-        if (stat(uploadPath.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode)/* && access(uploadPath.c_str(), W_OK)*/)
+        if (stat(uploadPath.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode) /* && access(uploadPath.c_str(), W_OK)*/)
         {
             for (std::vector<t_bodyPart>::iterator it = _postRequestData.begin(); it != _postRequestData.end(); it++)
             {
@@ -361,7 +364,7 @@ std::string const HttpResponse::ResponseHttpVersionNotSupported() const
     return (header + CRLF_Combination + CRLF_Combination + body);
 }
 
-bool upload(std::string const &path, std::string const &filename, std::string const &data)
+bool HttpResponse::upload(std::string const &path, std::string const &filename, std::string const &data)
 {
     struct stat stats;
 
@@ -377,4 +380,47 @@ bool upload(std::string const &path, std::string const &filename, std::string co
         std::cout << "file not created" << std::endl;
         return 1;
     }
+}
+
+std::string HttpResponse::readFile(std::string const &file_path)
+{
+
+    std::ifstream file(file_path);
+    if (file)
+    {
+        std::ostringstream stream_string;
+        stream_string << file.rdbuf();
+        return stream_string.str();
+    }
+    else
+        return "error file not opened";
+}
+
+std::string HttpResponse::readDirectory(std::string const &Director_path)
+{
+    DIR *dir;
+    std::string content;
+    struct dirent *entry;
+
+    if ((dir = opendir(Director_path.c_str())) == NULL)
+    {
+        _responseStatus = NOT_FOUND;
+        return "";
+    }
+    else
+    {
+        content.append("<!DOCTYPE html><html lang=\"en\"><head> <title>Directory</title></head><body>");
+        content.append("<h1>" + Director_path);
+        content.append("/</h1><hr>");
+        while ((entry = readdir(dir)) != NULL)
+        {
+            content.append("<a href=");
+            content.append("\"" + std::string(entry->d_name) + "\">");
+            content.append(entry->d_name);
+            content.append("<br>");
+        }
+        closedir(dir);
+        content.append("</body></html>");
+    }
+    return content;
 }
