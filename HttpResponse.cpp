@@ -343,29 +343,79 @@ std::string HttpResponse::readFile(std::string const &file_path)
         return "error file not opened";
 }
 
-std::string HttpResponse::readDirectory(std::string const &Director_path)
+std::string HttpResponse::readDirectory(std::string const &root, std::string const &path)
 {
     DIR *dir;
     std::string content;
     struct dirent *entry;
 
-    if ((dir = opendir(Director_path.c_str())) == NULL)
+    if ((dir = opendir((root + path).c_str())))
     {
-        _responseStatus = NOT_FOUND;
-        return "";
-    }
-    else
-    {
+        struct stat sb;
+
         content += "<!DOCTYPE html><html><head> <title>Directory</title></head><body>";
-        content += "<h1>" + Director_path;
-        content += "/</h1><hr>";
+        content += "<h1> index of " + path;
+        content += "</h1><hr>";
+        content += "<table style=\"width:100%\">";
+        char buffer[100];
+        struct tm t;
+        int i = 0;
         while ((entry = readdir(dir)) != NULL)
         {
-            content += "<a href=";
-            content += "\"" + std::string(entry->d_name) + "\">";
-            content += entry->d_name;
-            content += "<br>";
+            if (i >= 1) // skip  current directory link ./
+            {
+                memset(buffer, 0, 100);
+                content += "<tr>";
+                if (stat((root + path + entry->d_name).c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
+                {
+                    content += "<td>";
+                    content += "<a href=";
+                    content += "\"" + path + std::string(entry->d_name) + "\">";
+                    content += "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-folder-fill\" viewBox=\"0 0 16 16\"><path d=\"M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.825a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3zm-8.322.12C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139z\"/></svg>";
+                    content += "&nbsp;";
+                    content += entry->d_name;
+                    content += "/";
+                    content += "</a>";
+                    content += "</td>";
+                    if (i > 1)
+                    {
+                        content += "<td>";
+                        localtime_r(&(sb.st_mtimespec.tv_sec), &t);
+                        strftime(buffer, 80, "%d-%h-%Y  %T", &t);
+                        content += buffer;
+                        content += "</td>";
+
+                        content += "<td>";
+                        content += "-";
+                        content += "</td>";
+                    }
+                }
+                else
+                {
+                    content += "<td>";
+                    content += "<a href=";
+                    content += "\"" + path + std::string(entry->d_name) + "\">";
+                    content += "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-file-earmark-fill\" viewBox=\"0 0 16 16\"><path d=\"M4 0h5.293A1 1 0 0 1 10 .293L13.707 4a1 1 0 0 1 .293.707V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm5.5 1.5v2a1 1 0 0 0 1 1h2l-3-3z\"/></svg>";
+                    content += "&nbsp;";
+                    content += entry->d_name;
+                    content += "</a>";
+                    content += "</td>";
+
+                    content += "<td>";
+                    localtime_r(&(sb.st_mtimespec.tv_sec), &t);
+                    strftime(buffer, 80, "%d-%h-%Y  %T", &t);
+                    content += buffer;
+                    content += "</td>";
+
+                    content += "<td>";
+                    content += std::to_string(sb.st_size);
+                    content += "</td>";
+                }
+                content += "</tr>";
+            }
+            i++;
         }
+        content += "</table>";
         closedir(dir);
         content += "</body></html>";
     }
@@ -383,45 +433,6 @@ std::string HttpResponse::handle_GET_Request(std::string const &root, std::strin
     struct stat sb;
     if (stat(root.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
     {
-        /*
-        /// search for index
-        if (_path == "/")
-        {
-            if (_autoIndex)
-            {
-                body = readDirectory(root + _path);
-            }
-            else
-            {
-                if (stat(std::string(root + "/" + "index.html").c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
-                    body = readFile(std::string(root + "/" + "index.html"));
-                else
-                    return generateErrorResponse((_responseStatus = NOT_FOUND));
-            }
-        }
-        else
-        {
-            struct stat sb;
-            std::string filePath = root + _path;
-            if (stat(filePath.c_str(), &sb) == 0 && S_ISREG(sb.st_mode) && access(filePath.c_str(), R_OK) == 0)
-            {
-                if (_path.find(".") != std::string::npos)
-                {
-                    std::string filetype = _path.substr(_path.find(".", _path.length() - 5));
-                    if (__contentTypesList.find(filetype) != __contentTypesList.end())
-                        __contentType = __contentTypesList[filetype];
-                    body = readFile(filePath);
-                }
-            }
-            else
-            {
-                if (_autoIndex)
-                    body = readDirectory(filePath);
-                else
-                    return generateErrorResponse((_responseStatus = NOT_FOUND));
-            }
-        }
-        */
         std::string fullPath = root + path;
         std::cout << "//////////////////////////////////////////////////////////////////////////////////////\n";
         std::cout << "full path : " << fullPath << "\n";
@@ -449,14 +460,14 @@ std::string HttpResponse::handle_GET_Request(std::string const &root, std::strin
                     {
                         // if index not exist check the auto index is enabled  and acces to list content of directory
                         if (_autoIndex && access((fullPath).c_str(), R_OK | W_OK) == 0)
-                            body = readDirectory(fullPath);
+                            body = readDirectory(root, path);
                         else
                             return generateErrorResponse(FORBIDDEN);
                     }
                 }
                 else
                 { /// generate redirection
-                    return handleRedirection(_host, path + "/" );
+                    return handleRedirection(_host, path + "/");
                 }
             }
             else // if file open it and ;
@@ -487,8 +498,8 @@ std::string HttpResponse::handle_GET_Request(std::string const &root, std::strin
 }
 std::string HttpResponse::handleRedirection(std::string const &host, std::string const &location)
 {
-    return "HTTP/1.1 301 Moved Permanently\r\nLocation: http://" + host + location + CRLF_Combination + CRLF_Combination ;
-} 
+    return "HTTP/1.1 301 Moved Permanently\r\nLocation: http://" + host + location + CRLF_Combination + CRLF_Combination;
+}
 std::string HttpResponse::handle_POST_Request(std::string const &root, std::string const &uploadPath)
 {
     (void)root;
