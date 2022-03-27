@@ -497,11 +497,13 @@ std::string HttpResponse::handleRedirection(std::string const &host, std::string
 {
     return "HTTP/1.1 301 Moved Permanently\r\nLocation: http://" + host + location + CRLF_Combination + CRLF_Combination;
 }
+
 std::string HttpResponse::handle_POST_Request(std::string const &root, std::string const &uploadPath)
 {
     (void)root;
     // check if upload location exist
     struct stat sb;
+    
     if (stat(uploadPath.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode) /* && access(uploadPath.c_str(), W_OK)*/)
     {
         for (std::vector<t_bodyPart>::iterator it = _postRequestData.begin(); it != _postRequestData.end(); it++)
@@ -516,7 +518,9 @@ std::string HttpResponse::handle_POST_Request(std::string const &root, std::stri
                 outFile.close();
             }
         }
-        return ResponseOK();
+        std::string body = "<!DOCTYPE html>\r\n<html>\r\n<head>\r\n<title></title> \r\n</head> \r\n<body>\r\n<center><h1>uploaded</h1>\r\n</body>\r\n</html>\r\n";
+        std::string header = "HTTP/1.1 200 OK" + CRLF_Combination + "Content-Type: text/html; charset=UTF-8\r\nContent-Length: " + std::to_string(body.length()) + "\r\nConnection: Closed\r\nServer: webserv/1.0\r\nDate: " + getLocalTime();
+        return (header + CRLF_Combination + CRLF_Combination + body);
     }
     else
         return generateErrorResponse((_responseStatus == NOT_FOUND));
