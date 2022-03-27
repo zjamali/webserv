@@ -75,7 +75,7 @@ public:
     std::string handle_GET_Request(std::string const &root,std::string const &path);
     std::string handleRedirection(std::string const &host, std::string const &location);
     std::string handle_POST_Request(std::string const &root,std::string const &path);
-    std::string handle_DELETE_Request(std::string const &path);
+    std::string handle_DELETE_Request(std::string const &root, std::string const &path);
     void print();
     std::string readFile(std::string const &file_path);
     std::string readDirectory(std::string const &root, std::string const &path);

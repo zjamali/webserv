@@ -56,6 +56,7 @@ void HttpResponse::init_response()
     __codes[404] = "Not Found";
     __codes[403] = "Forbidden";
     __codes[405] = "Method Not Allowed";
+    __codes[415] = "Unsupported Media Type";
     //// Server error responses
     __codes[500] = "Internal Server Error";
     __codes[501] = "Not Implemented";
@@ -104,7 +105,7 @@ void HttpResponse::init_response()
     __contentTypesList[".odt"] = "application/vnd.oasis.opendocument.text";
     __contentTypesList[".oga"] = "audio/ogg";
     __contentTypesList[".ogv"] = "video/ogg";
-    __contentTypesList[".ogx"] = "OGG	a/ogg";
+    __contentTypesList[".ogx"] = "application/ogg";
     __contentTypesList[".opus"] = "audio/opus";
     __contentTypesList[".otf"] = "font/otf";
     __contentTypesList[".png"] = "image/png";
@@ -266,7 +267,7 @@ std::string HttpResponse::generateResponse(unsigned int const code_status, std::
     }
     else if (_method == "DELETE")
     {
-        return "DELETE";
+        return handle_DELETE_Request(root, path);
     }
     else
         return generateErrorResponse((code_status == NOT_IMPLLIMENTED));
@@ -434,9 +435,6 @@ std::string HttpResponse::handle_GET_Request(std::string const &root, std::strin
     if (stat(root.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode))
     {
         std::string fullPath = root + path;
-        std::cout << "//////////////////////////////////////////////////////////////////////////////////////\n";
-        std::cout << "full path : " << fullPath << "\n";
-        std::cout << "//////////////////////////////////////////////////////////////////////////////////////\n";
         struct stat sb;
         if (stat(fullPath.c_str(), &sb) == 0)
         {
@@ -472,7 +470,6 @@ std::string HttpResponse::handle_GET_Request(std::string const &root, std::strin
             }
             else // if file open it and ;
             {
-                std::cout << "FILE\n";
                 if (access((fullPath).c_str(), R_OK) == 0)
                 {
                     if (fullPath.find(".") != std::string::npos)
@@ -523,4 +520,22 @@ std::string HttpResponse::handle_POST_Request(std::string const &root, std::stri
     }
     else
         return generateErrorResponse((_responseStatus == NOT_FOUND));
+}
+
+std::string HttpResponse::handle_DELETE_Request(std::string const &root, std::string const &path)
+{
+    std::cout << "DELETE CALLED " << root +  path << "\n";
+    struct stat sb;
+    unsigned int code = NOT_FOUND;
+    if (stat((root + path).c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
+    {
+        if (remove((root + path).c_str()) == 0)
+            return "HTTP/1.1 202 Accepted\r\n\r\n";
+        else
+            return generateErrorResponse(NOT_FOUND);
+    }
+    else
+    {
+        return generateErrorResponse(NOT_FOUND);
+    }
 }
