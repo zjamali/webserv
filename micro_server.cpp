@@ -86,6 +86,7 @@ int main()
         request.print();
         ////// request parse end
         HttpResponse response(request);
+        response.print();
         //response.print();
         send(connection, response.getResponse().c_str(), response.getResponse().length(), 0);
         close(connection);

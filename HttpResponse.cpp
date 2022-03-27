@@ -36,7 +36,7 @@ void HttpResponse::init_response()
     _errorPagesExist = false;
     _autoIndex = false;
     CRLF_Combination = std::string(CRLF);
-    __http = "HTTP/1.1 ";
+    __http = "HTTP/1.1";
     __statusDesciption = "";
     __connection = "Closed";
     __contentLength = "150";
@@ -161,9 +161,9 @@ std::string HttpResponse::getLocalTime() const
 std::string HttpResponse::generateStartLine(unsigned int const &status_code)
 {
     if (__codes.find(status_code) != __codes.end())
-        return (__http + std::to_string(status_code) + __codes[status_code]);
+        return (__http + " " + std::to_string(status_code) + " " + __codes[status_code]);
     else
-        return (__http + std::to_string(NOT_FOUND) + __codes[NOT_FOUND]);
+        return (__http + " " + std::to_string(NOT_FOUND) + " " + __codes[NOT_FOUND]);
 }
 
 std::string HttpResponse::generateHeader(unsigned int const &status_code, unsigned int const &body_lenght, std::string const &content_type)
@@ -526,13 +526,12 @@ std::string HttpResponse::handle_DELETE_Request(std::string const &root, std::st
 {
     std::cout << "DELETE CALLED " << root +  path << "\n";
     struct stat sb;
-    unsigned int code = NOT_FOUND;
     if (stat((root + path).c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
     {
-        if (remove((root + path).c_str()) == 0)
+        if (access((root + path).c_str(),W_OK) == 0 && remove((root + path).c_str()) == 0)
             return "HTTP/1.1 202 Accepted\r\n\r\n";
         else
-            return generateErrorResponse(NOT_FOUND);
+            return generateErrorResponse(FORBIDDEN);
     }
     else
     {
