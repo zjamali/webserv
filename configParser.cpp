@@ -115,7 +115,11 @@ void	configParser::checkSyntaxErrors()
 	{
 		std::cout << "-----------------------------------------------------------" << std::endl;
 		std::cout << "\r\t\t\t\t| " ;
-		std::cout << ((*it).type == name ? "name" : (*it).type == parameter ? "parameter" : (*it).type == openingCurlyBracket ? "openingCurlyBracket" : (*it).type == closingCurlyBracket ? "closingCurlyBracket" : "semicolon");
+		std::cout << ((*it).type == name ? "name" : 
+			(*it).type == parameter ? "parameter" : 
+				(*it).type == openingCurlyBracket ? "openingCurlyBracket" : 
+					(*it).type == closingCurlyBracket ? "closingCurlyBracket" : 
+						"semicolon");
 		std::cout << "\r" << (*it).data << std::endl;
 		it++;
 	}
