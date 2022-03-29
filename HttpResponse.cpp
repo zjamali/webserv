@@ -443,9 +443,13 @@ std::string HttpResponse::handle_GET_Request(std::string const &root, std::strin
             {
                 if (fullPath[fullPath.length() - 1] == '/')
                 {
-                    /// check  if there are default page as index.html
+                    /// check  if there are default page as index.html or index.php
                     std::string default_page = "index.html";
+                    std::string default_php_page = "index.php";
+                    // if php file;
 
+                    if (stat((fullPath + default_php_page).c_str(), &sb) == 0)
+                        return CGI_GET_Request(root, path + default_php_page);
                     if (stat((fullPath + default_page).c_str(), &sb) == 0)
                     {
                         // check if you have access to the file
@@ -503,7 +507,7 @@ std::string HttpResponse::handle_POST_Request(std::string const &root, std::stri
     (void)root;
     // check if upload location exist
     struct stat sb;
-    
+
     if (stat(uploadPath.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode) /* && access(uploadPath.c_str(), W_OK)*/)
     {
         for (std::vector<t_bodyPart>::iterator it = _postRequestData.begin(); it != _postRequestData.end(); it++)
@@ -528,11 +532,11 @@ std::string HttpResponse::handle_POST_Request(std::string const &root, std::stri
 
 std::string HttpResponse::handle_DELETE_Request(std::string const &root, std::string const &path)
 {
-    std::cout << "DELETE CALLED " << root +  path << "\n";
+    std::cout << "DELETE CALLED " << root + path << "\n";
     struct stat sb;
     if (stat((root + path).c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
     {
-        if (access((root + path).c_str(),W_OK) == 0 && remove((root + path).c_str()) == 0)
+        if (access((root + path).c_str(), W_OK) == 0 && remove((root + path).c_str()) == 0)
             return "HTTP/1.1 202 Accepted\r\n\r\n";
         else
             return generateErrorResponse(FORBIDDEN);
@@ -541,4 +545,61 @@ std::string HttpResponse::handle_DELETE_Request(std::string const &root, std::st
     {
         return generateErrorResponse(NOT_FOUND);
     }
+}
+
+std::string HttpResponse::CGI_GET_Request(std::string const &root, std::string const &path)
+{
+    struct stat sb;
+    std::string body;
+    std::string header;
+    // regular file call
+    if (stat((root + path).c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
+    {
+        body = run_CGI(root + path);
+    }
+    else // directory
+    {
+        body = "";
+    }
+    return header + CRLF_Combination + CRLF_Combination + body;
+}
+
+std::string HttpResponse::run_CGI(std::string const &filename)
+{
+    extern char **environ;
+    int pipefd[2];
+    pid_t pid;
+    char **cmd;
+    std::string str;
+
+    char buffer[10000];
+    int r;
+    cmd = (char **)malloc(sizeof(char *) * 3);
+    cmd[0] = strdup("/Users/zjamali/goinfre/.brew/bin/php-cgi");
+    cmd[1] = strdup(filename.c_str());
+    cmd[2] = NULL;
+    pipe(pipefd);
+    if (!(pid = fork()))
+    {
+        close(pipefd[0]);
+        dup2(pipefd[1], 1);
+        if (execve(cmd[0], cmd, environ) == -1)
+        {
+            return generateErrorResponse(NOT_FOUND);
+        }
+    }
+    else
+    {
+        close(pipefd[1]);
+        while ((r = read(pipefd[0], &buffer, 1000)) > 1)
+        {
+            buffer[r] = '\0';
+            str.append(buffer);
+        }
+        close(pipefd[0]);
+    }
+    std::string body = str.substr(str.find("\r\n\r\n") + 5);
+    std::string header = generateHeader(OK, body.length(), "text/html; charset=UTF-8");
+    header.append("\r\nX-Powered-By: PHP/8.1.4");
+    return header + CRLF_Combination + CRLF_Combination + body;
 }

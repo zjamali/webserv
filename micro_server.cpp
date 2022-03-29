@@ -83,10 +83,10 @@ int main()
         (void)bytesRead;
         /////// request parse begin
         HttpRequest request(recievedData);
-        request.print();
+       // request.print();
         ////// request parse end
         HttpResponse response(request);
-        response.print();
+       // response.print();
         //response.print();
         send(connection, response.getResponse().c_str(), response.getResponse().length(), 0);
         close(connection);
