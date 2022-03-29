@@ -12,10 +12,9 @@
 
 #include "./configParser.hpp"
 
-configParser::configParser(char *configFileName) //args and their count
+void	configParser::startTokenization(char *configFileName)
 {
 	std::ifstream configFile(configFileName);
-
 	token	tokenNode;
 	type	tokenType;
 	std::string word;
@@ -61,10 +60,12 @@ tokenType = name;
 					/*********************************************************************************/
 					if (!word.empty())
 					{
+						//determine token type
 						tokenNode.data = word;
 						tokenNode.type = tokenType;
 						_tokensList.push_back(tokenNode);
-						std::cout << tokenNode.data << std::endl;
+						// std::cout << tokenNode.data << "     ";
+						// std::cout << (tokenNode.type == name ? "name" : tokenNode.type == parameter ? "parameter" : tokenNode.type == openingCurlyBracket ? "openingCurlyBracket" : tokenNode.type == closingCurlyBracket ? "closingCurlyBracket" : "semicolon") << std::endl;
 						word.clear();
 					}
 
@@ -74,11 +75,27 @@ tokenType = name;
 					/***************************************************************/
 					if (byte == '{' || byte == '}' || byte == ';')
 					{
+						//determine token type
+						if (byte == '{')
+							tokenType = openingCurlyBracket;
+						else if (byte == '}')
+							tokenType = closingCurlyBracket;
+						else if (byte == ';')
+							tokenType = semicolon;
+
 						tokenNode.data = byte;
-						// tokenNode.type = ;
+						tokenNode.type = tokenType;
 						_tokensList.push_back(tokenNode);
-						std::cout << tokenNode.data << std::endl;
+						// std::cout << tokenNode.data << "    ";
+						// std::cout << (tokenNode.type == name ? "name" : tokenNode.type == parameter ? "parameter" : tokenNode.type == openingCurlyBracket ? "openingCurlyBracket" : tokenNode.type == closingCurlyBracket ? "closingCurlyBracket" : "semicolon") << std::endl;
 					}
+
+					//determine next token type if it is a word
+					if (byte == '{' || byte == '}' || byte == ';')
+						tokenType = name;
+					else if (byte == ' ')
+						tokenType = parameter;
+					
 					break ;
 				}
 				word += byte;
@@ -86,9 +103,28 @@ tokenType = name;
 			}
 		}
 	}
-	// std::cout << word << std::endl;
-	//throw some error
 	//else
+		//throw some error
+}
+
+void	configParser::checkSyntaxErrors()
+{
+	std::list<token>::iterator it = _tokensList.begin();
+
+	while (it != _tokensList.end())
+	{
+		std::cout << "-----------------------------------------------------------" << std::endl;
+		std::cout << "\r\t\t\t\t| " ;
+		std::cout << ((*it).type == name ? "name" : (*it).type == parameter ? "parameter" : (*it).type == openingCurlyBracket ? "openingCurlyBracket" : (*it).type == closingCurlyBracket ? "closingCurlyBracket" : "semicolon");
+		std::cout << "\r" << (*it).data << std::endl;
+		it++;
+	}
+}
+
+configParser::configParser(char *configFileName) //args and their count or just file name :3
+{
+	startTokenization(configFileName);
+	checkSyntaxErrors();
 }
 
 configParser::~configParser()

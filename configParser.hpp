@@ -33,6 +33,8 @@ class configParser
 
 	public:
 		configParser(char *configFileName);
+		void startTokenization(char *configFileName);
+		void checkSyntaxErrors();
 		~configParser();
 };
 
