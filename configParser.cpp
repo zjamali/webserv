@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:33 by iltafah           #+#    #+#             */
-/*   Updated: 2022/03/23 22:04:05 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/03/29 13:24:55 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,18 @@ tokenType = name;
 				{
 					configFile.get(byte);
 					if (isspace(byte))
+						continue ;
+					break ;
+				}
+			}
+
+			if (byte == '#')
+			{
+				//skip hashtags
+				while (configFile.good())
+				{
+					configFile.get(byte);
+					if (byte != '\n')
 						continue ;
 					break ;
 				}
