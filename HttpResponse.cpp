@@ -474,6 +474,10 @@ std::string HttpResponse::handle_GET_Request(std::string const &root, std::strin
             }
             else // if file open it and ;
             {
+                if (fullPath.find(".php") != std::string::npos)
+                {
+                    return run_CGI(fullPath);
+                }
                 if (access((fullPath).c_str(), R_OK) == 0)
                 {
                     if (fullPath.find(".") != std::string::npos)
@@ -598,6 +602,9 @@ std::string HttpResponse::run_CGI(std::string const &filename)
         }
         close(pipefd[0]);
     }
+    std::cout << "+++++++ php +++++++\n";
+    std::cout << str << "\n";
+    std::cout << "+++++++ php +++++++\n";
     std::string body = str.substr(str.find("\r\n\r\n") + 5);
     std::string header = generateHeader(OK, body.length(), "text/html; charset=UTF-8");
     header.append("\r\nX-Powered-By: PHP/8.1.4");

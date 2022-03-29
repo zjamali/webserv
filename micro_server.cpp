@@ -66,7 +66,6 @@ int main()
                     std::string header = recievedData.substr(0, recievedData.find("\r\n\r\n"));
                     request_lenght = (header.length()) + atoi(contentLength.c_str()) + strlen("\r\n\r\n");
                 }
-                std::cout << "request_lenght: " << request_lenght << "| recieved data lenght :" << recievedData.length() <<"\n";
                 if (request_lenght < 900000000)
                 {
                     if (recievedData.length() >= request_lenght)
@@ -83,7 +82,7 @@ int main()
         (void)bytesRead;
         /////// request parse begin
         HttpRequest request(recievedData);
-       // request.print();
+        request.print();
         ////// request parse end
         HttpResponse response(request);
        // response.print();
