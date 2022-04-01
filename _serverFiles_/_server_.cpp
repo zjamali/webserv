@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/01 07:11:44 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/01 09:40:30 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,4 +153,31 @@ void	webServer::_start_()
 		if (_selectRet_ == -1)
 			throw (std::runtime_error("Select Error !"));
 	}
+}
+
+int	webServer::_getClientMaxBodySize_(int&	_clientSocket_)
+{
+	// first get the socket of the server that linked with the socket client :
+	std::map<int, int>::iterator iter = this->_clientServer_.find(_clientSocket_);
+	struct sockaddr_in _addr_;
+	std::memset(&_addr_, 0, sizeof(_addr_));
+	if (getsockname(iter->second, (struct sockaddr *)&_addr_, &this->_addrSize_) == -1)
+		throw (std::runtime_error("Unable to fetch server informations !"));
+	for(std::vector<SData>::iterator iter = this->_servers_.begin(); iter != this->_servers_.end(); iter++)
+	{
+		// get host from the server and check with iter hosts iter->get_host() == inet_ntoa(_addr_.sin_addr)
+		if (true)
+		{
+			// this->_ports_ =  // get ports from the current server iter->_get_ports()
+			for(std::vector<int>::iterator port = this->_ports_.begin(); port != this->_ports_.end(); port++)
+			{
+				// look for the port that we need *port == ntohs(_addr_.sin_port)
+				if (true)
+				{
+					return (1); // return the client body size of this server (*iter)->get_client_max_body_size()
+				}
+			}
+		}
+	}
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/14 16:29:15 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/01 00:45:23 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/01 09:26:43 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ class webServer{
 		fd_set	_readfds_;
 		fd_set	_writefds_;
 		fd_set	_setFDs_;
+
+		int _clientMaxBodyS_; // the client max body size that is already on config file (u need to transfer it to bytes)
 		
 		int		_maxSfd_; // first argument of select()
 		std::string _host_;
@@ -69,6 +71,7 @@ class webServer{
 		
 		void	_start_();
 		void	_buildASocket_();
+		int		_getClientMaxBodySize_(int&);
 		
 };
 
