@@ -354,7 +354,9 @@ std::string HttpResponse::readDirectory(std::string const &root, std::string con
     {
         struct stat sb;
 
-        content += "<!DOCTYPE html><html><head> <title>Directory</title></head><body>";
+        content += "<!DOCTYPE html><html><head> <title>";
+        content += "index of " + path;
+        content += "</title></head><body>";
         content += "<h1> index of " + path;
         content += "</h1><hr>";
         content += "<table style=\"width:100%\">";
