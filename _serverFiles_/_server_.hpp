@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/14 16:29:15 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/03/31 07:47:45 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/01 00:45:23 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ class webServer{
 		~webServer();
 		
 		void	_start_();
+		void	_buildASocket_();
 		
 };
 
