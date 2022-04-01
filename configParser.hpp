@@ -30,6 +30,16 @@ class configParser
 {
 	private:
 		std::list<token> _tokensList;
+	
+	private:
+		void checkHostSyntax(std::list<token>::iterator &it);
+		void checkRootSyntax(std::list<token>::iterator &it);
+		void checkServerSyntax(std::list<token>::iterator &it);
+		void checkListenSyntax(std::list<token>::iterator &it);
+		void checkLocationSyntax(std::list<token>::iterator &it);
+		void checkErrorPageSyntax(std::list<token>::iterator &it);
+		void checkServerNameSyntax(std::list<token>::iterator &it);
+		void checkMaxBodySizeSyntax(std::list<token>::iterator &it);
 
 	public:
 		configParser(char *configFileName);

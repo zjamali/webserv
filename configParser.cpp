@@ -12,6 +12,10 @@
 
 #include "./configParser.hpp"
 
+#ifndef DEBUG
+# define DEBUG false
+#endif
+
 void	configParser::startTokenization(char *configFileName)
 {
 	std::ifstream configFile(configFileName);
@@ -117,28 +121,174 @@ tokenType = name;
 	}
 	//else
 		//throw some error
+
+	if (DEBUG)
+	{
+		std::list<token>::iterator it = _tokensList.begin();
+
+		while (it != _tokensList.end())
+		{
+			std::cout << "-----------------------------------------------------------" << std::endl;
+			std::cout << "\r\t\t\t\t| " ;
+			std::cout << ((*it).type == name ? "name" : 
+				(*it).type == parameter ? "parameter" : 
+					(*it).type == openingCurlyBracket ? "openingCurlyBracket" : 
+						(*it).type == closingCurlyBracket ? "closingCurlyBracket" : 
+							"semicolon");
+			std::cout << "\r" << (*it).data << std::endl;
+			it++;
+		}
+	}
+}
+
+void	configParser::checkLocationSyntax(std::list<token>::iterator &it)
+{
+
+}
+
+void	configParser::checkListenSyntax(std::list<token>::iterator &it)
+{
+	if ((*it).type == parameter)
+	{
+		it++;
+		if ((*it).type != semicolon)
+			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+	}
+	else
+		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+}
+
+void	configParser::checkHostSyntax(std::list<token>::iterator &it)
+{
+	if ((*it).type == parameter)
+	{
+		it++;
+		if ((*it).type != semicolon)
+			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+	}
+	else
+		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+}
+
+void	configParser::checkServerNameSyntax(std::list<token>::iterator &it)
+{
+	if ((*it).type == parameter)
+	{
+		it++;
+		if ((*it).type != semicolon)
+			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+	}
+	else
+		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+}
+
+void	configParser::checkRootSyntax(std::list<token>::iterator &it)
+{
+	if ((*it).type == parameter)
+	{
+		it++;
+		if ((*it).type != semicolon)
+			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+	}
+	else
+		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+}
+
+void	configParser::checkErrorPageSyntax(std::list<token>::iterator &it)
+{
+	if ((*it).type == parameter)
+	{
+		it++;
+		if ((*it).type == parameter)
+		{
+			it++;
+			if ((*it).type != semicolon)
+				throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+		}
+		else
+			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+	}
+	else
+		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+}
+
+void	configParser::checkMaxBodySizeSyntax(std::list<token>::iterator &it)
+{
+	if ((*it).type == parameter)
+	{
+		it++;
+		if ((*it).type != semicolon)
+			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+	}
+	else
+		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+}
+
+void	configParser::checkServerSyntax(std::list<token>::iterator &it)
+{
+	if ((*it).type != openingCurlyBracket)
+		throw (std::runtime_error("hohohoho and how I will determine the server content without '{' idiot"));//throw an error
+
+	while (++it != _tokensList.end())
+	{
+		if ((*it).type == closingCurlyBracket)
+			break ;
+		else if ((*it).type == name)
+		{
+			if ((*it).data == "location")
+				checkLocationSyntax(++it);
+			else if ((*it).data == "listen")
+				checkListenSyntax(++it);
+			else if ((*it).data == "host")
+				checkHostSyntax(++it);
+			else if ((*it).data == "server_name")
+				checkServerNameSyntax(++it);
+			else if ((*it).data == "root")
+				checkRootSyntax(++it);
+			else if ((*it).data == "error_page")
+				checkErrorPageSyntax(++it);
+			else if ((*it).data == "client_max_body_size")
+				checkMaxBodySizeSyntax(++it);
+			else
+				throw (std::runtime_error("holy shit I don't know this directive [" + (*it).data + "] are u insane ?"));//throw an error
+		}
+		else if ((*it).type == openingCurlyBracket)
+			throw (std::runtime_error("why the fuck there is another opening curly bracket ?"));//throw an error
+	}
+
+	if ((*it).type != closingCurlyBracket)
+		throw (std::runtime_error("for god sake ma sed 3lina had server use this '}'"));//throw an error
 }
 
 void	configParser::checkSyntaxErrors()
 {
 	std::list<token>::iterator it = _tokensList.begin();
 
+	// name parameter semicolon
+	// name parameter parameter semicolon
+	// name parameter obrackets ... cbrackets
+
+	// server { }
+	// location /path { }
+	// listen 80 ;
+	// host 0.0.0.0 ;
+	// server_name www.example.com ;
+	// root /path ;
+	// error_page 404 /error_page ;
+
 	while (it != _tokensList.end())
 	{
-		std::cout << "-----------------------------------------------------------" << std::endl;
-		std::cout << "\r\t\t\t\t| " ;
-		std::cout << ((*it).type == name ? "name" : 
-			(*it).type == parameter ? "parameter" : 
-				(*it).type == openingCurlyBracket ? "openingCurlyBracket" : 
-					(*it).type == closingCurlyBracket ? "closingCurlyBracket" : 
-						"semicolon");
-		std::cout << "\r" << (*it).data << std::endl;
-		it++;
+		if ((*it).data == "server")
+			checkServerSyntax(++it);//check server syntax
+		else
+			std::cout << "tada" << std::endl ;//throw an error
+		break ;//remove this break ;
 	}
 }
 
 configParser::configParser(char *configFileName) //args and their count or just file name :3
 {
+	//don't forget to check the extention of the given file
 	startTokenization(configFileName);
 	checkSyntaxErrors();
 }
