@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/14 16:29:15 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/01 09:26:43 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/02 10:19:51 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 #define _SERVER_HPP
 
 # include "_UltimateHeader_.hpp"
+# define LAST_CHUNK "0\r\n\r\n"
+# define CRLF "\r\n"
+# define D_CRLF "\r\n\r\n"
 
 
 // Parsing data :
@@ -55,6 +58,8 @@ class webServer{
 		struct sockaddr_in	_Saddr_;
 		struct sockaddr_in	_Caddr_;
 		socklen_t			_addrSize_;
+
+		bool	_chunkedReq_;
 		
 		// Clients sockets and request data :
 		std::map<int, std::string> _clientsInfos_;
@@ -72,6 +77,8 @@ class webServer{
 		void	_start_();
 		void	_buildASocket_();
 		int		_getClientMaxBodySize_(int&);
+		bool		_handleRequest_(std::string&, int);
+		std::string	_handleChunkedRequest(std::string&);
 		
 };
 

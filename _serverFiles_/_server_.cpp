@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/01 09:40:30 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/02 10:20:59 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,24 +81,29 @@ void	webServer::_start_()
 		// the first parameter in select should be the highest-numbered file descriptor in any of the three sets
 		// plus 1 so we check the max fd num
 		// we use FD_ISSET to check for the fds that are ready 
+		//select uses descriptor sets, typically an array of integers,
+		// with each bit in each integer corresponding to a descriptor. FD_ZERO turns off all the bits of the fds (= 0)
+		// and every fd that is ready for write or read select turns on its bit () 
 		int _selectRet_ = select(this->_maxSfd_ + 1, &this->_readfds_, &this->_writefds_, NULL, &_time_);
 		if (_selectRet_ > 0)
 		{
 			for (int _fdsocket = 0; _fdsocket < this->_maxSfd_ + 1; _fdsocket++)
 			{
+				// look for the ready discriptors (socket)
 				if (FD_ISSET(_fdsocket, &this->_readfds_))
 				{
-					bool is_connected = false;
+					bool _newC_ = false;
 					for (std::vector<int>::iterator it = this->_socketFds_.begin(); it != _socketFds_.end(); it++)
 					{
+						// if the server socket is the ready one so we need to create the new connection with client
 						if (_fdsocket == *it)
 						{
-							is_connected = true;
+							_newC_ = true;
 							break ;
 						}
 					}
-					// check for is_connected : accepting the client connection ...
-					if (is_connected)
+					// check for _newC_ : accepting the client connection ...
+					if (_newC_)
 					{
 						// accept the new connection and get the socket for exchanging the data 
 						int _acceptedS_ = accept(_fdsocket, (struct sockaddr*)&this->_Caddr_, &this->_addrSize_);
@@ -119,7 +124,7 @@ void	webServer::_start_()
 							this->_clientServer_.insert(std::make_pair(_acceptedS_, _fdsocket)); // create a new node of client server
 						
 					}
-					else // for write 
+					else // for reading the request
 					{
 						int _acceptedS_ = _fdsocket;
 						// handling the request that sent and return the correct response :
@@ -135,6 +140,29 @@ void	webServer::_start_()
 							std::map<int, std::string>::iterator _it = this->_clientsInfos_.find(_acceptedS_);
 							if (_it != this->_clientsInfos_.end())
 								_it->second += _buffer_;
+							
+							/* FOR HANDLING CHUNKED TRANSFER-CODING
+								length := 0
+								read chunk-size, chunk-extension (if any) and CRLF
+								while (chunk-size > 0) {
+									read chunk-data and CRLF
+									append chunk-data to entity-body
+									length := length + chunk-size
+									read chunk-size and CRLF
+								}
+								read entity-header
+								while (entity-header not empty) {
+									append entity-header to existing header fields
+									read entity-header
+								}
+								Content-Length := length
+								Remove "chunked" from Transfer-Encoding
+							*/
+							if (this->_handleRequest_(_it->second, _acceptedS_))
+							{
+								if (this->_chunkedReq_)
+									_it->second = this->_handleChunkedRequest(_it->second);
+							}
 						}
 						else if (_rVal_ == 0) // socket shutdown
 						{
@@ -180,4 +208,41 @@ int	webServer::_getClientMaxBodySize_(int&	_clientSocket_)
 		}
 	}
 	return (0);
+}
+
+bool	webServer::_handleRequest_(std::string& _buff, int _acceptedS_)
+{
+	// max body size:
+	this->_clientMaxBodyS_ = this->_getClientMaxBodySize_(_acceptedS_);
+	// check content ...
+	if (_buff.find(D_CRLF) != std::string::npos)
+	{
+		std::string _reqHeaders_ = _buff.substr(0, _buff.find(D_CRLF) + 4);
+		if (_reqHeaders_.find("Transfer-Encoding: chunked") != std::string::npos)
+		{
+			this->_chunkedReq_ = true;
+			if (_buff.find(LAST_CHUNK) != std::string::npos)
+				return (true);
+			return (false);
+		}
+		else if (_reqHeaders_.find("Content-Length") != std::string::npos)
+		{
+			// index = find("Content-length: ")
+			size_t _bodySize_ = std::stoi(_reqHeaders_.substr(_reqHeaders_.find("Content-Length: ") + 16));
+			std::string _reqBody_ = _buff.substr(_buff.find(D_CRLF) + 4);
+			
+			if (_bodySize_ > (size_t)this->_clientMaxBodyS_)
+				return (true);
+			else if (_reqBody_.length() < _bodySize_)//if we didn't copy all the body
+				return (false);
+			
+		}
+		return (true);
+	}
+	return (false);
+}
+
+std::string	webServer::_handleChunkedRequest(std::string& _buff)
+{
+	return ("");
 }
