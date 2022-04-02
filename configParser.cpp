@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:33 by iltafah           #+#    #+#             */
-/*   Updated: 2022/03/29 13:24:55 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/02 20:14:12 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,15 @@
 #ifndef DEBUG
 # define DEBUG false
 #endif
+
+
+//I know the following foking ugly cood is foking ugly but don't worry I will butterfly it 
+//I know the following foking ugly cood is foking ugly but don't worry I will butterfly it 
+//I know the following foking ugly cood is foking ugly but don't worry I will butterfly it 
+//I know the following foking ugly cood is foking ugly but don't worry I will butterfly it 
+//I know the following foking ugly cood is foking ugly but don't worry I will butterfly it 
+//I know the following foking ugly cood is foking ugly but don't worry I will butterfly it 
+//I know the following foking ugly cood is foking ugly but don't worry I will butterfly it 
 
 void	configParser::startTokenization(char *configFileName)
 {
@@ -69,7 +78,7 @@ tokenType = name;
 				/* so here if I encounter spaces or semicolon or brackets store the word */
 				/* and if I found a semicolon or brackets store it also 			     */
 				/*************************************************************************/
-				if (isspace(byte) || byte == '{' || byte == '}' || byte == ';')
+				if (isspace(byte) || byte == '{' || byte == '}' || byte == ';' || byte == '#')
 				{
 					/*********************************************************************************/
 					/* store word if it is not empty, it can be empty if this is the first iteration */
@@ -80,8 +89,6 @@ tokenType = name;
 						tokenNode.data = word;
 						tokenNode.type = tokenType;
 						_tokensList.push_back(tokenNode);
-						// std::cout << tokenNode.data << "     ";
-						// std::cout << (tokenNode.type == name ? "name" : tokenNode.type == parameter ? "parameter" : tokenNode.type == openingCurlyBracket ? "openingCurlyBracket" : tokenNode.type == closingCurlyBracket ? "closingCurlyBracket" : "semicolon") << std::endl;
 						word.clear();
 					}
 
@@ -102,8 +109,6 @@ tokenType = name;
 						tokenNode.data = byte;
 						tokenNode.type = tokenType;
 						_tokensList.push_back(tokenNode);
-						// std::cout << tokenNode.data << "    ";
-						// std::cout << (tokenNode.type == name ? "name" : tokenNode.type == parameter ? "parameter" : tokenNode.type == openingCurlyBracket ? "openingCurlyBracket" : tokenNode.type == closingCurlyBracket ? "closingCurlyBracket" : "semicolon") << std::endl;
 					}
 
 					//determine next token type if it is a word
@@ -141,9 +146,148 @@ tokenType = name;
 	}
 }
 
+void	configParser::checkAutoIndexSyntax(std::list<token>::iterator &it)
+{
+	if ((*it).type == parameter)
+	{
+		it++;
+		if ((*it).type != semicolon)
+			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+	}
+	else
+		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+}
+
+void	configParser::checkIndexSyntax(std::list<token>::iterator &it)
+{
+	if ((*it).type == parameter)
+	{
+		it++;
+		if ((*it).type != semicolon)
+			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+	}
+	else
+		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+}
+
+void	configParser::checkAllowMethodsSyntax(std::list<token>::iterator &it)
+{
+	if ((*it).type == parameter)
+	{
+		int count;
+		for (count = 0; it != _tokensList.end() && count < 3; count++, ++it)
+		{
+			if ((*it).type == semicolon)
+				break ;
+			if ((*it).type == parameter)
+			{
+				if ((*it).data != "GET" && (*it).data != "POST" && (*it).data != "DELETE")
+					throw (std::runtime_error("wtf is this method ?!?!?! `" + (*it).data + "`, go learn some foking English"));
+			}
+			else
+				throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+		}
+		if (count == 0 || (*it).type != semicolon)
+			throw (std::runtime_error("Unexpected foking `" + (*it).data + "`"));
+	}
+	else
+		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+}
+
+void	configParser::checkReturnSyntax(std::list<token>::iterator &it)
+{
+	if ((*it).type == parameter)
+	{
+		it++;
+		if ((*it).type == parameter)
+		{
+			it++;
+			if ((*it).type != semicolon)
+				throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+		}
+		else
+			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+	}
+	else
+		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+}
+
+void	configParser::checkFastcgiPassSyntax(std::list<token>::iterator &it)
+{
+	if ((*it).type == parameter)
+	{
+		it++;
+		if ((*it).type != semicolon)
+			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+	}
+	else
+		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+}
+
+void	configParser::checkUploadEnableSyntax(std::list<token>::iterator &it)
+{
+	if ((*it).type == parameter)
+	{
+		it++;
+		if ((*it).type != semicolon)
+			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+	}
+	else
+		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+}
+
+void	configParser::checkUploadStoreSyntax(std::list<token>::iterator &it)
+{
+	if ((*it).type == parameter)
+	{
+		it++;
+		if ((*it).type != semicolon)
+			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+	}
+	else
+		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+}
+
 void	configParser::checkLocationSyntax(std::list<token>::iterator &it)
 {
-
+	if ((*it).type == parameter)
+	{
+		it++;
+		if ((*it).type == openingCurlyBracket)
+		{
+			while (it != _tokensList.end())
+			{
+				if ((*it).type == closingCurlyBracket)
+					break ;
+				else if ((*it).type == name)
+				{
+					if ((*it).data == "autoindex")
+						checkAutoIndexSyntax(++it);
+					else if ((*it).data == "index")
+						checkIndexSyntax(++it);
+					else if ((*it).data == "allow_methods")
+						checkAllowMethodsSyntax(++it);
+					else if ((*it).data == "return")
+						checkReturnSyntax(++it);
+					else if ((*it).data == "fastcgi_pass")
+						checkFastcgiPassSyntax(++it);
+					else if ((*it).data == "upload_enable")
+						checkUploadEnableSyntax(++it);
+					else if ((*it).data == "upload_store")
+						checkUploadStoreSyntax(++it);
+					else
+						break ;
+				}
+				it++;
+			}
+			if ((*it).type != closingCurlyBracket)
+				throw (std::runtime_error("for god sake ma sed 3lina had location, use this '}'"));//throw an error
+		}
+		else
+			throw (std::runtime_error("u forgot the focking `{` don't forget it again"));
+	}
+	else
+		throw (std::runtime_error("u madafaka have forgotten an argument and that argument is the focking path"));
 }
 
 void	configParser::checkListenSyntax(std::list<token>::iterator &it)
@@ -258,6 +402,8 @@ void	configParser::checkServerSyntax(std::list<token>::iterator &it)
 
 	if ((*it).type != closingCurlyBracket)
 		throw (std::runtime_error("for god sake ma sed 3lina had server use this '}'"));//throw an error
+	// I think you need to increment the iterator to skip the closing curly bracket
+	//it++;
 }
 
 void	configParser::checkSyntaxErrors()
@@ -296,3 +442,11 @@ configParser::configParser(char *configFileName) //args and their count or just 
 configParser::~configParser()
 {
 }
+
+
+
+
+//************************************//
+//**	  must check this case		**//
+//************************************//
+//listen 80#hello world
