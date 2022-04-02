@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/02 10:20:59 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/02 15:15:48 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	webServer::_start_()
 	FD_ZERO(&_writefds_);
 	for (std::vector<SData>::iterator serv = this->_servers_.begin(); serv != this->_servers_.end(); serv++)
 	{
-		this->_ports_ = {}; // get ports from the server
+		// this->_ports_ = ; // get ports from the server
 		this->_host_ = "23.23.23.23"; // get host from the server
 		for (std::vector<int>::iterator port = this->_ports_.begin(); port!=this->_ports_.end(); port++)
 		{
@@ -158,10 +158,23 @@ void	webServer::_start_()
 								Content-Length := length
 								Remove "chunked" from Transfer-Encoding
 							*/
+							/*
+								Example of chunked body:
+									4\r\n        (bytes to send)
+									Wiki\r\n     (data)
+									6\r\n        (bytes to send)
+									pedia \r\n   (data)
+									E\r\n        (bytes to send)
+									in \r\n
+									\r\n
+									chunks.\r\n  (data)
+									0\r\n        (final byte - 0)
+									\r\n         (end message)
+							*/
 							if (this->_handleRequest_(_it->second, _acceptedS_))
 							{
 								if (this->_chunkedReq_)
-									_it->second = this->_handleChunkedRequest(_it->second);
+									_it->second = this->_handleChunkedRequest_(_it->second);
 							}
 						}
 						else if (_rVal_ == 0) // socket shutdown
@@ -242,7 +255,7 @@ bool	webServer::_handleRequest_(std::string& _buff, int _acceptedS_)
 	return (false);
 }
 
-std::string	webServer::_handleChunkedRequest(std::string& _buff)
+std::string	webServer::_handleChunkedRequest_(std::string& _buff)
 {
 	return ("");
 }
