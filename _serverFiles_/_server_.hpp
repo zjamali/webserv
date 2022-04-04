@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/14 16:29:15 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/02 15:08:10 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/04 09:04:42 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,9 @@ class webServer{
 		int		_getClientMaxBodySize_(int&);
 		bool		_handleRequest_(std::string&, int);
 		std::string	_handleChunkedRequest_(std::string&);
-		
+		bool	_NonHexChar_(std::string&);
+		size_t	_getHexSizeOfChunk_(std::string&);
+		void	_handleResponse_(int&);
 };
 
 

@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/02 15:15:48 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/04 09:27:39 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,9 @@ void	webServer::_start_()
 							{
 								if (this->_chunkedReq_)
 									_it->second = this->_handleChunkedRequest_(_it->second);
+								// send the request data , the request call is in here
+								if (FD_ISSET(_acceptedS_, &this->_writefds_))
+									this->_handleResponse_(_acceptedS_); 
 							}
 						}
 						else if (_rVal_ == 0) // socket shutdown
@@ -215,6 +218,7 @@ int	webServer::_getClientMaxBodySize_(int&	_clientSocket_)
 				// look for the port that we need *port == ntohs(_addr_.sin_port)
 				if (true)
 				{
+					// also set the current port and current server ....
 					return (1); // return the client body size of this server (*iter)->get_client_max_body_size()
 				}
 			}
@@ -255,7 +259,63 @@ bool	webServer::_handleRequest_(std::string& _buff, int _acceptedS_)
 	return (false);
 }
 
-std::string	webServer::_handleChunkedRequest_(std::string& _buff)
+bool	webServer::_NonHexChar_(std::string& _check)
 {
-	return ("");
+	std::string hex = "0123456789abcdefABCDEF";
+	for(size_t i = 0; i < _check.size(); i++)
+		if (hex.find(_check[i] == std::string::npos))
+			return (true);
+	return (false);
+}
+
+size_t	webServer::_getHexSizeOfChunk_(std::string&	_chunkBuff)
+{
+	_chunkBuff.pop_back();
+	if (_NonHexChar_(_chunkBuff))
+		throw (std::runtime_error("Incorrect size !"));
+	size_t _decimalSize_ = 0;
+	std::stringstream hex(_chunkBuff);
+	hex >> std::hex >> _decimalSize_;
+	return (_decimalSize_);
+}
+
+std::string	webServer::_handleChunkedRequest_(std::string& _reqbuff)
+{
+	// get the body :
+	std::string _reqFixed_ = _reqbuff.substr(0, _reqbuff.find(D_CRLF) + 4);
+	std::string _reqBody_ = _reqbuff.substr(_reqbuff.find(D_CRLF) + 4);
+	size_t i = 0, _bodysize_ = 0;
+	while (i < _reqBody_.size())
+	{
+		// store the unchunked strings in tmp
+		std::string tmp = _reqBody_.substr(i, std::string::npos);
+		size_t _tmpLength_ = 0;
+		std::string line("");
+		std::stringstream _Sbody_(tmp);
+		std::getline(_Sbody_, line);
+		i += line.length() + 1;
+		_tmpLength_ = this->_getHexSizeOfChunk_(line);
+		_reqFixed_.append(_reqBody_.c_str() + i, _tmpLength_);
+		i+= _tmpLength_ + 2; // 2 for \r and \n
+		_bodysize_ += _tmpLength_;
+	}
+	this->_chunkedReq_ = false;// chunked data is fixed
+	return (_reqFixed_);
+}
+
+void	webServer::_handleResponse_(int& _acceptedS_)
+{
+	// CAll the respone class here 
+	std::string _response_("");
+	if (send(_acceptedS_, _response_.c_str(), _response_.length(), 0) != (ssize_t)_response_.length())
+		throw (std::runtime_error("Response Error for [ Socket : "+std::to_string(_acceptedS_) + " ]"));
+	// check for Header connection and close the socket 
+	if (true) //if the option of connection is close :
+	{
+		std::cout << "Socket [ " << _acceptedS_ << " ] disconnected !" << std::endl;
+		close(_acceptedS_);
+		FD_CLR(_acceptedS_, &_writefds_);
+		FD_CLR(_acceptedS_, &_setFDs_);
+	}
+	// clear all for request and response ....
 }

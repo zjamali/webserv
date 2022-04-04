@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:28 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/03/31 07:31:57 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/04 08:31:09 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <cstring>
 # include <sys/select.h>
 # include <sys/stat.h>
+# include <sstream>
 # include <sys/socket.h>
 # include <arpa/inet.h>
 # include <map>
