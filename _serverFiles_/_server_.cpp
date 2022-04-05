@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/05 13:48:24 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/05 15:26:46 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	webServer::_buildASocket_()
 }
 
 void	webServer::_start_()
-{
+{ 
 	FD_ZERO(&_setFDs_);
 	FD_ZERO(&_writefds_);
 	for (std::vector<SData>::iterator serv = this->_servers_.begin(); serv != this->_servers_.end(); serv++)
@@ -236,7 +236,6 @@ bool	webServer::_handleRequest_(std::string& _buff, int _acceptedS_)
 {
 	// max body size:
 	this->_clientMaxBodyS_ = this->_getClientMaxBodySize_(_acceptedS_);
-	// check content ...
 	if (_buff.find(D_CRLF) != std::string::npos)
 	{
 		std::string _reqHeaders_ = _buff.substr(0, _buff.find(D_CRLF) + 4);
@@ -250,7 +249,7 @@ bool	webServer::_handleRequest_(std::string& _buff, int _acceptedS_)
 		else if (_reqHeaders_.find("Content-Length") != std::string::npos)
 		{
 			// index = find("Content-length: ")
-			size_t _bodySize_ = std::stoi(_reqHeaders_.substr(_reqHeaders_.find("Content-Length: ") + 16));
+			size_t _bodySize_ = std::stoi(_reqHeaders_.substr((int)(_reqHeaders_.find("Content-Length: ")) + 16));
 			std::string _reqBody_ = _buff.substr(_buff.find(D_CRLF) + 4);
 			
 			if (_bodySize_ > (size_t)this->_clientMaxBodyS_)
@@ -310,7 +309,9 @@ std::string	webServer::_handleChunkedRequest_(std::string& _reqbuff)
 
 void	webServer::_handleResponse_(int& _acceptedS_)
 {
-	// CAll the respone class here 
+	// CAll the respone class here
+	// response needs a setter for request obj
+	//this->_response_.setterRequest(this->_request_);
 	std::string _response_("");
 	if (send(_acceptedS_, _response_.c_str(), _response_.length(), 0) != (ssize_t)_response_.length())
 		throw (std::runtime_error("Response Error for [ Socket : "+std::to_string(_acceptedS_) + " ]"));
