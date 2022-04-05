@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:02 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/02 19:08:00 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/05 00:27:40 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <string>
 # include <list>
 # include <fstream>
+# include "serverData.hpp"
 
 enum type { name, parameter, semicolon, openingCurlyBracket, closingCurlyBracket };
 
@@ -30,6 +31,7 @@ class configParser
 {
 	private:
 		std::list<token> _tokensList;
+		std::vector<serverData> _servers;
 	
 	private:
 		void checkHostSyntax(std::list<token>::iterator &it);
@@ -53,6 +55,7 @@ class configParser
 		configParser(char *configFileName);
 		void startTokenization(char *configFileName);
 		void checkSyntaxErrors();
+		void fillServersData();
 		~configParser();
 };
 

@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:44:42 by iltafah           #+#    #+#             */
-/*   Updated: 2022/03/29 13:38:58 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/05 00:45:48 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 class location
 {
 	private:
+		//root path
 		//location path
 		//autoindex {bool}
 		//indecies {maybe a vector of strings}

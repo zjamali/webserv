@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:33 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/02 20:14:12 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/05 00:28:39 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,7 +276,7 @@ void	configParser::checkLocationSyntax(std::list<token>::iterator &it)
 					else if ((*it).data == "upload_store")
 						checkUploadStoreSyntax(++it);
 					else
-						break ;
+						throw (std::runtime_error("holy shit I don't know this directive [" + (*it).data + "] are u insane ?"));
 				}
 				it++;
 			}
@@ -432,11 +432,17 @@ void	configParser::checkSyntaxErrors()
 	}
 }
 
+void	fillServersData()
+{
+	
+}
+
 configParser::configParser(char *configFileName) //args and their count or just file name :3
 {
 	//don't forget to check the extention of the given file
 	startTokenization(configFileName);
 	checkSyntaxErrors();
+	fillServersData();
 }
 
 configParser::~configParser()
