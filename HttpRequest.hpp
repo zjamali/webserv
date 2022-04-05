@@ -43,6 +43,7 @@ private:
     int _requestIndex;
 
 public:
+    void initRequest();
     int getRequestStatus() const;
     void print() const;
 
@@ -50,6 +51,8 @@ public:
      *   Request header
      */
 private:
+    int _port;
+    std::string _host;
     std::string _request;
     std::string _method;
     std::string _httpVersion;
@@ -66,6 +69,9 @@ private:
     bool checkRequestkHeaders();
 
 public:
+    void setBuffer(std::string const &buff) {};
+    void setPort(int const &port) {};
+    void setHost(std::string const &host) { };
     std::string getMethod() const { return _method;};
     std::string getHttpVersion() const { return _httpVersion; };
     std::string getPath() const { return _path; };
@@ -93,6 +99,8 @@ public:
     std::vector<t_bodyPart> getBodyParts() const {return _bodyParts;};
 
 public:
+    HttpRequest():_requestIndex(0), _request(""), _requestStatus(OK), _bodyExist(false)
+    {};
     HttpRequest(std::string const &request);
     ~HttpRequest();
 };

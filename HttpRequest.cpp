@@ -4,6 +4,10 @@
 HttpRequest::HttpRequest(std::string const &request)
     : _requestIndex(0), _request(request), _requestStatus(OK), _bodyExist(false)
 {
+}
+
+void HttpRequest::initRequest()
+{
     this->parseStartLine();
     if (_requestStatus != OK)
         return;
@@ -137,10 +141,10 @@ bool HttpRequest::checkRequestStartLine(std::string const &startLine)
     }
     if (_method != "GET" && _method != "DELETE" && _method != "POST")
     {
-        _requestStatus = NOT_IMPLLIMENTED; 
+        _requestStatus = NOT_IMPLLIMENTED;
         return false;
     }
-    if (_httpVersion != "HTTP/1.1" && _httpVersion != "HTTP/1.1")
+    if (_httpVersion != "HTTP/1.1")
     {
         _requestStatus = HTTP_VERSION_NOT_SUPPORTED; // 505 HTTP Version Not Supported
         return false;
@@ -316,11 +320,11 @@ int HttpRequest::getRequestStatus() const
 
 void HttpRequest::print() const
 {
-    
+
     std::cout << "\n==================  REQUEST BEGIN ==================\n";
-    std::cout << _request ;
+    std::cout << _request;
     std::cout << "\n==================  REQUEST END   ==================\n";
-    
+
     std::cout << "\n-------------------------  REQUEST BEGIN -------------------------\n";
     std::cout << "request status " << _requestStatus << "\n";
     std::cout << "method  :  {" << _method << "}\n";
@@ -334,5 +338,4 @@ void HttpRequest::print() const
         std::cout << "{" << it->first << "} : {" << it->second << "}\n";
     }
     std::cout << "-------------------------  REQUEST END   -------------------------\n";
-
 }
