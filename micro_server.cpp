@@ -82,6 +82,7 @@ int main()
         (void)bytesRead;
         /////// request parse begin
         HttpRequest request(recievedData);
+        request.initRequest();
         request.print();
         ////// request parse end
         HttpResponse response(request);

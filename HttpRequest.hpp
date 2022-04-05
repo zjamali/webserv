@@ -69,9 +69,9 @@ private:
     bool checkRequestkHeaders();
 
 public:
-    void setBuffer(std::string const &buff) {};
-    void setPort(int const &port) {};
-    void setHost(std::string const &host) { };
+    void setBuffer(std::string const &buff){_request = buff; };
+    void setPort(int const &port){_port=port;};
+    void setHost(std::string const &host){_host=host; };
     std::string getMethod() const { return _method;};
     std::string getHttpVersion() const { return _httpVersion; };
     std::string getPath() const { return _path; };
