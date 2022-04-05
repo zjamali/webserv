@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:33 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/05 17:14:02 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/05 17:37:55 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,11 @@
 //I know the following foking ugly cood is foking ugly but don't worry I will butterfly it 
 //I know the following foking ugly cood is foking ugly but don't worry I will butterfly it 
 
+
+const std::vector<serverData> &configParser::getServers() const
+{
+	return (_servers);
+}
 
 /*
 ** ************************************************************************** **
@@ -436,7 +441,7 @@ void	configParser::checkServerSyntax(std::list<token>::iterator &it)
 	// I think you need to increment the iterator to skip the closing curly bracket
 	//it++;
 	_servers.push_back(server);
-	std::cout << (_servers[0].getRoot()) << std::endl;
+	// std::cout << (_servers[0].getClientMaxBodySize()) << std::endl;
 	// std::cout << *(_servers[0].getPorts().begin()) << std::endl;
 	// std::cout << *(++_servers[0].getPorts().begin()) << std::endl;
 }
@@ -454,55 +459,6 @@ void	configParser::checkSyntaxAndFillData()
 		break ;//remove this break ;
 	}
 }
-
-// /*
-// ** ************************************************************************** **
-// 								CreateServers
-// ** ************************************************************************** **
-// */
-
-// void	configParser::createSingleServer(std::list<token>::iterator &it)
-// {
-// 	serverData server;
-
-// 	while (++it != _tokensList.end())
-// 	{
-// 		if ((*it).type == closingCurlyBracket)
-// 			break ;
-// 		if ((*it).type == name)
-// 		{
-// 			// if ((*it).data == "location")
-// 				// ;// checkLocationSyntax(++it);
-// 			// if ((*it).data == "listen")
-// 				// ;// checkListenSyntax(++it);
-// 			if ((*it).data == "host")
-// 				server.setHost();
-// 			// else if ((*it).data == "server_name")
-// 			// 	;// checkServerNameSyntax(++it);
-// 			// else if ((*it).data == "root")
-// 			// 	;// checkRootSyntax(++it);
-// 			// else if ((*it).data == "error_page")
-// 			// 	;// checkErrorPageSyntax(++it);
-// 			// else if ((*it).data == "client_max_body_size")
-// 			// 	;// checkMaxBodySizeSyntax(++it);
-// 		}
-// 	}
-// 	_servers.push_back(server);
-// }
-
-// void	configParser::createServers()
-// {
-// 	std::list<token>::iterator it = _tokensList.begin();
-
-// 	while (it != _tokensList.end())
-// 	{
-// 		if ((*it).data == "server")
-// 			createSingleServer(++it);//check server syntax
-// 		else
-// 			std::cout << "tada" << std::endl;//throw an error
-// 		break ;//remove this break ;
-// 	}
-// }
 
 configParser::configParser(char *configFileName) //args and their count or just file name :3
 {

@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:36:55 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/05 16:46:21 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/05 17:36:56 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,9 @@ class serverData
 {
 	private:
 
+		//client_max_body_size
+		int _client_max_body_size;
+
 		//root path
 		std::string _root;
 		
@@ -38,25 +41,23 @@ class serverData
 		//server names
 		std::set<int> _serverNames;
 		
-		//client_max_body_size
-		int _client_max_body_size;
-		
 		//map of error pages
 		std::map<bool, std::string> _errorPages;
-		
 
 	public:
 		serverData();
 		~serverData();
 
 	public:
-		// void setRoot(std::string givenRoot);
 		void setHost(std::string givenHost);
 		void setPorts(int givenPort);
+
 		std::set<int> getPorts();
 		std::string getHost();
+
 		void setRoot(std::string givenRoot);
 		std::string getRoot();
+
 		void setClientMaxBodySize(int givenSize);
 		int getClientMaxBodySize();
 		// void setServerNames();

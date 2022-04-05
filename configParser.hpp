@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:02 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/05 15:43:57 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/05 17:34:20 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ class configParser
 		configParser(char *configFileName);
 		void startTokenization(char *configFileName);
 		void checkSyntaxAndFillData();
-		// void createServers();
+		const std::vector<serverData> &getServers() const;
 		~configParser();
 };
 
