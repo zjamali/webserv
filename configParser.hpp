@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:02 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/05 00:27:40 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/05 15:43:57 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,14 @@ class configParser
 		std::vector<serverData> _servers;
 	
 	private:
-		void checkHostSyntax(std::list<token>::iterator &it);
-		void checkRootSyntax(std::list<token>::iterator &it);
 		void checkServerSyntax(std::list<token>::iterator &it);
-		void checkListenSyntax(std::list<token>::iterator &it);
-		void checkLocationSyntax(std::list<token>::iterator &it);
-		void checkErrorPageSyntax(std::list<token>::iterator &it);
-		void checkServerNameSyntax(std::list<token>::iterator &it);
-		void checkMaxBodySizeSyntax(std::list<token>::iterator &it);
+		void checkHostSyntax(std::list<token>::iterator &it, serverData &server);
+		void checkRootSyntax(std::list<token>::iterator &it, serverData &server);
+		void checkListenSyntax(std::list<token>::iterator &it, serverData &server);
+		void checkLocationSyntax(std::list<token>::iterator &it, serverData &server);
+		void checkErrorPageSyntax(std::list<token>::iterator &it, serverData &server);
+		void checkServerNameSyntax(std::list<token>::iterator &it, serverData &server);
+		void checkMaxBodySizeSyntax(std::list<token>::iterator &it, serverData &server);
 
 		void checkAutoIndexSyntax(std::list<token>::iterator &it);
 		void checkIndexSyntax(std::list<token>::iterator &it);
@@ -51,11 +51,13 @@ class configParser
 		void checkUploadEnableSyntax(std::list<token>::iterator &it);
 		void checkUploadStoreSyntax(std::list<token>::iterator &it);
 
+		// void createSingleServer(std::list<token>::iterator &it);
+
 	public:
 		configParser(char *configFileName);
 		void startTokenization(char *configFileName);
-		void checkSyntaxErrors();
-		void fillServersData();
+		void checkSyntaxAndFillData();
+		// void createServers();
 		~configParser();
 };
 

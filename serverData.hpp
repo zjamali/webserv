@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:36:55 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/05 00:44:23 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/05 16:01:07 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,31 +22,44 @@
 class serverData
 {
 	private:
-		
-		//vector of locations
-		std::vector<location> locations;
-		
-		//ports that the server listen on {vector ???}
-		std::set<int> ports;
+
+		//root path
+		std::string _root;
 		
 		//server host
-		std::string host;
+		std::string _host;
+		
+		//ports that the server listen on {vector ???}
+		std::set<int> _ports;
+		
+		//vector of locations
+		std::vector<location> _locations;
 		
 		//server names
-		std::set<int> serverNames;
+		std::set<int> _serverNames;
 		
 		//client_max_body_size
-		bool client_max_body_size;
+		bool _client_max_body_size;
 		
 		//map of error pages
-		std::map<bool, std::string> errorPages;
+		std::map<bool, std::string> _errorPages;
 		
-		//root path
-		std::string root;
 
 	public:
 		serverData();
 		~serverData();
+
+	public:
+		// void setRoot(std::string givenRoot);
+		void setHost(std::string givenHost);
+		void setPorts(int givenPort);
+		std::set<int> getPorts();
+		std::string getHost();
+		void setRoot(std::string givenRoot);
+		std::string getRoot();
+		// void setServerNames();
+		// void setClientMaxBodySize(bool var);
+		// void setErrorPages();
 };
 
 #endif
