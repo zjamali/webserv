@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/04 09:27:39 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/05 13:48:24 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,9 @@ void	webServer::_buildASocket_()
 	// creating a socket this socket is used for accepting connections not for exchanging the data{ :
 	if ((this->_socket_ = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 		throw (std::runtime_error("Socket creation error !"));
-	// for non-blocking
+	// Set the server socket to non-blocking mode .
+	// file descriptors are by default blocking , so need to change it to non-blocking mode
+	// we do that by taking the fd of first arg and set its flag to non-blocking mode using fcntl
 	if (fcntl(this->_socket_, F_SETFL, O_NONBLOCK) == -1)
 		throw (std::runtime_error("Non-blocking error for socket " + std::to_string(this->_socket_)+ "!"));
 	this->_option_ = true;
@@ -176,6 +178,9 @@ void	webServer::_start_()
 								if (this->_chunkedReq_)
 									_it->second = this->_handleChunkedRequest_(_it->second);
 								// send the request data , the request call is in here
+								// request part needs a setter and a default constructor 
+								// this->_request_.setData(_it->second);
+								//this->_request_.start();
 								if (FD_ISSET(_acceptedS_, &this->_writefds_))
 									this->_handleResponse_(_acceptedS_); 
 							}

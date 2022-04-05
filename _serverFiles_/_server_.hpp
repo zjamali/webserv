@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/14 16:29:15 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/04 09:04:42 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/05 13:42:57 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,11 @@ class webServer{
 		
 		//
 		std::map<int, int> _clientServer_;
-		// std::vector<_socket_> _sockets_;
+		
+		// Request and  Response:
+		// HttpRequest		_requestObj_;
+		// HttpResponse	_responseObj_;
+		
 		webServer() { }
 		webServer&	operator = (const webServer& );
 	

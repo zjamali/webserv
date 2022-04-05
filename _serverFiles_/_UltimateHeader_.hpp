@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:28 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/04 08:31:09 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/05 13:39:43 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@
 # include <vector>
 # include "_socket_.hpp"
 # include "_server_.hpp"
+# include "../HttpRequest.hpp"
+# include "../HttpResponse.hpp"
 
 
 #endif // !_UltimateHeader_.hpp
