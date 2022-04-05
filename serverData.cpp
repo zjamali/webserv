@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:36:44 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/05 16:02:29 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/05 17:12:47 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,4 +48,14 @@ void serverData::setRoot(std::string givenRoot)
 std::string serverData::getRoot()
 {
 	return (_root);
+}
+
+void serverData::setClientMaxBodySize(int givenSize)
+{
+	_client_max_body_size = givenSize;
+}
+
+int serverData::getClientMaxBodySize()
+{
+	return (_client_max_body_size);
 }

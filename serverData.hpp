@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:36:55 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/05 16:01:07 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/05 16:46:21 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ class serverData
 		std::set<int> _serverNames;
 		
 		//client_max_body_size
-		bool _client_max_body_size;
+		int _client_max_body_size;
 		
 		//map of error pages
 		std::map<bool, std::string> _errorPages;
@@ -57,8 +57,9 @@ class serverData
 		std::string getHost();
 		void setRoot(std::string givenRoot);
 		std::string getRoot();
+		void setClientMaxBodySize(int givenSize);
+		int getClientMaxBodySize();
 		// void setServerNames();
-		// void setClientMaxBodySize(bool var);
 		// void setErrorPages();
 };
 

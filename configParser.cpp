@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:33 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/05 16:03:01 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/05 17:14:02 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -380,8 +380,15 @@ void	configParser::checkErrorPageSyntax(std::list<token>::iterator &it, serverDa
 
 void	configParser::checkMaxBodySizeSyntax(std::list<token>::iterator &it, serverData &server)
 {
+	int size = 0;
+	char *ptr = NULL;
+
 	if ((*it).type == parameter)
 	{
+		size = strtol((*it).data.c_str(), &ptr, 10);
+		if ((*ptr != 'm' && *ptr != 'M') || *(ptr + 1) != '\0')
+			throw (std::runtime_error("unexpected client max body size `" + (*it).data + "`"));
+		server.setClientMaxBodySize(size);
 		it++;
 		if ((*it).type != semicolon)
 			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
