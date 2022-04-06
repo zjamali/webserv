@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:33 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/05 17:37:55 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/06 01:25:36 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -268,6 +268,8 @@ void	configParser::checkUploadStoreSyntax(std::list<token>::iterator &it)
 
 void	configParser::checkLocationSyntax(std::list<token>::iterator &it, serverData &server)
 {
+	location loc;
+
 	if ((*it).type == parameter)
 	{
 		it++;
@@ -306,6 +308,8 @@ void	configParser::checkLocationSyntax(std::list<token>::iterator &it, serverDat
 	}
 	else
 		throw (std::runtime_error("u madafaka have forgotten an argument and that argument is the focking path"));
+
+	server.setLocations(loc);
 }
 
 void	configParser::checkListenSyntax(std::list<token>::iterator &it, serverData &server)
@@ -344,6 +348,7 @@ void	configParser::checkServerNameSyntax(std::list<token>::iterator &it, serverD
 {
 	if ((*it).type == parameter)
 	{
+		server.setServerNames((*it).data);
 		it++;
 		if ((*it).type != semicolon)
 			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
@@ -367,11 +372,19 @@ void	configParser::checkRootSyntax(std::list<token>::iterator &it, serverData &s
 
 void	configParser::checkErrorPageSyntax(std::list<token>::iterator &it, serverData &server)
 {
+	char *ptr = NULL;
+	int errorCode = 0;
+	std::string errorPath;
+
 	if ((*it).type == parameter)
 	{
+		errorCode = std::strtol((*it).data.c_str(), &ptr, 10);
+		if (*ptr != '\0') //Don't forget to check errorCode range
+			throw (std::runtime_error("unexpected errorCode `" + (*it).data + "`"));
 		it++;
 		if ((*it).type == parameter)
 		{
+			errorPath = (*it).data;
 			it++;
 			if ((*it).type != semicolon)
 				throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
@@ -381,6 +394,7 @@ void	configParser::checkErrorPageSyntax(std::list<token>::iterator &it, serverDa
 	}
 	else
 		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+	server.setErrorPages(errorCode, errorPath);
 }
 
 void	configParser::checkMaxBodySizeSyntax(std::list<token>::iterator &it, serverData &server)
@@ -441,6 +455,9 @@ void	configParser::checkServerSyntax(std::list<token>::iterator &it)
 	// I think you need to increment the iterator to skip the closing curly bracket
 	//it++;
 	_servers.push_back(server);
+	// std::cout << (*(_servers[0].getErrorPages().begin())).first << std::endl;
+	// std::cout << (*(_servers[0].getErrorPages().begin())).second << std::endl;
+	// std::cout << *(_servers[0].getServerNames().begin()) << std::endl;
 	// std::cout << (_servers[0].getClientMaxBodySize()) << std::endl;
 	// std::cout << *(_servers[0].getPorts().begin()) << std::endl;
 	// std::cout << *(++_servers[0].getPorts().begin()) << std::endl;

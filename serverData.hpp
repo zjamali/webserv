@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:36:55 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/05 17:36:56 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/06 00:59:58 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,14 @@ class serverData
 		//ports that the server listen on {vector ???}
 		std::set<int> _ports;
 		
-		//vector of locations
-		std::vector<location> _locations;
-		
 		//server names
-		std::set<int> _serverNames;
+		std::set<std::string> _serverNames;
 		
 		//map of error pages
-		std::map<bool, std::string> _errorPages;
+		std::map<int, std::string> _errorPages;
+
+		//vector of locations
+		std::vector<location> _locations;
 
 	public:
 		serverData();
@@ -60,6 +60,15 @@ class serverData
 
 		void setClientMaxBodySize(int givenSize);
 		int getClientMaxBodySize();
+
+		void setServerNames(std::string serverName);
+		std::set<std::string> getServerNames();
+
+		void setErrorPages(int errorCode, std::string errorPath);
+		std::map<int, std::string> getErrorPages();
+
+		void setLocations(location loc);
+		std::vector<location> getLocations();
 		// void setServerNames();
 		// void setErrorPages();
 };
