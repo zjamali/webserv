@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:02 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/05 17:34:20 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/06 14:02:37 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,15 +43,13 @@ class configParser
 		void checkServerNameSyntax(std::list<token>::iterator &it, serverData &server);
 		void checkMaxBodySizeSyntax(std::list<token>::iterator &it, serverData &server);
 
-		void checkAutoIndexSyntax(std::list<token>::iterator &it);
-		void checkIndexSyntax(std::list<token>::iterator &it);
-		void checkAllowMethodsSyntax(std::list<token>::iterator &it);
-		void checkReturnSyntax(std::list<token>::iterator &it);
-		void checkFastcgiPassSyntax(std::list<token>::iterator &it);
-		void checkUploadEnableSyntax(std::list<token>::iterator &it);
-		void checkUploadStoreSyntax(std::list<token>::iterator &it);
-
-		// void createSingleServer(std::list<token>::iterator &it);
+		void checkIndexSyntax(std::list<token>::iterator &it, location &loc);
+		void checkReturnSyntax(std::list<token>::iterator &it, location &loc);
+		void checkAutoIndexSyntax(std::list<token>::iterator &it, location &loc);
+		void checkFastcgiPassSyntax(std::list<token>::iterator &it, location &loc);
+		void checkUploadStoreSyntax(std::list<token>::iterator &it, location &loc);
+		void checkUploadEnableSyntax(std::list<token>::iterator &it, location &loc);
+		void checkAllowedMethodsSyntax(std::list<token>::iterator &it, location &loc);
 
 	public:
 		configParser(char *configFileName);

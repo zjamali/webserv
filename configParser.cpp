@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:33 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/06 01:25:36 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/06 15:44:25 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,10 +164,25 @@ tokenType = name;
 ** ************************************************************************** **
 */
 
-void	configParser::checkAutoIndexSyntax(std::list<token>::iterator &it)
+std::string strToLower(std::string &str)
+{
+	std::string lowerStr = "";
+
+	for (int i = 0; str[i]; i++)
+		lowerStr += tolower(str[i]);
+	return (lowerStr);
+}
+
+void	configParser::checkAutoIndexSyntax(std::list<token>::iterator &it, location &loc)
 {
 	if ((*it).type == parameter)
 	{
+		if (strToLower((*it).data) != "on" && strToLower((*it).data) != "off")
+			throw (std::runtime_error("invalid madafaka value" + (*it).data + "in `autoindex` directive, it must be `on` or `off` madafaka"));
+		
+		if (strToLower((*it).data) == "on")
+			loc.setAutoIndex(true);
+
 		it++;
 		if ((*it).type != semicolon)
 			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
@@ -176,10 +191,11 @@ void	configParser::checkAutoIndexSyntax(std::list<token>::iterator &it)
 		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
 }
 
-void	configParser::checkIndexSyntax(std::list<token>::iterator &it)
+void	configParser::checkIndexSyntax(std::list<token>::iterator &it, location &loc)
 {
 	if ((*it).type == parameter)
 	{
+		loc.setIndices((*it).data);
 		it++;
 		if ((*it).type != semicolon)
 			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
@@ -188,7 +204,7 @@ void	configParser::checkIndexSyntax(std::list<token>::iterator &it)
 		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
 }
 
-void	configParser::checkAllowMethodsSyntax(std::list<token>::iterator &it)
+void	configParser::checkAllowedMethodsSyntax(std::list<token>::iterator &it, location &loc)
 {
 	if ((*it).type == parameter)
 	{
@@ -201,6 +217,7 @@ void	configParser::checkAllowMethodsSyntax(std::list<token>::iterator &it)
 			{
 				if ((*it).data != "GET" && (*it).data != "POST" && (*it).data != "DELETE")
 					throw (std::runtime_error("wtf is this method ?!?!?! `" + (*it).data + "`, go learn some foking English"));
+				loc.setAllowedMethods((*it).data, true);
 			}
 			else
 				throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
@@ -212,13 +229,21 @@ void	configParser::checkAllowMethodsSyntax(std::list<token>::iterator &it)
 		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
 }
 
-void	configParser::checkReturnSyntax(std::list<token>::iterator &it)
+void	configParser::checkReturnSyntax(std::list<token>::iterator &it, location &loc)
 {
+	char *ptr;
+	int	errorCode;
+	std::string errorPath;
+
 	if ((*it).type == parameter)
 	{
+		errorCode = strtol((*it).data.c_str(), &ptr, 10);
+		if (*ptr != '\0')
+			throw (std::runtime_error("WTF!!! what is this foking return code `" + (*it).data + "`"));
 		it++;
 		if ((*it).type == parameter)
 		{
+			errorPath = (*it).data;
 			it++;
 			if ((*it).type != semicolon)
 				throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
@@ -228,12 +253,17 @@ void	configParser::checkReturnSyntax(std::list<token>::iterator &it)
 	}
 	else
 		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+	
+	loc.setIsRedirection(true);
+	loc.setReturnData(std::make_pair<int, std::string>(errorCode, errorPath));
 }
 
-void	configParser::checkFastcgiPassSyntax(std::list<token>::iterator &it)
+void	configParser::checkFastcgiPassSyntax(std::list<token>::iterator &it, location &loc)
 {
 	if ((*it).type == parameter)
 	{
+		loc.setIsCgi(true);
+		loc.setCgiPath((*it).data);
 		it++;
 		if ((*it).type != semicolon)
 			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
@@ -242,10 +272,14 @@ void	configParser::checkFastcgiPassSyntax(std::list<token>::iterator &it)
 		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
 }
 
-void	configParser::checkUploadEnableSyntax(std::list<token>::iterator &it)
+void	configParser::checkUploadEnableSyntax(std::list<token>::iterator &it, location &loc)
 {
 	if ((*it).type == parameter)
 	{
+		if (strToLower((*it).data) != "on" && strToLower((*it).data) != "off")
+			throw (std::runtime_error("invalid madafaka value" + (*it).data + "in `upload_enable` directive, it must be `on` or `off` madafaka"));
+		if (strToLower((*it).data) == "on")
+			loc.setIsUploadEnable(true);
 		it++;
 		if ((*it).type != semicolon)
 			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
@@ -254,10 +288,11 @@ void	configParser::checkUploadEnableSyntax(std::list<token>::iterator &it)
 		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
 }
 
-void	configParser::checkUploadStoreSyntax(std::list<token>::iterator &it)
+void	configParser::checkUploadStoreSyntax(std::list<token>::iterator &it, location &loc)
 {
 	if ((*it).type == parameter)
 	{
+		loc.setUploadPath((*it).data);
 		it++;
 		if ((*it).type != semicolon)
 			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
@@ -272,6 +307,7 @@ void	configParser::checkLocationSyntax(std::list<token>::iterator &it, serverDat
 
 	if ((*it).type == parameter)
 	{
+		loc.setPath((*it).data);
 		it++;
 		if ((*it).type == openingCurlyBracket)
 		{
@@ -282,26 +318,26 @@ void	configParser::checkLocationSyntax(std::list<token>::iterator &it, serverDat
 				else if ((*it).type == name)
 				{
 					if ((*it).data == "autoindex")
-						checkAutoIndexSyntax(++it);
+						checkAutoIndexSyntax(++it, loc);
 					else if ((*it).data == "index")
-						checkIndexSyntax(++it);
+						checkIndexSyntax(++it, loc);
 					else if ((*it).data == "allow_methods")
-						checkAllowMethodsSyntax(++it);
+						checkAllowedMethodsSyntax(++it, loc);
 					else if ((*it).data == "return")
-						checkReturnSyntax(++it);
+						checkReturnSyntax(++it, loc);
 					else if ((*it).data == "fastcgi_pass")
-						checkFastcgiPassSyntax(++it);
+						checkFastcgiPassSyntax(++it, loc);
 					else if ((*it).data == "upload_enable")
-						checkUploadEnableSyntax(++it);
+						checkUploadEnableSyntax(++it, loc);
 					else if ((*it).data == "upload_store")
-						checkUploadStoreSyntax(++it);
+						checkUploadStoreSyntax(++it, loc);
 					else
 						throw (std::runtime_error("holy shit I don't know this directive [" + (*it).data + "] are u insane ?"));
 				}
 				it++;
 			}
 			if ((*it).type != closingCurlyBracket)
-				throw (std::runtime_error("for god sake ma sed 3lina had location, use this '}'"));//throw an error
+				throw (std::runtime_error("for god sake ma sed 3lina had location, use this '}'"));
 		}
 		else
 			throw (std::runtime_error("u forgot the focking `{` don't forget it again"));
@@ -452,9 +488,12 @@ void	configParser::checkServerSyntax(std::list<token>::iterator &it)
 
 	if ((*it).type != closingCurlyBracket)
 		throw (std::runtime_error("for god sake ma sed 3lina had server use this '}'"));//throw an error
-	// I think you need to increment the iterator to skip the closing curly bracket
-	//it++;
+
 	_servers.push_back(server);
+
+	// I think you need to increment the iterator to skip the closing curly bracket
+	it++; // skip the closing curly bracket
+
 	// std::cout << (*(_servers[0].getErrorPages().begin())).first << std::endl;
 	// std::cout << (*(_servers[0].getErrorPages().begin())).second << std::endl;
 	// std::cout << *(_servers[0].getServerNames().begin()) << std::endl;
@@ -472,8 +511,7 @@ void	configParser::checkSyntaxAndFillData()
 		if ((*it).data == "server")
 			checkServerSyntax(++it);//check server syntax
 		else
-			std::cout << "tada" << std::endl;//throw an error
-		break ;//remove this break ;
+			throw(std::runtime_error("unknown directive \"" + (*it).data + "\""));//throw an error
 	}
 }
 
