@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/06 14:17:47 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/06 15:21:25 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,7 @@ void	webServer::_start_()
 							// look for the client socket inside the map and add the body to its mapped value:
 							std::map<int, std::string>::iterator _it = this->_clientsInfos_.find(_acceptedS_);
 							if (_it != this->_clientsInfos_.end())
-								_it->second += _buffer_;
+								_it->second.append(_buffer_, _rVal_);
 							
 							/* FOR HANDLING CHUNKED TRANSFER-CODING
 								length := 0
