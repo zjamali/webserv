@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:33 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/06 15:44:25 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/06 17:24:39 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,23 +69,24 @@ tokenType = name;
 				}
 			}
 
-			if (byte == '#')
-			{
-				//skip hashtags
-				while (configFile.good())
-				{
-					configFile.get(byte);
-					if (byte != '\n')
-						continue ;
-					break ;
-				}
-			}
 
 			/**********************************/
 			/* another loop for reading words */
 			/**********************************/
 			while (configFile.good())
 			{
+				//skip hashtags
+				if (byte == '#')
+				{
+					while (configFile.good())
+					{
+						configFile.get(byte);
+						if (byte != '\n')
+							continue ;
+						break ;
+					}
+				}
+
 				/*************************************************************************/
 				/* so here if I encounter spaces or semicolon or brackets store the word */
 				/* and if I found a semicolon or brackets store it also 			     */
