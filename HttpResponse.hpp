@@ -12,6 +12,7 @@
 #include <dirent.h>
 #include <time.h>
 #include "HttpRequest.hpp"
+#include "IndexOfHtmlTemplate.hpp"
 
 class HttpResponse
 {

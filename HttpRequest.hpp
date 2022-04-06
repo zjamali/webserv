@@ -57,6 +57,7 @@ private:
     std::string _method;
     std::string _httpVersion;
     std::string _path;
+    std::string _connectionType;
     int _requestStatus;
     std::string _quereyData; // raw data
     std::map<std::string, std::string> _querey;
@@ -69,12 +70,15 @@ private:
     bool checkRequestkHeaders();
 
 public:
-    void setBuffer(std::string const &buff){_request = buff; };
+    void setBuffer(std::string const &buff){_request = buff;};
     void setPort(int const &port){_port=port;};
-    void setHost(std::string const &host){_host=host; };
+    void setHost(std::string const &host){_host=host;};
+
+    std::string getConnectionType() const{ return _connectionType;};
     std::string getMethod() const { return _method;};
     std::string getHttpVersion() const { return _httpVersion; };
     std::string getPath() const { return _path; };
+
     std::map<std::string, std::string> getHedaers() const {return _headers; };
     std::map<std::string, std::string> getQueries() const {return _querey; };
 

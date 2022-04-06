@@ -14,6 +14,10 @@ void HttpRequest::initRequest()
     this->parseHeaders();
     if (_requestStatus != OK)
         return;
+    if (_headers.find("Connection") != _headers.end())
+        _connectionType = _headers["Connection"];
+    else
+        _connectionType = "keep-alive";
     if (_method == "POST")
         this->parseRequestBody();
 }
