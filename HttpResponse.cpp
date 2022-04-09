@@ -1,9 +1,9 @@
 #include "HttpResponse.hpp"
 
-HttpResponse::HttpResponse(HttpRequest const &request)
+HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
 {
-    // init servers
     init_response();
+
     _responseStatus = request.getRequestStatus();
     _method = request.getMethod();
     _httpVersion = request.getHttpVersion();
@@ -24,12 +24,58 @@ HttpResponse::HttpResponse(HttpRequest const &request)
     }
     __connection = static_cast<std::string>(request.getConnectionType());
 
-    ///
-    _errorPagesExist = true;
+    // init servers find server
+    std::cout << "========================>" << _host << "<========================\n";
+
+    _server = server;
+
+    // root
+
+    _root = _server.getRoot();
+
+    // error pages
+    __errorPages = _server.getErrorPages();
+    if (__errorPages.size() != 0)
+        _errorPagesExist = true;
+
+    // locations
+    _locations = _server.getLocations();
+    location _location;
+    bool isLocationFounded = false;
+    /**** match path with location****/
+    for (std::vector<location>::iterator it = _locations.begin(); it != _locations.end() ; it++ )
+    {
+        if (it->getPath() == std::string(_path))
+        {
+            _location = *it;
+            isLocationFounded = true;
+            break;
+        }
+    }
+    if (isLocationFounded)
+    {
+        // if location is redirection
+        if (_location.getIsRedirection())
+        {
+            std::cout << ">>>>>>>>>>>>>>>>>location founded\n";
+            _finaleResponse = handleRedirection(_host,_location.getReturnData().first,_location.getReturnData().second);
+            return;
+        }
+        else
+        {
+            
+        }
+    }
+    // location  is retdirection or not
+    /// allowed methods
+    // error pages
+    // indeces
+    // location is cgi cgi path
+    // upload path
+    //
     _autoIndex = true;
-    ///
-    __errorPages[NOT_FOUND] = "/Users/zjamali/Desktop/webserv/www/404.html";
-    _finaleResponse = generateResponse(_responseStatus, "/Users/zjamali/Desktop/webserv/www", _path, "/Users/zjamali/Desktop/webserv/www/upload/"); // get config obj ; root
+
+    _finaleResponse = generateResponse(_responseStatus, _root, _path, "/Users/zjamali/Desktop/webserv/www/upload/"); // get config obj ; root
 }
 
 void HttpResponse::init_response()
@@ -183,12 +229,12 @@ void HttpResponse::print()
     std::cout << _finaleResponse << std::endl;
     std::cout << "+++++++++++++++++++++ Responce END ++++++++++++++++++++\n";
 }
-
+/*
 std::string HttpResponse::generateBody()
 {
     return " ";
 }
-
+*/
 std::string const HttpResponse::defaultServerPages(unsigned int &statusCode) const
 {
     if (statusCode == OK)
@@ -219,7 +265,7 @@ std::string const HttpResponse::generateErrorResponse(unsigned int errorCode)
         {
             std::string body;
             // get Html page path
-            std::string pagePath = __errorPages[errorCode];
+            std::string pagePath = _root + __errorPages[errorCode];
             struct stat sb;
             if (!stat(pagePath.c_str(), &sb) && S_ISREG(sb.st_mode))
             {
@@ -397,7 +443,7 @@ std::string HttpResponse::handle_GET_Request(std::string const &root, std::strin
                 }
                 else
                 { /// generate redirection
-                    return handleRedirection(_host, path + "/");
+                    return handleRedirection(_host,301, path + "/");
                 }
             }
             else // if file open it and ;
@@ -429,9 +475,9 @@ std::string HttpResponse::handle_GET_Request(std::string const &root, std::strin
     header += generateHeader(code_status, body.length(), __contentType);
     return (header + CRLF_Combination + CRLF_Combination + body);
 }
-std::string HttpResponse::handleRedirection(std::string const &host, std::string const &location)
+std::string HttpResponse::handleRedirection(std::string const &host,int const &code , std::string const &location)
 {
-    return "HTTP/1.1 301 Moved Permanently\r\nLocation: http://" + host + location + CRLF_Combination + CRLF_Combination;
+    return "HTTP/1.1 " + std::to_string(code) + std::string(" ") + __codes[code] + "\r\nLocation: http://" + host + location + CRLF_Combination + CRLF_Combination;
 }
 
 std::string HttpResponse::handle_POST_Request(std::string const &root, std::string const &uploadPath)

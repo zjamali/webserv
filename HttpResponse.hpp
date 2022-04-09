@@ -13,6 +13,7 @@
 #include <time.h>
 #include "HttpRequest.hpp"
 #include "IndexOfHtmlTemplate.hpp"
+#include "serverData.hpp"
 
 class HttpResponse
 {
@@ -34,7 +35,7 @@ private:
 
     std::map<unsigned int, std::string> __codes;
     std::map<std::string, std::string> __contentTypesList;
-    std::map<unsigned int, std::string> __errorPages;
+    std::map<int, std::string> __errorPages;
 
 private:
     //HttpRequest const &_request;
@@ -59,6 +60,7 @@ private:
     
     bool _errorPagesExist;
     bool _autoIndex;
+
     std::string const defaultServerPages(unsigned int &statusCode) const;
     std::string const generateErrorResponse(unsigned int errorCode);
     std::string const ResponseBadRequest() const;
@@ -67,14 +69,24 @@ private:
     std::string const ResponseMethodNotAllowed() const;
     std::string const ResponseHttpVersionNotSupported() const;
 
+
 public:
-    HttpResponse(HttpRequest const &request);
+    HttpResponse(HttpRequest const &request, serverData const &server);
+private:
+    std::set<int> _ports;
+    serverData _server;
+    std::string _root;
+    std::vector<location> _locations;
+    bool _uploadenabled;
+    std::string _uploadpath;
+
+public:
     ~HttpResponse();
 
     std::string generateResponse(unsigned int const code_status, std::string const &root /*or location*/, std::string const &path, std::string const &uploadPath);
     std::string const &getResponse() const { return _finaleResponse;};
     std::string handle_GET_Request(std::string const &root,std::string const &path);
-    std::string handleRedirection(std::string const &host, std::string const &location);
+    std::string handleRedirection(std::string const &host,int const &code , std::string const &location);
     std::string handle_POST_Request(std::string const &root,std::string const &path);
     std::string handle_DELETE_Request(std::string const &root, std::string const &path);
     

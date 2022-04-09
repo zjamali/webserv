@@ -1,105 +1,120 @@
 #include "micro_server.hpp"
 
-int main()
+#include "configParser.hpp"
+
+int main(int argc, char **argv)
 {
-	//////////////////////////////////////////////////
-	/*					Parser						*/
-	//////////////////////////////////////////////////
-
-
-
-	//////////////////////////////////////////////////
-	/************************************************/
-	//////////////////////////////////////////////////
-    // Create a socket (IPv4, TCP)
-    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd == -1)
+    std::vector<serverData> servers;
+    //////////////////////////////////////////////////
+    /*					Parser						*/
+    //////////////////////////////////////////////////
+    if (argc == 2)
     {
-        std::cout << "Failed to create socket. errno: " << errno << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    // Listen to port 9999 on any address
-    sockaddr_in sockaddr;
-    sockaddr.sin_family = AF_INET;
-    sockaddr.sin_addr.s_addr = INADDR_ANY;
-    sockaddr.sin_port = htons(PORT); // htons is necessary to convert a number to
-                                     // network byte order
-    if (bind(sockfd, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) < 0)
-    {
-        std::cout << "Failed to bind to port 9999. errno: " << errno << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    // Start listening. Hold at most 10 connections in the queue
-    if (listen(sockfd, 10) < 0)
-    {
-        std::cout << "Failed to listen on socket. errno: " << errno << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    // Grab a connection from the queue
-    size_t addrlen = sizeof(sockaddr);
-
-    while (1)
-    {
-        /* code */
-
-        int connection = accept(sockfd, (struct sockaddr *)&sockaddr, (socklen_t *)&addrlen);
-        if (connection < 0)
+        try
         {
-            std::cout << "Failed to grab connection. errno: " << errno << std::endl;
-            exit(EXIT_FAILURE);
-        }
-        char buffer[10000];
-        int bytesRead;
-        // bytesRead = read(connection, buffer, 10000);
-        std::string recievedData;
-        unsigned int request_lenght = 900000000;
-        int i = 1;
-        while ((bytesRead = recv(connection, buffer, 10000, 0)) > 0)
-        {
-            buffer[bytesRead] = '\0';
-            recievedData += buffer;
-            // read the all request
-            if (recievedData.find("POST") != std::string::npos)
-            {
-                // read the all request
-                if (i && recievedData.find("Content-Length:") != std::string::npos)
-                {
-                    i = 0;
-                    int begin = recievedData.find("Content-Length:") + strlen("Content-Length: ");
-                    int end = recievedData.find("\r\n", begin);
-                    std::string contentLength = recievedData.substr(begin, end - begin);
-                    std::string header = recievedData.substr(0, recievedData.find("\r\n\r\n"));
-                    request_lenght = (header.length()) + atoi(contentLength.c_str()) + strlen("\r\n\r\n");
-                }
-                if (request_lenght < 900000000)
-                {
-                    if (recievedData.length() >= request_lenght)
-                        break;
-                }
-            }
-            else
-            {
-                if (recievedData.find("\r\n\r\n") != std::string::npos)
-                    break;
-            }
-        }
+            configParser config(argv[1]);
+            servers = config.getServers();
+            //////////////////////////////////////////////////
+            /************************************************/
+            //////////////////////////////////////////////////
+            // Create a socket (IPv4, TCP)
 
-        (void)bytesRead;
-        /////// request parse begin
-        HttpRequest request(recievedData);
-        request.initRequest();
-        request.print();
-        ////// request parse end
-        HttpResponse response(request);
-       // response.print();
-        //response.print();
-        send(connection, response.getResponse().c_str(), response.getResponse().length(), 0);
-        close(connection);
+            int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+            if (sockfd == -1)
+            {
+                std::cout << "Failed to create socket. errno: " << errno << std::endl;
+                exit(EXIT_FAILURE);
+            }
+
+            // Listen to port 9999 on any address
+            sockaddr_in sockaddr;
+            sockaddr.sin_family = AF_INET;
+            sockaddr.sin_addr.s_addr = INADDR_ANY;
+            sockaddr.sin_port = htons(PORT); // htons is necessary to convert a number to
+                                             // network byte order
+            if (bind(sockfd, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) < 0)
+            {
+                std::cout << "Failed to bind to port 9999. errno: " << errno << std::endl;
+                exit(EXIT_FAILURE);
+            }
+
+            // Start listening. Hold at most 10 connections in the queue
+            if (listen(sockfd, 10) < 0)
+            {
+                std::cout << "Failed to listen on socket. errno: " << errno << std::endl;
+                exit(EXIT_FAILURE);
+            }
+
+            // Grab a connection from the queue
+            size_t addrlen = sizeof(sockaddr);
+
+            while (1)
+            {
+                /* code */
+
+                int connection = accept(sockfd, (struct sockaddr *)&sockaddr, (socklen_t *)&addrlen);
+                if (connection < 0)
+                {
+                    std::cout << "Failed to grab connection. errno: " << errno << std::endl;
+                    exit(EXIT_FAILURE);
+                }
+                char buffer[10000];
+                int bytesRead;
+                // bytesRead = read(connection, buffer, 10000);
+                std::string recievedData;
+                unsigned int request_lenght = 900000000;
+                int i = 1;
+                while ((bytesRead = recv(connection, buffer, 10000, 0)) > 0)
+                {
+                    buffer[bytesRead] = '\0';
+                    recievedData += buffer;
+                    // read the all request
+                    if (recievedData.find("POST") != std::string::npos)
+                    {
+                        // read the all request
+                        if (i && recievedData.find("Content-Length:") != std::string::npos)
+                        {
+                            i = 0;
+                            int begin = recievedData.find("Content-Length:") + strlen("Content-Length: ");
+                            int end = recievedData.find("\r\n", begin);
+                            std::string contentLength = recievedData.substr(begin, end - begin);
+                            std::string header = recievedData.substr(0, recievedData.find("\r\n\r\n"));
+                            request_lenght = (header.length()) + atoi(contentLength.c_str()) + strlen("\r\n\r\n");
+                        }
+                        if (request_lenght < 900000000)
+                        {
+                            if (recievedData.length() >= request_lenght)
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        if (recievedData.find("\r\n\r\n") != std::string::npos)
+                            break;
+                    }
+                }
+
+                (void)bytesRead;
+                /////// request parse begin
+                HttpRequest request(recievedData);
+                request.initRequest();
+                request.print();
+                ////// request parse end
+                HttpResponse response(request, servers[0]);
+                // response.print();
+                // response.print();
+                send(connection, response.getResponse().c_str(), response.getResponse().length(), 0);
+                close(connection);
+            }
+            close(sockfd);
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << e.what() << '\n';
+        }
     }
-    close(sockfd);
+    else
+        std::cout << "Error, you should pass a config file" << std::endl;
 }
 
 /*
