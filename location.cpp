@@ -6,13 +6,13 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:45:44 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/06 15:40:21 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/09 00:34:31 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./location.hpp"
 
-location::location() : _autoIndex(false), _isCgi(false), _isRedirection(false), _isUploadEnable(false)
+location::location() : _autoIndex(false), _isRedirection(false), _isCgi(false), _isUploadEnable(false)
 {
 	_allowedMethods.insert(std::make_pair<std::string, bool>("GET", true));
 	_allowedMethods.insert(std::make_pair<std::string, bool>("POST", false));
