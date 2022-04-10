@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/06 15:21:25 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/09 16:04:20 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@ webServer::webServer(configParser& _cp_)
 {
 	this->_servers_.assign(_cp_.getServers().begin(), _cp_.getServers().end());
 	this->_start_();
+}
+
+webServer::~webServer()
+{
+	
 }
 
 void	webServer::_buildASocket_() 
@@ -75,7 +80,7 @@ void	webServer::_start_()
 		}
 	}
 	// waiting for the connection :
-	struct timeval _time_ = {1, 1};
+	struct timeval _time_ = {1, 0};
 	while(true)
 	{
 		FD_ZERO(&this->_readfds_);
@@ -132,10 +137,10 @@ void	webServer::_start_()
 					{
 						int _acceptedS_ = _fdsocket;
 						// handling the request that sent and return the correct response :
-						char _buffer_[1024];
+						char _buffer_[BUFSIZE + 1];
 						bzero(_buffer_, sizeof(_buffer_));
 						// read from client socket 
-						int _rVal_ = recv(_acceptedS_, _buffer_, 1024, 0);
+						int _rVal_ = recv(_acceptedS_, _buffer_, BUFSIZE, 0);
 						std::cout << "Receive data from client with socket : " << _acceptedS_ << " - IP = " << inet_ntoa(this->_Caddr_.sin_addr) << ":" << ntohs(this->_Caddr_.sin_port) << std::endl;
 						if (_rVal_ > 0)
 						{

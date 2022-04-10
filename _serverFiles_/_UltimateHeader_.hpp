@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:28 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/06 13:58:37 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/09 16:03:52 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@
 # include "../HttpRequest.hpp"
 # include "../HttpResponse.hpp"
 # include "../configParser.hpp"
+
+# define BUFSIZE 1024
 
 
 

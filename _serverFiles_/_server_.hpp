@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/14 16:29:15 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/06 14:07:13 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/10 15:03:50 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,9 @@ class webServer{
 		
 		// Request and  Response:
 		HttpRequest		_requestObj_;
+
+		serverData	_respServer_;
+		int			_respPort_;
 		
 		webServer() { }
 		webServer&	operator = (const webServer& );
