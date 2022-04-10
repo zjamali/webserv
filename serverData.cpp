@@ -6,14 +6,15 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:36:44 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/06 16:46:28 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/10 01:46:25 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "serverData.hpp"
 
-serverData::serverData() : _client_max_body_size(0)
+serverData::serverData() : _client_max_body_size(1), _host("0.0.0.0") //default port is 80,  //default root is "/etc/nginx/html", //default server name ""
 {
+	
 }
 
 serverData::~serverData()

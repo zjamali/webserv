@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:33 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/06 17:24:39 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/09 21:52:11 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ tokenType = name;
 				/* so here if I encounter spaces or semicolon or brackets store the word */
 				/* and if I found a semicolon or brackets store it also 			     */
 				/*************************************************************************/
-				if (isspace(byte) || byte == '{' || byte == '}' || byte == ';' || byte == '#')
+				if (isspace(byte) || byte == '{' || byte == '}' || byte == ';')
 				{
 					/*********************************************************************************/
 					/* store word if it is not empty, it can be empty if this is the first iteration */
