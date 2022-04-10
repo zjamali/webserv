@@ -35,37 +35,108 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
 
     // error pages
     __errorPages = _server.getErrorPages();
-    if (__errorPages.size() != 0)
+    if (__errorPages.size())
         _errorPagesExist = true;
 
     // locations
     _locations = _server.getLocations();
     location _location;
     bool isLocationFounded = false;
-    /**** match path with location****/
-    for (std::vector<location>::iterator it = _locations.begin(); it != _locations.end() ; it++ )
+
+    // get upload location and cgi
+    for (std::vector<location>::iterator it = _locations.begin(); it != _locations.end(); it++)
     {
-        if (it->getPath() == std::string(_path))
+        if (it->getIsUploadEnable())
+        {
+            _uploadenabled = true;
+            _uploadpath = it->getUploadPath();
+        }
+        // get cgi
+        if (!_php_cgi_exist && it->getIsCgi() && it->getPath() == "*.php")
+        {
+            _php_cgi_exist = true;
+            _php_cgi_path = it->getCgiPath();
+        }
+        if (!_python_cgi_exist && it->getIsCgi() && it->getPath() == "*.py")
+        {
+            _python_cgi_exist = true;
+            _python_cgi_path = it->getCgiPath();
+        }
+    }
+
+    /**** match path with location****/
+    for (std::vector<location>::iterator it = _locations.begin(); it != _locations.end(); it++)
+    {
+        if (it->getPath() == _path || std::string(it->getPath() + "/") == std::string(_path))
         {
             _location = *it;
             isLocationFounded = true;
             break;
         }
     }
-    if (isLocationFounded)
+    /**** match path with a cgi ***/
+    if (!isLocationFounded)
     {
-        // if location is redirection
-        if (_location.getIsRedirection())
+        if (_path.rfind(".php") != std::string::npos)
         {
-            std::cout << ">>>>>>>>>>>>>>>>>location founded\n";
-            _finaleResponse = handleRedirection(_host,_location.getReturnData().first,_location.getReturnData().second);
-            return;
+            _is_cgi = true;
+            for (std::vector<location>::iterator it = _locations.begin(); it != _locations.end(); it++)
+            {
+                if (it->getPath() == "*.php")
+                {
+                    _location = *it;
+                    isLocationFounded = true;
+                    _indices.insert(_php_index);
+                    _autoIndex = false;
+                    _allowedMethods = _location.getAllowedMethods();
+                }
+            }
         }
-        else
+        else if (_path.rfind(".py") != std::string::npos)
         {
-            
+            _is_cgi = true;
+            for (std::vector<location>::iterator it = _locations.begin(); it != _locations.end(); it++)
+            {
+                if (it->getPath() == "*.py")
+                {
+                    _location = *it;
+                    isLocationFounded = true;
+                    _indices.insert(_python_index);
+                    _autoIndex = false;
+                    _allowedMethods = _location.getAllowedMethods();
+                }
+            }
         }
     }
+
+    if (!isLocationFounded) // set default location if no location founded
+    {
+        if (_locations.size())
+            _location = _locations[0];
+        else
+        {
+            _finaleResponse = generateErrorResponse(NOT_FOUND);
+            return;
+        }
+    }
+    // if location is redirection
+    if (_location.getIsRedirection())
+    {
+        _finaleResponse = handleRedirection(_host, _location.getReturnData().first, _location.getReturnData().second);
+        return;
+    }
+    else
+    {
+        if (!_is_cgi)
+        {
+            _autoIndex = _location.getAutoIndex();
+            _allowedMethods = _location.getAllowedMethods();
+            if (_location.getIndices().size()) // set indeces
+                _indices = _location.getIndices();
+        }
+    }
+
+    std::cout << "location : " << _location.getPath() << "\n";
     // location  is retdirection or not
     /// allowed methods
     // error pages
@@ -73,15 +144,24 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
     // location is cgi cgi path
     // upload path
     //
-    _autoIndex = true;
 
-    _finaleResponse = generateResponse(_responseStatus, _root, _path, "/Users/zjamali/Desktop/webserv/www/upload/"); // get config obj ; root
+    _finaleResponse = generateResponse(_responseStatus, _root, _path); // get config obj ; root
 }
 
 void HttpResponse::init_response()
 {
-    _errorPagesExist = false;
+    _uploadenabled = false;
+
+    _php_cgi_exist = false;
+    _php_index = "index.php";
+    _python_cgi_exist = false;
+    _python_index = "index.py";
+    _is_cgi = false;
     _autoIndex = false;
+    // default index
+    _indices.insert("index.html");
+    _indices.insert("index.htm");
+
     CRLF_Combination = std::string(CRLF);
     __http = "HTTP/1.1";
     __statusDesciption = "";
@@ -251,6 +331,8 @@ std::string const HttpResponse::defaultServerPages(unsigned int &statusCode) con
         return ResponseMethodNotAllowed();
     else if (statusCode == FORBIDDEN)
         return ResponseForbidden();
+    else if (statusCode == INTERNAL_SERVER_ERROR)
+        return ResponseForbidden();
     else
         return ResponseNotFound();
 }
@@ -293,7 +375,7 @@ std::string const HttpResponse::generateErrorResponse(unsigned int errorCode)
     }
 }
 
-std::string HttpResponse::generateResponse(unsigned int const code_status, std::string const &root /*or location*/, std::string const &path, std::string const &uploadPath)
+std::string HttpResponse::generateResponse(unsigned int const code_status, std::string const &root /*or location*/, std::string const &path)
 {
     std::string response;
     std::string header;
@@ -304,15 +386,16 @@ std::string HttpResponse::generateResponse(unsigned int const code_status, std::
         return generateErrorResponse(code_status);
     }
     ///
-    if (_method == "GET")
+    if (_method == "GET" && _allowedMethods["GET"])
     {
         return handle_GET_Request(root, path);
     }
-    else if (_method == "POST")
+    else if (_method == "POST" && _allowedMethods["POST"])
     {
-        return handle_POST_Request(root, uploadPath);
+        std::cout << "post called\n";
+        return handle_POST_Request();
     }
-    else if (_method == "DELETE")
+    else if (_method == "DELETE" && _allowedMethods["DELETE"])
     {
         return handle_DELETE_Request(root, path);
     }
@@ -417,40 +500,70 @@ std::string HttpResponse::handle_GET_Request(std::string const &root, std::strin
             {
                 if (fullPath[fullPath.length() - 1] == '/')
                 {
-                    /// check  if there are default page as index.html or index.php
-                    std::string default_page = "index.html";
-                    std::string default_php_page = "index.php";
-                    // if php file;
-
-                    if (stat((fullPath + default_php_page).c_str(), &sb) == 0)
-                        return CGI_GET_Request(root, path + default_php_page);
-                    if (stat((fullPath + default_page).c_str(), &sb) == 0)
+                    /// check  indeces
+                    // std::string default_page = "index.html";
+                    //  if php file;
+                    std::string default_page;
+                    bool default_page_exist = 0;
+                    for (std::set<std::string>::iterator it = _indices.begin(); it != _indices.end(); it++)
                     {
-                        // check if you have access to the file
-                        if (access((fullPath + default_page).c_str(), R_OK) == 0)
-                            body = readFile(fullPath + default_page);
-                        else
-                            return generateErrorResponse(FORBIDDEN);
+                        default_page = *it;
+                        if (default_page.rfind(".php") != std::string::npos)
+                        {
+                            _is_cgi = true;
+                            if (stat((fullPath + default_page).c_str(), &sb) == 0)
+                            {
+                                    return CGI_GET_Request(root, path + default_page, _php_cgi_path);
+                            }
+                        }
+                        else if (default_page.rfind(".py") != std::string::npos)
+                        {
+                            _is_cgi = true;
+                            if (stat((fullPath + default_page).c_str(), &sb) == 0)
+                            {
+                                    return CGI_GET_Request(root, path + default_page, _python_cgi_path);
+                            }
+                        }
+                        if (stat((fullPath + default_page).c_str(), &sb) == 0)
+                        {
+                            // check if you have access to the file
+                            if (access((fullPath + default_page).c_str(), R_OK) == 0)
+                            {
+                                default_page_exist = 1;
+                                body = readFile(fullPath + default_page);
+                                break;
+                            }
+                            else
+                            {
+                                return generateErrorResponse(FORBIDDEN);
+                            }
+                        }
                     }
-                    else
+                    if (!default_page_exist)
                     {
                         // if index not exist check the auto index is enabled  and acces to list content of directory
-                        if (_autoIndex && access((fullPath).c_str(), R_OK | W_OK) == 0)
+                        if (!default_page_exist && _autoIndex && access((fullPath).c_str(), R_OK | W_OK) == 0)
                             body = readDirectory(root, path);
                         else
+                        {
                             return generateErrorResponse(FORBIDDEN);
+                        }
                     }
                 }
                 else
                 { /// generate redirection
-                    return handleRedirection(_host,301, path + "/");
+                    return handleRedirection(_host, 301, path + "/");
                 }
             }
             else // if file open it and ;
             {
                 if (fullPath.find(".php") != std::string::npos)
                 {
-                    return run_CGI(fullPath);
+                    return run_CGI(fullPath, _php_cgi_path);
+                }
+                if (fullPath.find(".py") != std::string::npos)
+                {
+                    return run_CGI(fullPath, _python_cgi_path);
                 }
                 if (access((fullPath).c_str(), R_OK) == 0)
                 {
@@ -463,7 +576,9 @@ std::string HttpResponse::handle_GET_Request(std::string const &root, std::strin
                     body = readFile(fullPath);
                 }
                 else
+                {
                     return generateErrorResponse(FORBIDDEN);
+                }
             }
         }
         else // if path not exist return not found
@@ -475,24 +590,25 @@ std::string HttpResponse::handle_GET_Request(std::string const &root, std::strin
     header += generateHeader(code_status, body.length(), __contentType);
     return (header + CRLF_Combination + CRLF_Combination + body);
 }
-std::string HttpResponse::handleRedirection(std::string const &host,int const &code , std::string const &location)
+std::string HttpResponse::handleRedirection(std::string const &host, int const &code, std::string const &location)
 {
     return "HTTP/1.1 " + std::to_string(code) + std::string(" ") + __codes[code] + "\r\nLocation: http://" + host + location + CRLF_Combination + CRLF_Combination;
 }
 
-std::string HttpResponse::handle_POST_Request(std::string const &root, std::string const &uploadPath)
+std::string HttpResponse::handle_POST_Request()
 {
-    (void)root;
     // check if upload location exist
     struct stat sb;
-
+    std::string uploadPath = _root + _uploadpath;
     if (stat(uploadPath.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode) /* && access(uploadPath.c_str(), W_OK)*/)
     {
+        std::cout << "upload : " << uploadPath << "\n";
         for (std::vector<t_bodyPart>::iterator it = _postRequestData.begin(); it != _postRequestData.end(); it++)
         {
             if (!(it->_filename.empty())) // a filename exist
             {
-                std::ofstream outFile(uploadPath + it->_filename);
+                std::cout << "filename : " << it->_filename << "| data" << it->_data << "\n";
+                std::ofstream outFile(uploadPath + "/" + it->_filename);
                 if (outFile)
                 {
                     outFile << it->_data;
@@ -505,7 +621,9 @@ std::string HttpResponse::handle_POST_Request(std::string const &root, std::stri
         return (header + CRLF_Combination + CRLF_Combination + body);
     }
     else
-        return generateErrorResponse((_responseStatus == NOT_FOUND));
+    {
+        return generateErrorResponse((_responseStatus == INTERNAL_SERVER_ERROR));
+    }
 }
 
 std::string HttpResponse::handle_DELETE_Request(std::string const &root, std::string const &path)
@@ -525,7 +643,7 @@ std::string HttpResponse::handle_DELETE_Request(std::string const &root, std::st
     }
 }
 
-std::string HttpResponse::CGI_GET_Request(std::string const &root, std::string const &path)
+std::string HttpResponse::CGI_GET_Request(std::string const &root, std::string const &path, std::string const &cgi_path)
 {
     struct stat sb;
     std::string body;
@@ -533,7 +651,7 @@ std::string HttpResponse::CGI_GET_Request(std::string const &root, std::string c
     // regular file call
     if (stat((root + path).c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
     {
-        body = run_CGI(root + path);
+        body = run_CGI(root + path, cgi_path);
     }
     else // directory
     {
@@ -542,7 +660,7 @@ std::string HttpResponse::CGI_GET_Request(std::string const &root, std::string c
     return header + CRLF_Combination + CRLF_Combination + body;
 }
 
-std::string HttpResponse::run_CGI(std::string const &filename)
+std::string HttpResponse::run_CGI(std::string const &filename, std::string const &cgi_path)
 {
     extern char **environ;
     int pipefd[2];
@@ -553,7 +671,7 @@ std::string HttpResponse::run_CGI(std::string const &filename)
     char buffer[10000];
     int r;
     cmd = (char **)malloc(sizeof(char *) * 3);
-    cmd[0] = strdup("/Users/zjamali/goinfre/.brew/bin/php-cgi");
+    cmd[0] = strdup(cgi_path.c_str());
     cmd[1] = strdup(filename.c_str());
     cmd[2] = NULL;
     pipe(pipefd);
@@ -576,9 +694,9 @@ std::string HttpResponse::run_CGI(std::string const &filename)
         }
         close(pipefd[0]);
     }
-    std::cout << "+++++++ php +++++++\n";
+    std::cout << "++++++++++++++\n";
     std::cout << str << "\n";
-    std::cout << "+++++++ php +++++++\n";
+    std::cout << "++++++++++++++\n";
     std::string body = str.substr(str.find("\r\n\r\n") + 5);
     std::string header = generateHeader(OK, body.length(), "text/html; charset=UTF-8");
     header.append("\r\nX-Powered-By: PHP/8.1.4");
