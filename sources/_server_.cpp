@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/11 01:41:56 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/11 23:55:27 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,7 +214,7 @@ void	webServer::_start_()
 	}
 }
 
-int	webServer::_getClientMaxBodySize_(int&	_clientSocket_)
+void	webServer::_getClientMaxBodySize_(int&	_clientSocket_)
 {
 	// first get the socket of the server that linked with the socket client :
 	std::map<int, int>::iterator iter = this->_clientServer_.find(_clientSocket_);
@@ -233,20 +233,22 @@ int	webServer::_getClientMaxBodySize_(int&	_clientSocket_)
 				// look for the port that we need *port == ntohs(_addr_.sin_port)
 				if (*port == ntohs(_addr_.sin_port))
 				{
+					this->_respServer_ = (*iter);
+					this->_respPort_  = *port;
+					this->_clientMaxBodyS_ = this->_respServer_.getClientMaxBodySize();
+					break;
 					// also set the current port and current server ....
 					// save this server and  port and return the max body size 
-					return (1); // return the client body size of this server (*iter)->get_client_max_body_size()
 				}
 			}
 		}
 	}
-	return (0);
 }
 
 bool	webServer::_handleRequest_(std::string& _buff, int _acceptedS_)
 {
 	// max body size:
-	this->_clientMaxBodyS_ = this->_getClientMaxBodySize_(_acceptedS_);
+	this->_getClientMaxBodySize_(_acceptedS_);
 	if (_buff.find(D_CRLF) != std::string::npos)
 	{
 		std::string _reqHeaders_ = _buff.substr(0, _buff.find(D_CRLF) + 4);
@@ -321,7 +323,7 @@ std::string	webServer::_handleChunkedRequest_(std::string& _reqbuff)
 void	webServer::_handleResponse_(int& _acceptedS_)
 {
 	// CAll the respone class here // port && server
-	HttpResponse	_responseObj_(this->_requestObj_);
+	HttpResponse	_responseObj_(this->_requestObj_, this->_respServer_);
 	std::string _response_("");
 	if (send(_acceptedS_, _response_.c_str(), _response_.length(), 0) != (ssize_t)_response_.length())
 		throw (std::runtime_error("Response Error for [ Socket : "+std::to_string(_acceptedS_) + " ]"));

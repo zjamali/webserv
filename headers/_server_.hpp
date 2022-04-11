@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/14 16:29:15 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/11 01:41:26 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/11 23:53:51 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ class webServer{
 		
 		void	_start_();
 		void	_buildASocket_();
-		int		_getClientMaxBodySize_(int&);
+		void		_getClientMaxBodySize_(int&);
 		bool		_handleRequest_(std::string&, int);
 		std::string	_handleChunkedRequest_(std::string&);
 		bool	_NonHexChar_(std::string&);
