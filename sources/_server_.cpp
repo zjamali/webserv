@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/11 01:05:47 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/11 01:41:56 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -334,4 +334,9 @@ void	webServer::_handleResponse_(int& _acceptedS_)
 		FD_CLR(_acceptedS_, &_setFDs_);
 	}
 	// clear all for request and response ....
+}
+
+void webServer::_testgit_(void)
+{
+	std::cout << "hahahah";
 }

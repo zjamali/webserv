@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/14 16:29:15 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/11 01:02:47 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/11 01:41:26 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@
 # define D_CRLF "\r\n\r\n"
 # define BUFSIZE 1024
 
-class configParser;
-class serverData;
-class HttpRequest;
-class HttpResponse;
+// class configParser;
+// class serverData;
+// class HttpRequest;
+// class HttpResponse;
 
 class webServer{
 	
@@ -78,6 +78,7 @@ class webServer{
 		bool	_NonHexChar_(std::string&);
 		size_t	_getHexSizeOfChunk_(std::string&);
 		void	_handleResponse_(int&);
+		void _testgit_(void);
 };
 
 
