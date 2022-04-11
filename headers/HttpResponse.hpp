@@ -1,5 +1,6 @@
 #ifndef HTTPRESPONSE_HPP
 #define HTTPRESPONSE_HPP
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -13,6 +14,7 @@
 #include <time.h>
 #include "HttpRequest.hpp"
 #include "IndexOfHtmlTemplate.hpp"
+#include "serverData.hpp"
 
 class HttpResponse
 {

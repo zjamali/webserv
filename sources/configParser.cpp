@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./configParser.hpp"
+#include "../headers/configParser.hpp"
 
 #ifndef DEBUG
 # define DEBUG false

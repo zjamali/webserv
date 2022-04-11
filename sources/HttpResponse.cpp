@@ -1,4 +1,4 @@
-#include "HttpResponse.hpp"
+#include "../headers/HttpResponse.hpp"
 
 HttpResponse::HttpResponse(HttpRequest const &request)
 {

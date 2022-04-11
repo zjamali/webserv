@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:28 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/09 16:03:52 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/11 01:03:58 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <sys/socket.h>
 # include <arpa/inet.h>
 # include <map>
+# include <set>
 # include <algorithm>
 # include <netinet/in.h>
 # include <unistd.h>
@@ -30,14 +31,10 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <vector>
-# include "_socket_.hpp"
+# include "HttpRequest.hpp"
+# include "HttpResponse.hpp"
+# include "configParser.hpp"
 # include "_server_.hpp"
-# include "../HttpRequest.hpp"
-# include "../HttpResponse.hpp"
-# include "../configParser.hpp"
-
-# define BUFSIZE 1024
-
 
 
 #endif // !_UltimateHeader_.hpp

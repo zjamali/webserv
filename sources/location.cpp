@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./location.hpp"
+#include "../headers/location.hpp"
 
 location::location()
 {

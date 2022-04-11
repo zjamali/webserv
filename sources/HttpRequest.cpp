@@ -1,5 +1,5 @@
 
-#include "HttpRequest.hpp"
+#include "../headers/HttpRequest.hpp"
 
 HttpRequest::HttpRequest(std::string const &request)
     : _requestIndex(0), _request(request), _requestStatus(OK), _bodyExist(false)

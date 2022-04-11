@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "serverData.hpp"
+#include "../headers/serverData.hpp"
 
 serverData::serverData()
 {

@@ -1,5 +1,6 @@
 #ifndef HTTPREQUEST_HPP
 #define HTTPREQUEST_HPP
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -22,6 +23,7 @@
 #define FORBIDDEN 403
 #define NOT_FOUND 404
 #define METHOD_NOT_ALLOWED 405
+#define INTERNAL_SERVER_ERROR 500 
 #define NOT_IMPLLIMENTED 501
 #define HTTP_VERSION_NOT_SUPPORTED 505
 
@@ -32,7 +34,7 @@ typedef struct s_bodyPart
     std::string _filename;
     std::string _contType;
     std::string _data;
-}t_bodyPart;
+} t_bodyPart;
 
 class HttpRequest
 {
@@ -70,17 +72,17 @@ private:
     bool checkRequestkHeaders();
 
 public:
-    void setBuffer(std::string const &buff){_request = buff;};
-    void setPort(int const &port){_port=port;};
-    void setHost(std::string const &host){_host=host;};
+    void setBuffer(std::string const &buff) { _request = buff; };
+    void setPort(int const &port) { _port = port; };
+    void setHost(std::string const &host) { _host = host; };
 
-    std::string getConnectionType() const{ return _connectionType;};
-    std::string getMethod() const { return _method;};
+    std::string getConnectionType() const { return _connectionType; };
+    std::string getMethod() const { return _method; };
     std::string getHttpVersion() const { return _httpVersion; };
     std::string getPath() const { return _path; };
 
-    std::map<std::string, std::string> getHedaers() const {return _headers; };
-    std::map<std::string, std::string> getQueries() const {return _querey; };
+    std::map<std::string, std::string> getHedaers() const { return _headers; };
+    std::map<std::string, std::string> getQueries() const { return _querey; };
 
     /*
      *   Request Body
@@ -88,7 +90,7 @@ public:
 private:
     std::string _requestBody;
     bool _bodyExist;
-    
+
     std::string _bodyDataType;
     std::string _boundary;
     std::vector<t_bodyPart> _bodyParts;
@@ -99,12 +101,11 @@ private:
 
 public:
     std::string getRequestBody() const;
-    
-    std::vector<t_bodyPart> getBodyParts() const {return _bodyParts;};
+
+    std::vector<t_bodyPart> getBodyParts() const { return _bodyParts; };
 
 public:
-    HttpRequest():_requestIndex(0), _request(""), _requestStatus(OK), _bodyExist(false)
-    {};
+    HttpRequest() : _requestIndex(0), _request(""), _requestStatus(OK), _bodyExist(false){};
     HttpRequest(std::string const &request);
     ~HttpRequest();
 };

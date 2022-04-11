@@ -5,27 +5,28 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/03/26 20:43:31 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/03/26 20:43:32 by abdait-m         ###   ########.fr       */
+/*   Created: 2022/03/21 23:41:00 by iltafah           #+#    #+#             */
+/*   Updated: 2022/04/11 00:51:14 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "_server_.hpp"
+#include "../headers/_UltimateHeader_.hpp"
 
-// class SData{
-	
-// 	private:
-// 		int	_port_;
-// 		std::string	_host_;
-// 		std::vector<std::string> _names_;
-// 		std::vector<std::string> _locs_;
-// };
-
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
-	// getter for vector of servers from the parser....
-	std::vector<SData>	parsingData;
-	webServer server(parsingData);
-
-	server._start_();
+	if (argc == 2)
+	{
+		try
+		{
+			configParser config(argv[1]);
+			webServer	ws(config);
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
+	}
+	else
+		std::cout << "Error, you should pass a config file" << std::endl;
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/14 16:29:15 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/10 15:03:50 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/11 01:02:47 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,22 +17,12 @@
 # define LAST_CHUNK "0\r\n\r\n"
 # define CRLF "\r\n"
 # define D_CRLF "\r\n\r\n"
+# define BUFSIZE 1024
 
-
-// Parsing data :
-class SData{
-	
-	private:
-		int	_port_;
-		std::string	_host_;
-		std::vector<std::string> _names_;
-		std::vector<std::string> _locs_;
-		
-	public:
-		int const& getPort() const { return (this->_port_);}
-		const std::string& getHost() const { return (this->_host_); }
-		// .......
-};
+class configParser;
+class serverData;
+class HttpRequest;
+class HttpResponse;
 
 class webServer{
 	

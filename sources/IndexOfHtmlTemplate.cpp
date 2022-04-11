@@ -1,4 +1,4 @@
-#include "IndexOfHtmlTemplate.hpp"
+#include "../headers/IndexOfHtmlTemplate.hpp"
 
 IndexOfHtmlTemplate::IndexOfHtmlTemplate(std::string const &root, std::string const &path)
 {

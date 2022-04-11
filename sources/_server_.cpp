@@ -6,11 +6,11 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/09 16:04:20 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/11 01:05:47 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "_server_.hpp"
+# include "../headers/_server_.hpp"
 
 webServer::webServer(configParser& _cp_)
 {
@@ -278,7 +278,7 @@ bool	webServer::_NonHexChar_(std::string& _check)
 {
 	std::string hex = "0123456789abcdefABCDEF";
 	for(size_t i = 0; i < _check.size(); i++)
-		if (hex.find(_check[i] == std::string::npos))
+		if (hex.find(_check[i]) == std::string::npos)
 			return (true);
 	return (false);
 }
