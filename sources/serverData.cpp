@@ -6,14 +6,14 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:36:44 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/06 01:01:57 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/11 01:31:36 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/serverData.hpp"
 
-serverData::serverData()
-{
+serverData::serverData() : _client_max_body_size(1), _host("0.0.0.0"), _defaultPort(80) //default root is "/etc/nginx/html", //default server name ""
+{	
 }
 
 serverData::~serverData()
@@ -88,4 +88,9 @@ void serverData::setLocations(location loc)
 std::vector<location> serverData::getLocations()
 {
 	return (_locations);
+}
+
+int serverData::getDefaultPort() const
+{
+	return (_defaultPort);
 }
