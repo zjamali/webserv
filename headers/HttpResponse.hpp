@@ -1,6 +1,5 @@
 #ifndef HTTPRESPONSE_HPP
 #define HTTPRESPONSE_HPP
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -36,7 +35,7 @@ private:
 
     std::map<unsigned int, std::string> __codes;
     std::map<std::string, std::string> __contentTypesList;
-    std::map<unsigned int, std::string> __errorPages;
+    std::map<int, std::string> __errorPages;
 
 private:
     //HttpRequest const &_request;
@@ -61,6 +60,7 @@ private:
     
     bool _errorPagesExist;
     bool _autoIndex;
+
     std::string const defaultServerPages(unsigned int &statusCode) const;
     std::string const generateErrorResponse(unsigned int errorCode);
     std::string const ResponseBadRequest() const;
@@ -69,15 +69,37 @@ private:
     std::string const ResponseMethodNotAllowed() const;
     std::string const ResponseHttpVersionNotSupported() const;
 
+
 public:
-    HttpResponse(HttpRequest const &request);
+    HttpResponse(HttpRequest const &request, serverData const &server);
+private:
+    std::set<int> _ports;
+    serverData _server;
+    std::string _root;
+    std::vector<location> _locations;
+    location _location;
+    bool _uploadenabled;
+    std::string _uploadpath;
+    std::map<std::string, bool> _allowedMethods;
+    std::set<std::string> _indices;
+    bool _is_cgi;
+
+    bool _php_cgi_exist;
+    std::string _php_cgi_path;
+    std::string _php_index;
+
+    bool _python_cgi_exist;
+    std::string _python_index;
+    std::string _python_cgi_path;
+
+public:
     ~HttpResponse();
 
-    std::string generateResponse(unsigned int const code_status, std::string const &root /*or location*/, std::string const &path, std::string const &uploadPath);
+    std::string generateResponse(unsigned int const code_status, std::string const &root /*or location*/, std::string const &path);
     std::string const &getResponse() const { return _finaleResponse;};
     std::string handle_GET_Request(std::string const &root,std::string const &path);
-    std::string handleRedirection(std::string const &host, std::string const &location);
-    std::string handle_POST_Request(std::string const &root,std::string const &path);
+    std::string handleRedirection(std::string const &host,int const &code , std::string const &location);
+    std::string handle_POST_Request();
     std::string handle_DELETE_Request(std::string const &root, std::string const &path);
     
 
@@ -87,8 +109,8 @@ public:
     bool upload(std::string const &path, std::string const &filename, std::string const &data);
 
     // cgi 
-    std::string CGI_GET_Request(std::string const &root, std::string const &path);
-    std::string run_CGI(std::string const &filename);
+    std::string CGI_GET_Request(std::string const &root, std::string const &path, std::string const &cgi_path);
+    std::string run_CGI(std::string const &filename, std::string const &cgi_path);
 };
 
 #endif

@@ -1,6 +1,5 @@
 #ifndef INDEXOFHTMLTEMPLATE
 #define INDEXOFHTMLTEMPLATE
-
 #include <dirent.h>
 #include <sys/stat.h>
 #include <string>
