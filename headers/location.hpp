@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:44:42 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/11 01:26:23 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/11 01:46:27 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,11 @@ class location
 
 		void setUploadPath(std::string givenPath);
 		std::string getUploadPath();
+
+		void blah() 
+		{
+			
+		};
 };
 
 #endif
