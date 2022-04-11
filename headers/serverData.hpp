@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   serverData.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:36:55 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/11 00:43:52 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/11 01:29:03 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ class serverData
 		
 		//ports that the server listen on {vector ???}
 		std::set<int> _ports;
+		int _defaultPort;
 		
 		//server names
 		std::set<std::string> _serverNames;
@@ -69,8 +70,8 @@ class serverData
 
 		void setLocations(location loc);
 		std::vector<location> getLocations();
-		// void setServerNames();
-		// void setErrorPages();
+
+		int getDefaultPort() const;
 };
 
 #endif
