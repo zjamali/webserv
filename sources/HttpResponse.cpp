@@ -392,7 +392,6 @@ std::string HttpResponse::generateResponse(unsigned int const code_status, std::
     }
     else if (_method == "POST" && _allowedMethods["POST"])
     {
-        std::cout << "post called\n";
         return handle_POST_Request();
     }
     else if (_method == "DELETE" && _allowedMethods["DELETE"])
