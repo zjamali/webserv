@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:33 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/12 01:35:57 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/12 07:06:27 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,10 @@ void	configParser::startTokenization(char *configFileName)
 	type	tokenType;
 	std::string word;
 	char		byte;
+	size_t		line;
 
 
+line = 1;
 //firstly the type will be a name
 tokenType = name;
 
@@ -60,11 +62,17 @@ tokenType = name;
 			if (isspace(byte) == true)
 			{
 				//skip spaces and empty lines
+				if (byte == '\n')
+					line++;
 				while (configFile.good())
 				{
 					configFile.get(byte);
 					if (isspace(byte))
+					{
+						if (byte == '\n')
+							line++;
 						continue ;
+					}
 					break ;
 				}
 			}
@@ -83,6 +91,7 @@ tokenType = name;
 						configFile.get(byte);
 						if (byte != '\n')
 							continue ;
+						line++;
 						break ;
 					}
 				}
@@ -93,6 +102,8 @@ tokenType = name;
 				/*************************************************************************/
 				if (isspace(byte) || byte == '{' || byte == '}' || byte == ';')
 				{
+					if (byte == '\n')
+						line++;
 					/*********************************************************************************/
 					/* store word if it is not empty, it can be empty if this is the first iteration */
 					/*********************************************************************************/
@@ -101,6 +112,7 @@ tokenType = name;
 						//determine token type
 						tokenNode.data = word;
 						tokenNode.type = tokenType;
+						tokenNode.line = line;
 						_tokensList.push_back(tokenNode);
 						word.clear();
 					}
@@ -121,6 +133,7 @@ tokenType = name;
 
 						tokenNode.data = byte;
 						tokenNode.type = tokenType;
+						tokenNode.line = line;
 						_tokensList.push_back(tokenNode);
 					}
 
@@ -129,7 +142,7 @@ tokenType = name;
 						tokenType = name;
 					else if (byte == ' ')
 						tokenType = parameter;
-					
+
 					break ;
 				}
 				word += byte;
@@ -179,7 +192,7 @@ void	configParser::checkAutoIndexSyntax(std::list<token>::iterator &it, location
 	if ((*it).type == parameter)
 	{
 		if (strToLower((*it).data) != "on" && strToLower((*it).data) != "off")
-			throw (std::runtime_error("invalid madafaka value" + (*it).data + "in `autoindex` directive, it must be `on` or `off` madafaka"));
+			throw (std::runtime_error(std::to_string((*it).line) + " : invalid madafaka value `" + (*it).data + "` in `autoindex` directive, it must be `on` or `off` madafaka"));
 		
 		if (strToLower((*it).data) == "on")
 			loc.setAutoIndex(true);
@@ -302,6 +315,19 @@ void	configParser::checkUploadStoreSyntax(std::list<token>::iterator &it, locati
 		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
 }
 
+void	configParser::checkLocationRootSyntax(std::list<token>::iterator &it, location &loc)
+{
+	if ((*it).type == parameter)
+	{
+		loc.setRoot((*it).data);
+		it++;
+		if ((*it).type != semicolon)
+			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+	}
+	else
+		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+}
+
 void	configParser::checkLocationSyntax(std::list<token>::iterator &it, serverData &server)
 {
 	location loc;
@@ -320,6 +346,8 @@ void	configParser::checkLocationSyntax(std::list<token>::iterator &it, serverDat
 				{
 					if ((*it).data == "autoindex")
 						checkAutoIndexSyntax(++it, loc);
+					else if ((*it).data == "root")
+						checkLocationRootSyntax(++it, loc);
 					else if ((*it).data == "index")
 						checkIndexSyntax(++it, loc);
 					else if ((*it).data == "allow_methods")
@@ -427,7 +455,7 @@ void	configParser::checkServerNameSyntax(std::list<token>::iterator &it, serverD
 		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
 }
 
-void	configParser::checkRootSyntax(std::list<token>::iterator &it, serverData &server)
+void	configParser::checkServerRootSyntax(std::list<token>::iterator &it, serverData &server)
 {
 	if ((*it).type == parameter)
 	{
@@ -508,7 +536,7 @@ void	configParser::checkServerSyntax(std::list<token>::iterator &it)
 			else if ((*it).data == "server_name")
 				checkServerNameSyntax(++it, server);
 			else if ((*it).data == "root")
-				checkRootSyntax(++it, server);
+				checkServerRootSyntax(++it, server);
 			else if ((*it).data == "error_page")
 				checkErrorPageSyntax(++it, server);
 			else if ((*it).data == "client_max_body_size")
@@ -553,7 +581,6 @@ configParser::configParser(char *configFileName) //args and their count or just 
 	//don't forget to check the extention of the given file
 	startTokenization(configFileName);
 	checkSyntaxAndFillData();
-	// createServers();
 }
 
 configParser::~configParser()
