@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 		try
 		{
 			configParser config(argv[1]);
-			// webServer	ws(config);
+			webServer	ws(config);
 		}
 		catch(const std::exception& e)
 		{
