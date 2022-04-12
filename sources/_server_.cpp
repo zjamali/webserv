@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/11 23:55:27 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/12 00:50:05 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,6 +188,7 @@ void	webServer::_start_()
 								// request part needs a setter and a default constructor 
 								this->_requestObj_.setBuffer(_it->second);
 								this->_requestObj_.initRequest();
+								this->_requestObj_.print();
 								// this->_requestObj_.setHost();
 								// this->_requestObj_.setPort()
 								//this->_request_.start();
@@ -325,16 +326,22 @@ void	webServer::_handleResponse_(int& _acceptedS_)
 	// CAll the respone class here // port && server
 	HttpResponse	_responseObj_(this->_requestObj_, this->_respServer_);
 	std::string _response_("");
+	_responseObj_.print();
+	_response_.append(_responseObj_.getResponse());
+	std::cout << std::endl <<"++++++++++++++++++++++++++\n"<< _response_ << std::endl;
 	if (send(_acceptedS_, _response_.c_str(), _response_.length(), 0) != (ssize_t)_response_.length())
 		throw (std::runtime_error("Response Error for [ Socket : "+std::to_string(_acceptedS_) + " ]"));
+	// std::cout << "----------------------- RESPONSE ---------------------------" << std::endl;
+	// std::cout << _response_ << std::endl;
+	// std::cout << "------------------------------------------------------------" << std::endl;
 	// check for Header connection and close the socket 
-	if (true) //if the option of connection is close :
-	{
-		std::cout << "Socket [ " << _acceptedS_ << " ] disconnected !" << std::endl;
-		close(_acceptedS_);
-		FD_CLR(_acceptedS_, &_writefds_);
-		FD_CLR(_acceptedS_, &_setFDs_);
-	}
+	// if (true) //if the option of connection is close :
+	// {
+	// 	std::cout << "Socket [ " << _acceptedS_ << " ] disconnected !" << std::endl;
+	// 	close(_acceptedS_);
+	// 	FD_CLR(_acceptedS_, &_writefds_);
+	// 	FD_CLR(_acceptedS_, &_setFDs_);
+	// }
 	// clear all for request and response ....
 }
 
