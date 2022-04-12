@@ -33,6 +33,7 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
 
     _root = _server.getRoot();
 
+
     // error pages
     __errorPages = _server.getErrorPages();
     if (__errorPages.size())
@@ -43,6 +44,10 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
     location _location;
     bool isLocationFounded = false;
 
+    if(_root.empty())
+    {
+        _errorPagesExist = false;
+    }
     // get upload location and cgi
     for (std::vector<location>::iterator it = _locations.begin(); it != _locations.end(); it++)
     {
