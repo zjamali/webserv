@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:33 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/11 01:29:36 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/12 01:35:57 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,8 +137,8 @@ tokenType = name;
 			}
 		}
 	}
-	//else
-		//throw some error
+	else
+		throw (std::runtime_error("File couldn't be open!!"));
 
 	if (DEBUG)
 	{
@@ -378,24 +378,32 @@ void	configParser::checkHostSyntax(std::list<token>::iterator &it, serverData &s
 		int count = 0;
 		char *ptr;
 
+		///////////////////////////////////////////////////////////////////////
+		//*							Split Host								*//
+		///////////////////////////////////////////////////////////////////////
+		std::vector<std::string> splittedHost;
 		while ((pos = (*it).data.find(".", pos)) != std::string::npos)
 		{
-			octet = strtol((*it).data.substr(oldPos, pos).c_str(), &ptr, 10);
-			count++;
-			std::cout << "'" << (*it).data.substr(oldPos, pos - oldPos) << "' old pos : " << oldPos << ", pos : " << pos << std::endl;
-			if (/* *ptr != '\0' || */octet < 0 || octet > 255 || count > 4)
-				throw (std::runtime_error("host not found in \"" + (*it).data + "\" of the \"listen\" directive"));
+			splittedHost.push_back((*it).data.substr(oldPos, pos - oldPos));
 			pos++;
 			oldPos = pos;
 		}
+		splittedHost.push_back((*it).data.substr(oldPos, pos - oldPos));
 		
-		std::cout << "'" << (*it).data.substr(oldPos, pos - oldPos) << "' old pos : " << oldPos << ", pos : " << pos << std::endl;
-		octet = strtol((*it).data.substr(oldPos, pos).c_str(), &ptr, 10);
-		count++;
-		// std::cout << "count : " << count << std::endl;
-		if (/* *ptr != '\0' || */octet < 0 || octet > 255 || count > 4)
+		///////////////////////////////////////////////////////////////////////
+		//*							Check Host								*//
+		///////////////////////////////////////////////////////////////////////
+		std::vector<std::string>::iterator vecit = splittedHost.begin();
+		while (vecit != splittedHost.end())
+		{
+			octet = strtol((*vecit).c_str(), &ptr, 10);
+			if (*ptr != '\0' || octet < 0 || octet > 255)
 				throw (std::runtime_error("host not found in \"" + (*it).data + "\" of the \"listen\" directive"));
-
+			count++;
+			vecit++;
+		}
+		if (count != 4)
+			throw (std::runtime_error("host not found in \"" + (*it).data + "\" of the \"listen\" directive"));
 
 		server.setHost((*it).data);
 		it++;
@@ -515,17 +523,16 @@ void	configParser::checkServerSyntax(std::list<token>::iterator &it)
 	if ((*it).type != closingCurlyBracket)
 		throw (std::runtime_error("for god sake ma sed 3lina had server use this '}'"));//throw an error
 
+	if (server.getHost().empty() == true)
+		throw (std::runtime_error("Host is empty u focking stupid not u, it is just a message ;)"));
+	else if (server.getPorts().empty() == true)
+		throw (std::runtime_error("There is no port in server, please listen on some ports u foking madafaka"));
+	else if (server.getRoot().empty() == true)
+		throw (std::runtime_error("there is no root, please specify some foking root"));
 	_servers.push_back(server);
 
 	// I think you need to increment the iterator to skip the closing curly bracket
 	it++; // skip the closing curly bracket
-
-	// std::cout << (*(_servers[0].getErrorPages().begin())).first << std::endl;
-	// std::cout << (*(_servers[0].getErrorPages().begin())).second << std::endl;
-	// std::cout << *(_servers[0].getServerNames().begin()) << std::endl;
-	// std::cout << (_servers[0].getClientMaxBodySize()) << std::endl;
-	// std::cout << *(_servers[0].getPorts().begin()) << std::endl;
-	// std::cout << *(++_servers[0].getPorts().begin()) << std::endl;
 }
 
 void	configParser::checkSyntaxAndFillData()
