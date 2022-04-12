@@ -613,7 +613,7 @@ std::string HttpResponse::handle_POST_Request()
             if (!(it->_filename.empty())) // a filename exist
             {
                 std::cout << "filename : " << it->_filename << "| data" << it->_data << "\n";
-                std::ofstream outFile(uploadPath + "/" + it->_filename);
+                std::ofstream outFile(uploadPath + "/" + it->_filename,std::ios::out | std::ios::binary);
                 if (outFile)
                 {
                     outFile << it->_data;

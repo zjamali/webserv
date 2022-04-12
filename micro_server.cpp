@@ -69,6 +69,7 @@ int main(int argc, char **argv)
                     buffer[bytesRead] = '\0';
                     recievedData += buffer;
                     // read the all request
+                    std::cout << buffer << "\n";
                     if (recievedData.find("POST") != std::string::npos)
                     {
                         // read the all request
@@ -96,6 +97,10 @@ int main(int argc, char **argv)
 
                 (void)bytesRead;
                 /////// request parse begin
+                std::cout << "----------------------------------------------------------------\n";
+                std::cout << recievedData << std::endl;
+                std::cout << "----------------------------------------------------------------\n";
+
                 HttpRequest request(recievedData);
                 request.initRequest();
                 request.print();
