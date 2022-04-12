@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:02 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/11 01:25:56 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/12 07:00:39 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,9 @@ enum type { name, parameter, semicolon, openingCurlyBracket, closingCurlyBracket
 
 struct token
 {
-	std::string data;
 	type		type;
+	size_t		line;
+	std::string	data;
 };
 
 class configParser
@@ -36,7 +37,7 @@ class configParser
 	private:
 		void checkServerSyntax(std::list<token>::iterator &it);
 		void checkHostSyntax(std::list<token>::iterator &it, serverData &server);
-		void checkRootSyntax(std::list<token>::iterator &it, serverData &server);
+		void checkServerRootSyntax(std::list<token>::iterator &it, serverData &server);
 		void checkListenSyntax(std::list<token>::iterator &it, serverData &server);
 		void checkLocationSyntax(std::list<token>::iterator &it, serverData &server);
 		void checkErrorPageSyntax(std::list<token>::iterator &it, serverData &server);
@@ -44,6 +45,7 @@ class configParser
 		void checkMaxBodySizeSyntax(std::list<token>::iterator &it, serverData &server);
 
 		void checkIndexSyntax(std::list<token>::iterator &it, location &loc);
+		void checkLocationRootSyntax(std::list<token>::iterator &it, location &loc);
 		void checkReturnSyntax(std::list<token>::iterator &it, location &loc);
 		void checkAutoIndexSyntax(std::list<token>::iterator &it, location &loc);
 		void checkFastcgiPassSyntax(std::list<token>::iterator &it, location &loc);

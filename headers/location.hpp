@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:44:42 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/11 22:35:38 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/12 07:02:32 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,10 @@ class location
 		
 		//autoindex {bool}
 		bool _autoIndex;
-		
+
+		//root path
+		std::string _root;
+
 		//indices {maybe a vector of strings}
 		std::set<std::string> _indices;
 
@@ -52,6 +55,9 @@ class location
 	public:
 		void setPath(std::string path);
 		std::string getPath();
+
+		void setRoot(std::string givenRoot);
+		std::string getRoot();
 
 		void setAutoIndex(bool var);
 		bool getAutoIndex();
