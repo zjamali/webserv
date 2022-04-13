@@ -78,6 +78,12 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
             isLocationFounded = true;
             break;
         }
+        if (_path.find(std::string(it->getPath() + "/")) != std::string::npos && _path.find(std::string(it->getPath() + "/")) == 0)
+        {
+            _location = *it;
+            isLocationFounded = true;
+            break;
+        }
     }
     /**** match path with a cgi ***/
     if (!isLocationFounded)
@@ -124,6 +130,13 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
             return;
         }
     }
+
+    // if root exist inside location
+    if (!_location.getRoot().empty())
+    {
+        _root = _location.getRoot();
+    }
+
     // if location is redirection
     if (_location.getIsRedirection())
     {
