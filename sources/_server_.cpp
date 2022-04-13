@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/13 21:52:26 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/13 22:52:49 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,10 +150,10 @@ void	webServer::_start_()
 							std::map<int, std::string>::iterator _it = this->_clientsInfos_.find(_acceptedS_);
 							if (_it != this->_clientsInfos_.end())
 								_it->second.append(_buffer_, _rVal_);
-							std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n";
-							std::cout << _buffer_ << std::endl;
-							std::cout << _rVal_ << std::endl;
-							std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n";
+							// std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n";
+							// std::cout << _buffer_ << std::endl;
+							// std::cout << _rVal_ << std::endl;
+							// std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n";
 							
 							/* FOR HANDLING CHUNKED TRANSFER-CODING
 								length := 0
@@ -191,9 +191,9 @@ void	webServer::_start_()
 									_it->second = this->_handleChunkedRequest_(_it->second);
 								// send the request data , the request call is in here
 								// request part needs a setter and a default constructor
-								// std::cout << "&&&&&&&&&&&&&&&&&&&&&\n";
-								// std::cout << _it->second << std::endl;
-								// std::cout << "&&&&&&&&&&&&&&&&&&&&&\n";
+								std::cout << "&&&&&&&&&&&&&&&&&&&&&\n";
+								std::cout << _it->second << std::endl;
+								std::cout << "&&&&&&&&&&&&&&&&&&&&&\n";
 								this->_requestObj_.setBuffer(_it->second);
 								this->_requestObj_.initRequest();
 								// this->_requestObj_.print();
