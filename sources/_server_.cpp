@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/12 00:50:05 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/13 22:52:49 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ void	webServer::_start_()
 		//select uses descriptor sets, typically an array of integers,
 		// with each bit in each integer corresponding to a descriptor. FD_ZERO turns off all the bits of the fds (= 0)
 		// and every fd that is ready for write or read select turns on its bit () 
+		// usleep(2000);
 		int _selectRet_ = select(this->_maxSfd_ + 1, &this->_readfds_, &this->_writefds_, NULL, &_time_);
 		if (_selectRet_ > 0)
 		{
@@ -149,6 +150,10 @@ void	webServer::_start_()
 							std::map<int, std::string>::iterator _it = this->_clientsInfos_.find(_acceptedS_);
 							if (_it != this->_clientsInfos_.end())
 								_it->second.append(_buffer_, _rVal_);
+							// std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n";
+							// std::cout << _buffer_ << std::endl;
+							// std::cout << _rVal_ << std::endl;
+							// std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n";
 							
 							/* FOR HANDLING CHUNKED TRANSFER-CODING
 								length := 0
@@ -185,10 +190,13 @@ void	webServer::_start_()
 								if (this->_chunkedReq_)
 									_it->second = this->_handleChunkedRequest_(_it->second);
 								// send the request data , the request call is in here
-								// request part needs a setter and a default constructor 
+								// request part needs a setter and a default constructor
+								std::cout << "&&&&&&&&&&&&&&&&&&&&&\n";
+								std::cout << _it->second << std::endl;
+								std::cout << "&&&&&&&&&&&&&&&&&&&&&\n";
 								this->_requestObj_.setBuffer(_it->second);
 								this->_requestObj_.initRequest();
-								this->_requestObj_.print();
+								// this->_requestObj_.print();
 								// this->_requestObj_.setHost();
 								// this->_requestObj_.setPort()
 								//this->_request_.start();
@@ -204,7 +212,7 @@ void	webServer::_start_()
 							this->_clientsInfos_.erase(_acceptedS_);
 							std::cout << "The stream socket [ " << _acceptedS_ << " ] disconnected !" << std::endl;
 						}
-						else // 
+						else // >
 							return ;
 					}
 				}
@@ -236,7 +244,7 @@ void	webServer::_getClientMaxBodySize_(int&	_clientSocket_)
 				{
 					this->_respServer_ = (*iter);
 					this->_respPort_  = *port;
-					this->_clientMaxBodyS_ = this->_respServer_.getClientMaxBodySize();
+					this->_clientMaxBodyS_ = this->_respServer_.getClientMaxBodySize() * 1024 * 1024;
 					break;
 					// also set the current port and current server ....
 					// save this server and  port and return the max body size 
@@ -318,17 +326,21 @@ std::string	webServer::_handleChunkedRequest_(std::string& _reqbuff)
 		_bodysize_ += _tmpLength_;
 	}
 	this->_chunkedReq_ = false;// chunked data is fixed
+	(void)_bodysize_;
 	return (_reqFixed_);
 }
 
 void	webServer::_handleResponse_(int& _acceptedS_)
 {
 	// CAll the respone class here // port && server
+	// std::cout << "***********************************************\n";
+	// this->_requestObj_.print();
+	// std::cout << "***********************************************\n";
 	HttpResponse	_responseObj_(this->_requestObj_, this->_respServer_);
 	std::string _response_("");
-	_responseObj_.print();
+	// _responseObj_.print();
 	_response_.append(_responseObj_.getResponse());
-	std::cout << std::endl <<"++++++++++++++++++++++++++\n"<< _response_ << std::endl;
+	// std::cout << std::endl <<"++++++++++++++++++++++++++\n"<< _response_ << std::endl;
 	if (send(_acceptedS_, _response_.c_str(), _response_.length(), 0) != (ssize_t)_response_.length())
 		throw (std::runtime_error("Response Error for [ Socket : "+std::to_string(_acceptedS_) + " ]"));
 	// std::cout << "----------------------- RESPONSE ---------------------------" << std::endl;
