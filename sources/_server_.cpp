@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/13 22:52:49 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/13 23:37:50 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,6 +202,7 @@ void	webServer::_start_()
 								//this->_request_.start();
 								if (FD_ISSET(_acceptedS_, &this->_writefds_))
 									this->_handleResponse_(_acceptedS_); 
+								_it->second = "";
 							}
 						}
 						else if (_rVal_ == 0) // socket shutdown
