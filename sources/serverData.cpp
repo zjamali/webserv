@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:36:44 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/12 00:53:06 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/13 07:23:05 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,9 +88,4 @@ void serverData::setLocations(location loc)
 std::vector<location> serverData::getLocations()
 {
 	return (_locations);
-}
-
-int serverData::getDefaultPort() const
-{
-	return (_defaultPort);
 }
