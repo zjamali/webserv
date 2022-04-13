@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/12 02:57:20 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/13 21:52:26 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,7 +212,7 @@ void	webServer::_start_()
 							this->_clientsInfos_.erase(_acceptedS_);
 							std::cout << "The stream socket [ " << _acceptedS_ << " ] disconnected !" << std::endl;
 						}
-						else // 
+						else // >
 							return ;
 					}
 				}
@@ -244,7 +244,7 @@ void	webServer::_getClientMaxBodySize_(int&	_clientSocket_)
 				{
 					this->_respServer_ = (*iter);
 					this->_respPort_  = *port;
-					this->_clientMaxBodyS_ = this->_respServer_.getClientMaxBodySize();
+					this->_clientMaxBodyS_ = this->_respServer_.getClientMaxBodySize() * 1024 * 1024;
 					break;
 					// also set the current port and current server ....
 					// save this server and  port and return the max body size 
@@ -326,6 +326,7 @@ std::string	webServer::_handleChunkedRequest_(std::string& _reqbuff)
 		_bodysize_ += _tmpLength_;
 	}
 	this->_chunkedReq_ = false;// chunked data is fixed
+	(void)_bodysize_;
 	return (_reqFixed_);
 }
 

@@ -6,7 +6,7 @@
 #    By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/10 14:58:16 by abdait-m          #+#    #+#              #
-#    Updated: 2022/04/11 01:11:26 by abdait-m         ###   ########.fr        #
+#    Updated: 2022/04/13 21:24:01 by abdait-m         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,7 +28,7 @@ OBJS = $(SRCS:.cpp=.o)
 
 CPP = clang++
 
-CPPFLAGS = -std=c++98 -Wall -Wextra -Werror
+CPPFLAGS = -std=c++11 -Wall -Wextra -Werror
 
 all: $(NAME)
 
