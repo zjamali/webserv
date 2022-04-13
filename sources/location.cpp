@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:45:44 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/11 01:46:03 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/13 07:23:15 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,4 +121,14 @@ void location::setUploadPath(std::string givenPath)
 std::string location::getUploadPath()
 {
 	return (_uploadPath);
+}
+
+void location::setRoot(std::string givenRoot)
+{
+	_root = givenRoot;
+}
+
+std::string location::getRoot()
+{
+	return (_root);
 }

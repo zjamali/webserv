@@ -33,6 +33,7 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
 
     _root = _server.getRoot();
 
+
     // error pages
     __errorPages = _server.getErrorPages();
     if (__errorPages.size())
@@ -43,6 +44,10 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
     location _location;
     bool isLocationFounded = false;
 
+    if(_root.empty())
+    {
+        _errorPagesExist = false;
+    }
     // get upload location and cgi
     for (std::vector<location>::iterator it = _locations.begin(); it != _locations.end(); it++)
     {
@@ -68,6 +73,12 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
     for (std::vector<location>::iterator it = _locations.begin(); it != _locations.end(); it++)
     {
         if (it->getPath() == _path || std::string(it->getPath() + "/") == std::string(_path))
+        {
+            _location = *it;
+            isLocationFounded = true;
+            break;
+        }
+        if (_path.find(std::string(it->getPath() + "/")) != std::string::npos && _path.find(std::string(it->getPath() + "/")) == 0)
         {
             _location = *it;
             isLocationFounded = true;
@@ -119,6 +130,13 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
             return;
         }
     }
+
+    // if root exist inside location
+    if (!_location.getRoot().empty())
+    {
+        _root = _location.getRoot();
+    }
+
     // if location is redirection
     if (_location.getIsRedirection())
     {
@@ -607,7 +625,7 @@ std::string HttpResponse::handle_POST_Request()
             if (!(it->_filename.empty())) // a filename exist
             {
                 std::cout << "filename : " << it->_filename << "| data" << it->_data << "\n";
-                std::ofstream outFile(uploadPath + "/" + it->_filename);
+                std::ofstream outFile(uploadPath + "/" + it->_filename,std::ios::out | std::ios::binary);
                 if (outFile)
                 {
                     outFile << it->_data;

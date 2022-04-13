@@ -44,8 +44,10 @@ void	configParser::startTokenization(char *configFileName)
 	type	tokenType;
 	std::string word;
 	char		byte;
+	size_t		line;
 
 
+line = 1;
 //firstly the type will be a name
 tokenType = name;
 
@@ -60,11 +62,17 @@ tokenType = name;
 			if (isspace(byte) == true)
 			{
 				//skip spaces and empty lines
+				if (byte == '\n')
+					line++;
 				while (configFile.good())
 				{
 					configFile.get(byte);
 					if (isspace(byte))
+					{
+						if (byte == '\n')
+							line++;
 						continue ;
+					}
 					break ;
 				}
 			}
@@ -101,6 +109,7 @@ tokenType = name;
 						//determine token type
 						tokenNode.data = word;
 						tokenNode.type = tokenType;
+						tokenNode.line = line;
 						_tokensList.push_back(tokenNode);
 						word.clear();
 					}
@@ -121,6 +130,7 @@ tokenType = name;
 
 						tokenNode.data = byte;
 						tokenNode.type = tokenType;
+						tokenNode.line = line;
 						_tokensList.push_back(tokenNode);
 					}
 
@@ -129,7 +139,10 @@ tokenType = name;
 						tokenType = name;
 					else if (byte == ' ')
 						tokenType = parameter;
-					
+
+					if (byte == '\n')
+						line++;
+
 					break ;
 				}
 				word += byte;
@@ -137,8 +150,8 @@ tokenType = name;
 			}
 		}
 	}
-	//else
-		//throw some error
+	else
+		throw (std::runtime_error("File couldn't be open!!"));
 
 	if (DEBUG)
 	{
@@ -179,17 +192,17 @@ void	configParser::checkAutoIndexSyntax(std::list<token>::iterator &it, location
 	if ((*it).type == parameter)
 	{
 		if (strToLower((*it).data) != "on" && strToLower((*it).data) != "off")
-			throw (std::runtime_error("invalid madafaka value" + (*it).data + "in `autoindex` directive, it must be `on` or `off` madafaka"));
+			throw (std::runtime_error("invalid value of \"autoindex\" directive in " + _configFileName + ":" + std::to_string((*it).line) + "\nIt must be one of [on, off]"));
 		
 		if (strToLower((*it).data) == "on")
 			loc.setAutoIndex(true);
 
 		it++;
 		if ((*it).type != semicolon)
-			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+			throw (std::runtime_error("invalid number of arguments in \"autoindex\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
 	}
 	else
-		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+		throw (std::runtime_error("invalid number of arguments in \"autoindex\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
 }
 
 void	configParser::checkIndexSyntax(std::list<token>::iterator &it, location &loc)
@@ -199,10 +212,10 @@ void	configParser::checkIndexSyntax(std::list<token>::iterator &it, location &lo
 		loc.setIndices((*it).data);
 		it++;
 		if ((*it).type != semicolon)
-			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+			throw (std::runtime_error("invalid number of arguments in \"index\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
 	}
 	else
-		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+		throw (std::runtime_error("invalid number of arguments in \"index\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
 }
 
 void	configParser::checkAllowedMethodsSyntax(std::list<token>::iterator &it, location &loc)
@@ -217,17 +230,17 @@ void	configParser::checkAllowedMethodsSyntax(std::list<token>::iterator &it, loc
 			if ((*it).type == parameter)
 			{
 				if ((*it).data != "GET" && (*it).data != "POST" && (*it).data != "DELETE")
-					throw (std::runtime_error("wtf is this method ?!?!?! `" + (*it).data + "`, go learn some foking English"));
+					throw (std::runtime_error("invalid value of \"allow_methods\" directive in " + _configFileName + ":" + std::to_string((*it).line) + "\nIt must be one of [GET, POST, DELETE]"));
 				loc.setAllowedMethods((*it).data, true);
 			}
 			else
-				throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+				throw (std::runtime_error("invalid number of arguments in \"allow_methods\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
 		}
 		if (count == 0 || (*it).type != semicolon)
-			throw (std::runtime_error("Unexpected foking `" + (*it).data + "`"));
+			throw (std::runtime_error("invalid number of arguments in \"allow_methods\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
 	}
 	else
-		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+		throw (std::runtime_error("invalid number of arguments in \"allow_methods\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
 }
 
 void	configParser::checkReturnSyntax(std::list<token>::iterator &it, location &loc) // from 0 to 999 as in nginx ?!
@@ -240,20 +253,20 @@ void	configParser::checkReturnSyntax(std::list<token>::iterator &it, location &l
 	{
 		errorCode = strtol((*it).data.c_str(), &ptr, 10);
 		if (*ptr != '\0')
-			throw (std::runtime_error("WTF!!! what is this foking return code `" + (*it).data + "`"));
+			throw (std::runtime_error("invalid return code " + (*it).data + " in " + _configFileName + ":" + (*it).data));
 		it++;
 		if ((*it).type == parameter)
 		{
 			errorPath = (*it).data;
 			it++;
 			if ((*it).type != semicolon)
-				throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+				throw (std::runtime_error("invalid number of arguments in \"return\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
 		}
 		else
-			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+			throw (std::runtime_error("invalid number of arguments in \"return\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
 	}
 	else
-		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+		throw (std::runtime_error("invalid number of arguments in \"return\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
 	
 	loc.setIsRedirection(true);
 	loc.setReturnData(std::make_pair<int, std::string>(errorCode, errorPath));
@@ -267,10 +280,10 @@ void	configParser::checkFastcgiPassSyntax(std::list<token>::iterator &it, locati
 		loc.setCgiPath((*it).data);
 		it++;
 		if ((*it).type != semicolon)
-			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+			throw (std::runtime_error("invalid number of arguments in \"fastcgi_pass\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
 	}
 	else
-		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+		throw (std::runtime_error("invalid number of arguments in \"fastcgi_pass\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
 }
 
 void	configParser::checkUploadEnableSyntax(std::list<token>::iterator &it, location &loc)
@@ -278,15 +291,15 @@ void	configParser::checkUploadEnableSyntax(std::list<token>::iterator &it, locat
 	if ((*it).type == parameter)
 	{
 		if (strToLower((*it).data) != "on" && strToLower((*it).data) != "off")
-			throw (std::runtime_error("invalid madafaka value" + (*it).data + "in `upload_enable` directive, it must be `on` or `off` madafaka"));
+			throw (std::runtime_error("invalid value \"" + (*it).data + "\" in " + _configFileName + ":" + std::to_string((*it).line)));
 		if (strToLower((*it).data) == "on")
 			loc.setIsUploadEnable(true);
 		it++;
 		if ((*it).type != semicolon)
-			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+			throw (std::runtime_error("invalid number of arguments in \"upload_enable\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
 	}
 	else
-		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+		throw (std::runtime_error("invalid number of arguments in \"upload_enable\" directive in " + _configFileName + ":" + std::to_string((*it).line)) );
 }
 
 void	configParser::checkUploadStoreSyntax(std::list<token>::iterator &it, location &loc)
@@ -296,10 +309,23 @@ void	configParser::checkUploadStoreSyntax(std::list<token>::iterator &it, locati
 		loc.setUploadPath((*it).data);
 		it++;
 		if ((*it).type != semicolon)
-			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+			throw (std::runtime_error("invalid number of arguments in \"upload_store\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
 	}
 	else
-		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+		throw (std::runtime_error("invalid number of arguments in \"upload_store\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
+}
+
+void	configParser::checkLocationRootSyntax(std::list<token>::iterator &it, location &loc)
+{
+	if ((*it).type == parameter)
+	{
+		loc.setRoot((*it).data);
+		it++;
+		if ((*it).type != semicolon)
+			throw (std::runtime_error("invalid number of arguments in \"root\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
+	}
+	else
+		throw (std::runtime_error("invalid number of arguments in \"root\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
 }
 
 void	configParser::checkLocationSyntax(std::list<token>::iterator &it, serverData &server)
@@ -312,6 +338,7 @@ void	configParser::checkLocationSyntax(std::list<token>::iterator &it, serverDat
 		it++;
 		if ((*it).type == openingCurlyBracket)
 		{
+			it++;
 			while (it != _tokensList.end())
 			{
 				if ((*it).type == closingCurlyBracket)
@@ -320,6 +347,8 @@ void	configParser::checkLocationSyntax(std::list<token>::iterator &it, serverDat
 				{
 					if ((*it).data == "autoindex")
 						checkAutoIndexSyntax(++it, loc);
+					else if ((*it).data == "root")
+						checkLocationRootSyntax(++it, loc);
 					else if ((*it).data == "index")
 						checkIndexSyntax(++it, loc);
 					else if ((*it).data == "allow_methods")
@@ -333,18 +362,20 @@ void	configParser::checkLocationSyntax(std::list<token>::iterator &it, serverDat
 					else if ((*it).data == "upload_store")
 						checkUploadStoreSyntax(++it, loc);
 					else
-						throw (std::runtime_error("holy shit I don't know this directive [" + (*it).data + "] are u insane ?"));
+						throw (std::runtime_error("an unknown directive \"" + (*it).data + "\" within location context in " + _configFileName + ":" + std::to_string((*it).line)));
 				}
+				else if ((*it).type == openingCurlyBracket)
+					throw (std::runtime_error("multiple `{` within location context in " + _configFileName + ":" + std::to_string((*it).line)));
 				it++;
 			}
 			if ((*it).type != closingCurlyBracket)
-				throw (std::runtime_error("for god sake ma sed 3lina had location, use this '}'"));
+				throw (std::runtime_error("location must be closed with `}` in " + _configFileName + ":" + std::to_string((*it).line)));
 		}
 		else
-			throw (std::runtime_error("u forgot the focking `{` don't forget it again"));
+			throw (std::runtime_error("missing `{` for a location in " + _configFileName + ":" + std::to_string((*it).line)));
 	}
 	else
-		throw (std::runtime_error("u madafaka have forgotten an argument and that argument is the focking path"));
+		throw (std::runtime_error("invalid number of arguments in \"location\" directive in " + _configFileName + ":" + std::to_string((*--it).line)));
 
 	server.setLocations(loc);
 }
@@ -358,14 +389,14 @@ void	configParser::checkListenSyntax(std::list<token>::iterator &it, serverData 
 	{
 		port = strtol((*it).data.c_str(), &ptr, 10);
 		if (*ptr != '\0' || port <= 0 || port > 65535)
-			throw (std::runtime_error("unexpected port `" + (*it).data + "`"));
+			throw (std::runtime_error("invalid port in \"" + (*it).data +  "\" of the \"listen\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
 		server.setPorts(port);
 		it++;
 		if ((*it).type != semicolon)
-			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+			throw (std::runtime_error("invalid number of arguments in \"listen\" directive in " + _configFileName + ":" + std::to_string((*--it).line)));
 	}
 	else
-		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+		throw (std::runtime_error("invalid number of arguments in \"listen\" directive in " + _configFileName + ":" + std::to_string((*--it).line)));
 }
 
 void	configParser::checkHostSyntax(std::list<token>::iterator &it, serverData &server)
@@ -378,32 +409,40 @@ void	configParser::checkHostSyntax(std::list<token>::iterator &it, serverData &s
 		int count = 0;
 		char *ptr;
 
+		///////////////////////////////////////////////////////////////////////
+		//*							Split Host								*//
+		///////////////////////////////////////////////////////////////////////
+		std::vector<std::string> splittedHost;
 		while ((pos = (*it).data.find(".", pos)) != std::string::npos)
 		{
-			octet = strtol((*it).data.substr(oldPos, pos).c_str(), &ptr, 10);
-			count++;
-			std::cout << "'" << (*it).data.substr(oldPos, pos - oldPos) << "' old pos : " << oldPos << ", pos : " << pos << std::endl;
-			if (/* *ptr != '\0' || */octet < 0 || octet > 255 || count > 4)
-				throw (std::runtime_error("host not found in \"" + (*it).data + "\" of the \"listen\" directive"));
+			splittedHost.push_back((*it).data.substr(oldPos, pos - oldPos));
 			pos++;
 			oldPos = pos;
 		}
+		splittedHost.push_back((*it).data.substr(oldPos, pos - oldPos));
 		
-		std::cout << "'" << (*it).data.substr(oldPos, pos - oldPos) << "' old pos : " << oldPos << ", pos : " << pos << std::endl;
-		octet = strtol((*it).data.substr(oldPos, pos).c_str(), &ptr, 10);
-		count++;
-		// std::cout << "count : " << count << std::endl;
-		if (/* *ptr != '\0' || */octet < 0 || octet > 255 || count > 4)
-				throw (std::runtime_error("host not found in \"" + (*it).data + "\" of the \"listen\" directive"));
-
+		///////////////////////////////////////////////////////////////////////
+		//*							Check Host								*//
+		///////////////////////////////////////////////////////////////////////
+		std::vector<std::string>::iterator vecit = splittedHost.begin();
+		while (vecit != splittedHost.end())
+		{
+			octet = strtol((*vecit).c_str(), &ptr, 10);
+			if (*ptr != '\0' || octet < 0 || octet > 255)
+				throw (std::runtime_error("host not found in \"" + (*it).data + "\" of the \"listen\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
+			count++;
+			vecit++;
+		}
+		if (count != 4)
+			throw (std::runtime_error("host not found in \"" + (*it).data + "\" of the \"listen\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
 
 		server.setHost((*it).data);
 		it++;
 		if ((*it).type != semicolon)
-			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+			throw (std::runtime_error("invalid number of arguments in \"host\" directive in " + _configFileName + ":" + std::to_string((*--it).line)));
 	}
 	else
-		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+		throw (std::runtime_error("invalid number of arguments in \"host\" directive in " + _configFileName + ":" + std::to_string((*--it).line)));
 }
 
 void	configParser::checkServerNameSyntax(std::list<token>::iterator &it, serverData &server)
@@ -413,23 +452,23 @@ void	configParser::checkServerNameSyntax(std::list<token>::iterator &it, serverD
 		server.setServerNames((*it).data);
 		it++;
 		if ((*it).type != semicolon)
-			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+			throw (std::runtime_error("invalid number of arguments in \"server_name\" directive in " + _configFileName + ":" + std::to_string((*--it).line)));
 	}
 	else
-		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+		throw (std::runtime_error("invalid number of arguments in \"server_name\" directive in " + _configFileName + ":" + std::to_string((*--it).line)));
 }
 
-void	configParser::checkRootSyntax(std::list<token>::iterator &it, serverData &server)
+void	configParser::checkServerRootSyntax(std::list<token>::iterator &it, serverData &server)
 {
 	if ((*it).type == parameter)
 	{
 		server.setRoot((*it).data);
 		it++;
 		if ((*it).type != semicolon)
-			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+			throw (std::runtime_error("invalid number of arguments in \"root\" directive in " + _configFileName + ":" + std::to_string((*--it).line)));
 	}
 	else
-		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+		throw (std::runtime_error("invalid number of arguments in \"root\" directive in " + _configFileName + ":" + std::to_string((*--it).line)));
 }
 
 void	configParser::checkErrorPageSyntax(std::list<token>::iterator &it, serverData &server)
@@ -441,21 +480,21 @@ void	configParser::checkErrorPageSyntax(std::list<token>::iterator &it, serverDa
 	if ((*it).type == parameter)
 	{
 		errorCode = std::strtol((*it).data.c_str(), &ptr, 10);
-		if (*ptr != '\0') //Don't forget to check errorCode range
-			throw (std::runtime_error("unexpected errorCode `" + (*it).data + "`"));
+		if (*ptr != '\0' || errorCode < 300 || errorCode > 599)
+			throw (std::runtime_error("value \"" + (*it).data + "\" must be between 300 and 599 in " + _configFileName + ":" + std::to_string(((*it).line))));
 		it++;
 		if ((*it).type == parameter)
 		{
 			errorPath = (*it).data;
 			it++;
 			if ((*it).type != semicolon)
-				throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+				throw (std::runtime_error("invalid value \"" + (*it).data + "\" in " + _configFileName + ":" + std::to_string((*it).line)));
 		}
 		else
-			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+			throw (std::runtime_error("invalid number of arguments in \"error_page\" directive in " + _configFileName + ":" + std::to_string((*--it).line)));
 	}
 	else
-		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+		throw (std::runtime_error("invalid number of arguments in \"error_page\" directive in " + _configFileName + ":" + std::to_string((*--it).line)));
 	server.setErrorPages(errorCode, errorPath);
 }
 
@@ -472,10 +511,10 @@ void	configParser::checkMaxBodySizeSyntax(std::list<token>::iterator &it, server
 		server.setClientMaxBodySize(size);
 		it++;
 		if ((*it).type != semicolon)
-			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+			throw (std::runtime_error("invalid number of arguments in \"MaxBodySize\" directive in " + _configFileName + ":" + std::to_string((*--it).line)));
 	}
 	else
-		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+		throw (std::runtime_error("invalid number of arguments in \"MaxBodySize\" directive in " + _configFileName + ":" + std::to_string((*--it).line)));
 }
 
 void	configParser::checkServerSyntax(std::list<token>::iterator &it)
@@ -483,7 +522,7 @@ void	configParser::checkServerSyntax(std::list<token>::iterator &it)
 	serverData server;
 
 	if ((*it).type != openingCurlyBracket)
-		throw (std::runtime_error("hohohoho and how I will determine the server content without '{' idiot"));//throw an error
+		throw (std::runtime_error(("missing `{` for a server in " + _configFileName + ":" + std::to_string((*it).line))));
 
 	while (++it != _tokensList.end())
 	{
@@ -500,32 +539,30 @@ void	configParser::checkServerSyntax(std::list<token>::iterator &it)
 			else if ((*it).data == "server_name")
 				checkServerNameSyntax(++it, server);
 			else if ((*it).data == "root")
-				checkRootSyntax(++it, server);
+				checkServerRootSyntax(++it, server);
 			else if ((*it).data == "error_page")
 				checkErrorPageSyntax(++it, server);
 			else if ((*it).data == "client_max_body_size")
 				checkMaxBodySizeSyntax(++it, server);
 			else
-				throw (std::runtime_error("holy shit I don't know this directive [" + (*it).data + "] are u insane ?"));//throw an error
+				throw (std::runtime_error("an unknown directive \"" + (*it).data + "\" within server context in " + _configFileName + ":" + std::to_string((*it).line)));//throw an error
 		}
 		else if ((*it).type == openingCurlyBracket)
-			throw (std::runtime_error("why the fuck there is another opening curly bracket ?"));//throw an error
+			throw (std::runtime_error("multiple `{` within server context in " + _configFileName + ":" + std::to_string((*it).line)));
 	}
 
 	if ((*it).type != closingCurlyBracket)
-		throw (std::runtime_error("for god sake ma sed 3lina had server use this '}'"));//throw an error
+		throw (std::runtime_error("Server must be closed with `}` in " + _configFileName + ":" + std::to_string((*--it).line)));
 
+	if (server.getHost().empty() == true)
+		throw (std::runtime_error("there is no host within the server that ends in line : `" + std::to_string((*it).line) + "` please specify one"));
+	else if (server.getPorts().empty() == true)
+		throw (std::runtime_error("there is no port within the server that ends in line : `" + std::to_string((*it).line) + "` please specify one"));
+	else if (server.getRoot().empty() == true)
+		throw (std::runtime_error("there is no root within the server that ends in line : `" + std::to_string((*it).line) + "` please specify one"));
 	_servers.push_back(server);
 
-	// I think you need to increment the iterator to skip the closing curly bracket
 	it++; // skip the closing curly bracket
-
-	// std::cout << (*(_servers[0].getErrorPages().begin())).first << std::endl;
-	// std::cout << (*(_servers[0].getErrorPages().begin())).second << std::endl;
-	// std::cout << *(_servers[0].getServerNames().begin()) << std::endl;
-	// std::cout << (_servers[0].getClientMaxBodySize()) << std::endl;
-	// std::cout << *(_servers[0].getPorts().begin()) << std::endl;
-	// std::cout << *(++_servers[0].getPorts().begin()) << std::endl;
 }
 
 void	configParser::checkSyntaxAndFillData()
@@ -537,16 +574,16 @@ void	configParser::checkSyntaxAndFillData()
 		if ((*it).data == "server")
 			checkServerSyntax(++it);//check server syntax
 		else
-			throw(std::runtime_error("unknown directive \"" + (*it).data + "\""));//throw an error
+			throw(std::runtime_error("Unknown directive \"" + (*it).data + "\" in " + _configFileName + ":" + std::to_string((*it).line)));//throw an error
+	//unknown directive "blah" in /etc/nginx/conf.d/default.conf:4
 	}
 }
 
-configParser::configParser(char *configFileName) //args and their count or just file name :3
+configParser::configParser(char *configFileName) : _configFileName(configFileName) //args and their count or just file name :3
 {
 	//don't forget to check the extention of the given file
 	startTokenization(configFileName);
 	checkSyntaxAndFillData();
-	// createServers();
 }
 
 configParser::~configParser()
