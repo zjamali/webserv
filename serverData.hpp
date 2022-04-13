@@ -1,12 +1,13 @@
+
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   serverData.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:36:55 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/06 15:11:14 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/12 23:30:47 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +70,7 @@ class serverData
 
 		void setLocations(location loc);
 		std::vector<location> getLocations();
+
 };
 
 #endif

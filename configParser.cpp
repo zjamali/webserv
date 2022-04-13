@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   configParser.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: zjamali <zjamali@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:33 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/06 17:24:39 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/12 23:29:06 by zjamali          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,10 @@ void	configParser::startTokenization(char *configFileName)
 	type	tokenType;
 	std::string word;
 	char		byte;
+	size_t		line;
 
 
+line = 1;
 //firstly the type will be a name
 tokenType = name;
 
@@ -60,11 +62,17 @@ tokenType = name;
 			if (isspace(byte) == true)
 			{
 				//skip spaces and empty lines
+				if (byte == '\n')
+					line++;
 				while (configFile.good())
 				{
 					configFile.get(byte);
 					if (isspace(byte))
+					{
+						if (byte == '\n')
+							line++;
 						continue ;
+					}
 					break ;
 				}
 			}
@@ -83,6 +91,7 @@ tokenType = name;
 						configFile.get(byte);
 						if (byte != '\n')
 							continue ;
+						line++;
 						break ;
 					}
 				}
@@ -91,8 +100,10 @@ tokenType = name;
 				/* so here if I encounter spaces or semicolon or brackets store the word */
 				/* and if I found a semicolon or brackets store it also 			     */
 				/*************************************************************************/
-				if (isspace(byte) || byte == '{' || byte == '}' || byte == ';' || byte == '#')
+				if (isspace(byte) || byte == '{' || byte == '}' || byte == ';')
 				{
+					if (byte == '\n')
+						line++;
 					/*********************************************************************************/
 					/* store word if it is not empty, it can be empty if this is the first iteration */
 					/*********************************************************************************/
@@ -101,6 +112,7 @@ tokenType = name;
 						//determine token type
 						tokenNode.data = word;
 						tokenNode.type = tokenType;
+						tokenNode.line = line;
 						_tokensList.push_back(tokenNode);
 						word.clear();
 					}
@@ -121,6 +133,7 @@ tokenType = name;
 
 						tokenNode.data = byte;
 						tokenNode.type = tokenType;
+						tokenNode.line = line;
 						_tokensList.push_back(tokenNode);
 					}
 
@@ -129,7 +142,7 @@ tokenType = name;
 						tokenType = name;
 					else if (byte == ' ')
 						tokenType = parameter;
-					
+
 					break ;
 				}
 				word += byte;
@@ -137,8 +150,8 @@ tokenType = name;
 			}
 		}
 	}
-	//else
-		//throw some error
+	else
+		throw (std::runtime_error("File couldn't be open!!"));
 
 	if (DEBUG)
 	{
@@ -179,7 +192,7 @@ void	configParser::checkAutoIndexSyntax(std::list<token>::iterator &it, location
 	if ((*it).type == parameter)
 	{
 		if (strToLower((*it).data) != "on" && strToLower((*it).data) != "off")
-			throw (std::runtime_error("invalid madafaka value" + (*it).data + "in `autoindex` directive, it must be `on` or `off` madafaka"));
+			throw (std::runtime_error(std::to_string((*it).line) + " : invalid madafaka value `" + (*it).data + "` in `autoindex` directive, it must be `on` or `off` madafaka"));
 		
 		if (strToLower((*it).data) == "on")
 			loc.setAutoIndex(true);
@@ -230,7 +243,7 @@ void	configParser::checkAllowedMethodsSyntax(std::list<token>::iterator &it, loc
 		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
 }
 
-void	configParser::checkReturnSyntax(std::list<token>::iterator &it, location &loc)
+void	configParser::checkReturnSyntax(std::list<token>::iterator &it, location &loc) // from 0 to 999 as in nginx ?!
 {
 	char *ptr;
 	int	errorCode;
@@ -302,6 +315,19 @@ void	configParser::checkUploadStoreSyntax(std::list<token>::iterator &it, locati
 		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
 }
 
+void	configParser::checkLocationRootSyntax(std::list<token>::iterator &it, location &loc)
+{
+	if ((*it).type == parameter)
+	{
+		loc.setRoot((*it).data);
+		it++;
+		if ((*it).type != semicolon)
+			throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+	}
+	else
+		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
+}
+
 void	configParser::checkLocationSyntax(std::list<token>::iterator &it, serverData &server)
 {
 	location loc;
@@ -320,6 +346,8 @@ void	configParser::checkLocationSyntax(std::list<token>::iterator &it, serverDat
 				{
 					if ((*it).data == "autoindex")
 						checkAutoIndexSyntax(++it, loc);
+					else if ((*it).data == "root")
+						checkLocationRootSyntax(++it, loc);
 					else if ((*it).data == "index")
 						checkIndexSyntax(++it, loc);
 					else if ((*it).data == "allow_methods")
@@ -372,6 +400,39 @@ void	configParser::checkHostSyntax(std::list<token>::iterator &it, serverData &s
 {
 	if ((*it).type == parameter)
 	{
+		size_t pos = 0;
+		size_t oldPos = 0;
+		int octet = 0;
+		int count = 0;
+		char *ptr;
+
+		///////////////////////////////////////////////////////////////////////
+		//*							Split Host								*//
+		///////////////////////////////////////////////////////////////////////
+		std::vector<std::string> splittedHost;
+		while ((pos = (*it).data.find(".", pos)) != std::string::npos)
+		{
+			splittedHost.push_back((*it).data.substr(oldPos, pos - oldPos));
+			pos++;
+			oldPos = pos;
+		}
+		splittedHost.push_back((*it).data.substr(oldPos, pos - oldPos));
+		
+		///////////////////////////////////////////////////////////////////////
+		//*							Check Host								*//
+		///////////////////////////////////////////////////////////////////////
+		std::vector<std::string>::iterator vecit = splittedHost.begin();
+		while (vecit != splittedHost.end())
+		{
+			octet = strtol((*vecit).c_str(), &ptr, 10);
+			if (*ptr != '\0' || octet < 0 || octet > 255)
+				throw (std::runtime_error("host not found in \"" + (*it).data + "\" of the \"listen\" directive"));
+			count++;
+			vecit++;
+		}
+		if (count != 4)
+			throw (std::runtime_error("host not found in \"" + (*it).data + "\" of the \"listen\" directive"));
+
 		server.setHost((*it).data);
 		it++;
 		if ((*it).type != semicolon)
@@ -394,7 +455,7 @@ void	configParser::checkServerNameSyntax(std::list<token>::iterator &it, serverD
 		throw (std::runtime_error("unexpected madafaka `" + (*it).data + "`"));
 }
 
-void	configParser::checkRootSyntax(std::list<token>::iterator &it, serverData &server)
+void	configParser::checkServerRootSyntax(std::list<token>::iterator &it, serverData &server)
 {
 	if ((*it).type == parameter)
 	{
@@ -475,7 +536,7 @@ void	configParser::checkServerSyntax(std::list<token>::iterator &it)
 			else if ((*it).data == "server_name")
 				checkServerNameSyntax(++it, server);
 			else if ((*it).data == "root")
-				checkRootSyntax(++it, server);
+				checkServerRootSyntax(++it, server);
 			else if ((*it).data == "error_page")
 				checkErrorPageSyntax(++it, server);
 			else if ((*it).data == "client_max_body_size")
@@ -490,17 +551,16 @@ void	configParser::checkServerSyntax(std::list<token>::iterator &it)
 	if ((*it).type != closingCurlyBracket)
 		throw (std::runtime_error("for god sake ma sed 3lina had server use this '}'"));//throw an error
 
+	if (server.getHost().empty() == true)
+		throw (std::runtime_error("Host is empty u focking stupid not u, it is just a message ;)"));
+	else if (server.getPorts().empty() == true)
+		throw (std::runtime_error("There is no port in server, please listen on some ports u foking madafaka"));
+	else if (server.getRoot().empty() == true)
+		throw (std::runtime_error("there is no root, please specify some foking root"));
 	_servers.push_back(server);
 
 	// I think you need to increment the iterator to skip the closing curly bracket
 	it++; // skip the closing curly bracket
-
-	// std::cout << (*(_servers[0].getErrorPages().begin())).first << std::endl;
-	// std::cout << (*(_servers[0].getErrorPages().begin())).second << std::endl;
-	// std::cout << *(_servers[0].getServerNames().begin()) << std::endl;
-	// std::cout << (_servers[0].getClientMaxBodySize()) << std::endl;
-	// std::cout << *(_servers[0].getPorts().begin()) << std::endl;
-	// std::cout << *(++_servers[0].getPorts().begin()) << std::endl;
 }
 
 void	configParser::checkSyntaxAndFillData()
@@ -521,7 +581,6 @@ configParser::configParser(char *configFileName) //args and their count or just 
 	//don't forget to check the extention of the given file
 	startTokenization(configFileName);
 	checkSyntaxAndFillData();
-	// createServers();
 }
 
 configParser::~configParser()
