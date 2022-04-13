@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:02 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/12 07:00:39 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/13 07:24:18 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ struct token
 class configParser
 {
 	private:
+		std::string _configFileName;
 		std::list<token> _tokensList;
 		std::vector<serverData> _servers;
 	

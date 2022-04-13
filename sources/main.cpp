@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 23:41:00 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/11 22:48:25 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/13 07:22:57 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 		try
 		{
 			configParser config(argv[1]);
-			// webServer	ws(config);
+			webServer	ws(config);
 		}
 		catch(const std::exception& e)
 		{
