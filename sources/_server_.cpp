@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/14 00:39:26 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/14 16:05:03 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,9 +127,9 @@ void	webServer::_start_()
 						// set the max fd
 						this->_maxSfd_ = (_acceptedS_ > this->_maxSfd_) ? _acceptedS_ : this->_maxSfd_;
 						this->_clientsInfos_.insert(std::make_pair(_acceptedS_, ""));
-						std::map<int, int>::iterator i = this->_clientServer_.find(_acceptedS_);
-						if (i != this->_clientServer_.end()) 
-							i->second = _fdsocket; // set server socket to the client node 
+						std::map<int, int>::iterator it = this->_clientServer_.find(_acceptedS_);
+						if (it != this->_clientServer_.end()) 
+							it->second = _fdsocket; // set server socket to the client node 
 						else
 							this->_clientServer_.insert(std::make_pair(_acceptedS_, _fdsocket)); // create a new node of client server
 						
@@ -214,7 +214,7 @@ void	webServer::_start_()
 							this->_clientsInfos_.erase(_acceptedS_);
 							std::cout << "The stream socket [ " << _acceptedS_ << " ] disconnected !" << std::endl;
 						}
-						else // >
+						else
 							return ;
 					}
 				}
