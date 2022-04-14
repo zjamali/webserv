@@ -19,10 +19,6 @@
 # define D_CRLF "\r\n\r\n"
 # define BUFSIZE 1024
 
-// class configParser;
-// class serverData;
-// class HttpRequest;
-// class HttpResponse;
 
 class webServer{
 	
@@ -58,7 +54,7 @@ class webServer{
 		std::map<int, int> _clientServer_;
 		
 		// Request and  Response:
-		HttpRequest		_requestObj_;
+		// HttpRequest		_requestObj_;
 
 		serverData	_respServer_;
 		int			_respPort_;
@@ -77,8 +73,7 @@ class webServer{
 		std::string	_handleChunkedRequest_(std::string&);
 		bool	_NonHexChar_(std::string&);
 		size_t	_getHexSizeOfChunk_(std::string&);
-		void	_handleResponse_(int&);
-		void _testgit_(void);
+		void	_handleResponse_(int&, HttpRequest&);
 };
 
 

@@ -6,13 +6,13 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/13 23:37:50 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/14 00:39:26 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "../headers/_server_.hpp"
 
-webServer::webServer(configParser& _cp_)
+webServer::webServer(configParser& _cp_):_socket_(0), _option_(false), _currPort_(0), _clientMaxBodyS_(0), _maxSfd_(0), _host_(""), _addrSize_(0), _chunkedReq_(false)
 {
 	this->_servers_.assign(_cp_.getServers().begin(), _cp_.getServers().end());
 	this->_start_();
@@ -20,7 +20,8 @@ webServer::webServer(configParser& _cp_)
 
 webServer::~webServer()
 {
-	
+	for (std::vector<int>::iterator itC = this->_socketFds_.begin(); itC != this->_socketFds_.end(); ++itC)
+		close((*itC));
 }
 
 void	webServer::_buildASocket_() 
@@ -67,7 +68,6 @@ void	webServer::_start_()
 		for (std::set<int>::iterator port = this->_ports_.begin(); port!=this->_ports_.end(); port++)
 		{
 			this->_currPort_ = *port;
-			// error check :
 			try
 			{
 				this->_buildASocket_();
@@ -80,11 +80,11 @@ void	webServer::_start_()
 		}
 	}
 	// waiting for the connection :
-	struct timeval _time_ = {1, 0};
 	while(true)
 	{
 		FD_ZERO(&this->_readfds_);
 		this->_readfds_ = this->_setFDs_;
+		struct timeval _time_ = {1, 0};
 		// On successful return, each set is modified such that 
 		// it contains only the file descriptors that are ready for I/O of the type delineated by that set
 		// the first parameter in select should be the highest-numbered file descriptor in any of the three sets
@@ -194,14 +194,15 @@ void	webServer::_start_()
 								std::cout << "SERVER[buffer] ==> &&&&&&&&&&&&&&&&&&&&& START &&&&&&&&&&&&&&&&&&&&&&&&&&&&\n";
 								std::cout << _it->second << std::endl;
 								std::cout << "SERVER[buffer] ==> &&&&&&&&&&&&&&&&&&&&& END &&&&&&&&&&&&&&&&&&&&&&&&&&&&\n";
-								this->_requestObj_.setBuffer(_it->second);
-								this->_requestObj_.initRequest();
+								HttpRequest _newReq_;
+								_newReq_.setBuffer(_it->second);
+								_newReq_.initRequest();
 								// this->_requestObj_.print();
 								// this->_requestObj_.setHost();
 								// this->_requestObj_.setPort()
 								//this->_request_.start();
 								if (FD_ISSET(_acceptedS_, &this->_writefds_))
-									this->_handleResponse_(_acceptedS_); 
+									this->_handleResponse_(_acceptedS_, _newReq_); 
 								_it->second = "";
 							}
 						}
@@ -331,13 +332,13 @@ std::string	webServer::_handleChunkedRequest_(std::string& _reqbuff)
 	return (_reqFixed_);
 }
 
-void	webServer::_handleResponse_(int& _acceptedS_)
+void	webServer::_handleResponse_(int& _acceptedS_, HttpRequest& _newReq_)
 {
 	// CAll the respone class here // port && server
 	// std::cout << "***********************************************\n";
 	// this->_requestObj_.print();
 	// std::cout << "***********************************************\n";
-	HttpResponse	_responseObj_(this->_requestObj_, this->_respServer_);
+	HttpResponse	_responseObj_(_newReq_, this->_respServer_);
 	std::string _response_("");
 	// _responseObj_.print();
 	_response_.append(_responseObj_.getResponse());
@@ -348,7 +349,7 @@ void	webServer::_handleResponse_(int& _acceptedS_)
 	// std::cout << _response_ << std::endl;
 	// std::cout << "------------------------------------------------------------" << std::endl;
 	// check for Header connection and close the socket 
-	// if (true) //if the option of connection is close :
+	// if (true/*!_newReq_.getConnectionType().compare("close")*/) //if the option of connection is close :
 	// {
 	// 	std::cout << "Socket [ " << _acceptedS_ << " ] disconnected !" << std::endl;
 	// 	close(_acceptedS_);
@@ -356,9 +357,4 @@ void	webServer::_handleResponse_(int& _acceptedS_)
 	// 	FD_CLR(_acceptedS_, &_setFDs_);
 	// }
 	// clear all for request and response ....
-}
-
-void webServer::_testgit_(void)
-{
-	std::cout << "hahahah";
 }
