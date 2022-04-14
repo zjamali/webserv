@@ -191,9 +191,9 @@ void	webServer::_start_()
 									_it->second = this->_handleChunkedRequest_(_it->second);
 								// send the request data , the request call is in here
 								// request part needs a setter and a default constructor
-								std::cout << "&&&&&&&&&&&&&&&&&&&&&\n";
+								std::cout << "SERVER[buffer] ==> &&&&&&&&&&&&&&&&&&&&& START &&&&&&&&&&&&&&&&&&&&&&&&&&&&\n";
 								std::cout << _it->second << std::endl;
-								std::cout << "&&&&&&&&&&&&&&&&&&&&&\n";
+								std::cout << "SERVER[buffer] ==> &&&&&&&&&&&&&&&&&&&&& END &&&&&&&&&&&&&&&&&&&&&&&&&&&&\n";
 								this->_requestObj_.setBuffer(_it->second);
 								this->_requestObj_.initRequest();
 								// this->_requestObj_.print();
