@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/14 16:05:03 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/14 17:47:16 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,138 @@ void	webServer::_buildASocket_()
 	
 }
 
+void	webServer::_acceptingClientConnection_(int& _fdsocket)
+{
+	// accept the new connection and get the socket for exchanging the data 
+	int _acceptedS_ = accept(_fdsocket, (struct sockaddr*)&this->_Caddr_, &this->_addrSize_);
+	if (_acceptedS_ == -1)
+		throw (std::runtime_error("The connection from the client is rejected !"));
+	std::cout << "New connection established [ Server socket " << _fdsocket << " | Client socket "<<" | " << inet_ntoa(this->_Caddr_.sin_addr)<< ":"<< this->_Caddr_.sin_port << std::endl;
+	if (fcntl(_acceptedS_, F_SETFL, O_NONBLOCK) == -1)
+		throw (std::runtime_error("Non-blocking error for socket" + std::to_string(_acceptedS_) + "!"));
+	FD_SET(_acceptedS_, &this->_setFDs_);
+	FD_SET(_acceptedS_, &this->_writefds_);
+	// set the max fd
+	this->_maxSfd_ = (_acceptedS_ > this->_maxSfd_) ? _acceptedS_ : this->_maxSfd_;
+	this->_clientsInfos_.insert(std::make_pair(_acceptedS_, ""));
+	std::map<int, int>::iterator it = this->_clientServer_.find(_acceptedS_);
+	if (it != this->_clientServer_.end()) 
+		it->second = _fdsocket; // set server socket to the client node 
+	else
+		this->_clientServer_.insert(std::make_pair(_acceptedS_, _fdsocket)); // create a new node of client server
+}
+
+bool	webServer::_checkServerSocket_(int& _fdsocket)
+{
+	for (std::vector<int>::iterator it = this->_socketFds_.begin(); it != _socketFds_.end(); it++)
+	{
+		// if the server socket is the ready one so we need to create the new connection with client
+		if (_fdsocket == *it)
+			return (true);
+	}
+	return (false);
+}
+
+void	webServer::_closeSocket_(int& _acceptedS_)
+{
+	close(_acceptedS_);
+	FD_CLR(_acceptedS_, &this->_setFDs_);
+	FD_CLR(_acceptedS_, &this->_writefds_);
+	this->_clientsInfos_.erase(_acceptedS_);
+	std::cout << "The stream socket [ " << _acceptedS_ << " ] disconnected !" << std::endl;
+}
+
+void	webServer::_handlingClientConnection_(int& _fdsocket)
+{
+	int _acceptedS_ = _fdsocket;
+	// handling the request that sent and return the correct response :
+	char _buffer_[BUFSIZE + 1];
+	bzero(_buffer_, sizeof(_buffer_));
+	// read from client socket 
+	int _rVal_ = recv(_acceptedS_, _buffer_, BUFSIZE, 0);
+	std::cout << "Receive data from client with socket : " << _acceptedS_ << " - IP = " << inet_ntoa(this->_Caddr_.sin_addr) << ":" << ntohs(this->_Caddr_.sin_port) << std::endl;
+	if (_rVal_ > 0)
+	{
+		_buffer_[_rVal_] = '\0';
+		// look for the client socket inside the map and add the body to its mapped value:
+		std::map<int, std::string>::iterator _it = this->_clientsInfos_.find(_acceptedS_);
+		if (_it != this->_clientsInfos_.end())
+			_it->second.append(_buffer_, _rVal_);
+		if (this->_handleRequest_(_it->second, _acceptedS_))
+		{
+			if (this->_chunkedReq_)
+			{
+				try
+				{
+					_it->second = this->_handleChunkedRequest_(_it->second);
+				}
+				catch(const std::exception& e)
+				{
+					std::cerr << e.what() << std::endl;
+				}
+			}
+			// std::cout << "SERVER[buffer] ==> &&&&&&&&&&&&&&&&&&&&& START &&&&&&&&&&&&&&&&&&&&&&&&&&&&\n";
+			// std::cout << _it->second << std::endl;
+			// std::cout << "SERVER[buffer] ==> &&&&&&&&&&&&&&&&&&&&& END &&&&&&&&&&&&&&&&&&&&&&&&&&&&\n";
+			HttpRequest _newReq_;
+			_newReq_.setBuffer(_it->second);
+			_newReq_.initRequest();
+			_newReq_.print();
+			if (FD_ISSET(_acceptedS_, &this->_writefds_))
+				this->_handleResponse_(_acceptedS_, _newReq_); 
+			_it->second = "";
+		}
+	}
+	else if (_rVal_ == 0) // socket shutdown
+	{
+		this->_closeSocket_(_acceptedS_);
+		// close(_acceptedS_);
+		// FD_CLR(_acceptedS_, &this->_setFDs_);
+		// FD_CLR(_acceptedS_, &this->_writefds_);
+		// this->_clientsInfos_.erase(_acceptedS_);
+		// std::cout << "The stream socket [ " << _acceptedS_ << " ] disconnected !" << std::endl;
+	}
+	else
+		return ;
+}
+
+void	webServer::_holdForConnections_()
+{
+	while(true)
+	{
+		FD_ZERO(&this->_readfds_);
+		this->_readfds_ = this->_setFDs_;
+		struct timeval _time_ = {1, 0};
+		// On successful return, each set is modified such that 
+		// it contains only the file descriptors that are ready for I/O of the type delineated by that set
+		// the first parameter in select should be the highest-numbered file descriptor in any of the three sets
+		// plus 1 so we check the max fd num
+		// we use FD_ISSET to check for the fds that are ready 
+		//select uses descriptor sets, typically an array of integers,
+		// with each bit in each integer corresponding to a descriptor. FD_ZERO turns off all the bits of the fds (= 0)
+		// and every fd that is ready for write or read select turns on its bit () 
+		// usleep(2000);
+		int _selectRet_ = select(this->_maxSfd_ + 1, &this->_readfds_, &this->_writefds_, NULL, &_time_);
+		if (_selectRet_ > 0)
+		{
+			for (int _fdsocket = 0; _fdsocket < this->_maxSfd_ + 1; _fdsocket++)
+			{
+				// look for the ready discriptors (socket)
+				if (FD_ISSET(_fdsocket, &this->_readfds_))
+				{
+					bool _newC_ = this->_checkServerSocket_(_fdsocket);
+					if (_newC_)
+						this->_acceptingClientConnection_(_fdsocket);
+					else // for reading the request
+						this->_handlingClientConnection_(_fdsocket);
+				}
+			}
+		}
+		if (_selectRet_ == -1)
+			throw (std::runtime_error("Select Error !"));
+	}
+}
+
 void	webServer::_start_()
 { 
 	FD_ZERO(&_setFDs_);
@@ -80,149 +212,7 @@ void	webServer::_start_()
 		}
 	}
 	// waiting for the connection :
-	while(true)
-	{
-		FD_ZERO(&this->_readfds_);
-		this->_readfds_ = this->_setFDs_;
-		struct timeval _time_ = {1, 0};
-		// On successful return, each set is modified such that 
-		// it contains only the file descriptors that are ready for I/O of the type delineated by that set
-		// the first parameter in select should be the highest-numbered file descriptor in any of the three sets
-		// plus 1 so we check the max fd num
-		// we use FD_ISSET to check for the fds that are ready 
-		//select uses descriptor sets, typically an array of integers,
-		// with each bit in each integer corresponding to a descriptor. FD_ZERO turns off all the bits of the fds (= 0)
-		// and every fd that is ready for write or read select turns on its bit () 
-		// usleep(2000);
-		int _selectRet_ = select(this->_maxSfd_ + 1, &this->_readfds_, &this->_writefds_, NULL, &_time_);
-		if (_selectRet_ > 0)
-		{
-			for (int _fdsocket = 0; _fdsocket < this->_maxSfd_ + 1; _fdsocket++)
-			{
-				// look for the ready discriptors (socket)
-				if (FD_ISSET(_fdsocket, &this->_readfds_))
-				{
-					bool _newC_ = false;
-					for (std::vector<int>::iterator it = this->_socketFds_.begin(); it != _socketFds_.end(); it++)
-					{
-						// if the server socket is the ready one so we need to create the new connection with client
-						if (_fdsocket == *it)
-						{
-							_newC_ = true;
-							break ;
-						}
-					}
-					// check for _newC_ : accepting the client connection ...
-					if (_newC_)
-					{
-						// accept the new connection and get the socket for exchanging the data 
-						int _acceptedS_ = accept(_fdsocket, (struct sockaddr*)&this->_Caddr_, &this->_addrSize_);
-						if (_acceptedS_ == -1)
-							throw (std::runtime_error("The connection from the client is rejected !"));
-						std::cout << "New connection established [ Server socket " << _fdsocket << " | Client socket "<<" | " << inet_ntoa(this->_Caddr_.sin_addr)<< ":"<< this->_Caddr_.sin_port << std::endl;
-						if (fcntl(_acceptedS_, F_SETFL, O_NONBLOCK) == -1)
-							throw (std::runtime_error("Non-blocking error for socket" + std::to_string(_acceptedS_) + "!"));
-						FD_SET(_acceptedS_, &this->_setFDs_);
-						FD_SET(_acceptedS_, &this->_writefds_);
-						// set the max fd
-						this->_maxSfd_ = (_acceptedS_ > this->_maxSfd_) ? _acceptedS_ : this->_maxSfd_;
-						this->_clientsInfos_.insert(std::make_pair(_acceptedS_, ""));
-						std::map<int, int>::iterator it = this->_clientServer_.find(_acceptedS_);
-						if (it != this->_clientServer_.end()) 
-							it->second = _fdsocket; // set server socket to the client node 
-						else
-							this->_clientServer_.insert(std::make_pair(_acceptedS_, _fdsocket)); // create a new node of client server
-						
-					}
-					else // for reading the request
-					{
-						int _acceptedS_ = _fdsocket;
-						// handling the request that sent and return the correct response :
-						char _buffer_[BUFSIZE + 1];
-						bzero(_buffer_, sizeof(_buffer_));
-						// read from client socket 
-						int _rVal_ = recv(_acceptedS_, _buffer_, BUFSIZE, 0);
-						std::cout << "Receive data from client with socket : " << _acceptedS_ << " - IP = " << inet_ntoa(this->_Caddr_.sin_addr) << ":" << ntohs(this->_Caddr_.sin_port) << std::endl;
-						if (_rVal_ > 0)
-						{
-							_buffer_[_rVal_] = '\0';
-							// look for the client socket inside the map and add the body to its mapped value:
-							std::map<int, std::string>::iterator _it = this->_clientsInfos_.find(_acceptedS_);
-							if (_it != this->_clientsInfos_.end())
-								_it->second.append(_buffer_, _rVal_);
-							// std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n";
-							// std::cout << _buffer_ << std::endl;
-							// std::cout << _rVal_ << std::endl;
-							// std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n";
-							
-							/* FOR HANDLING CHUNKED TRANSFER-CODING
-								length := 0
-								read chunk-size, chunk-extension (if any) and CRLF
-								while (chunk-size > 0) {
-									read chunk-data and CRLF
-									append chunk-data to entity-body
-									length := length + chunk-size
-									read chunk-size and CRLF
-								}
-								read entity-header
-								while (entity-header not empty) {
-									append entity-header to existing header fields
-									read entity-header
-								}
-								Content-Length := length
-								Remove "chunked" from Transfer-Encoding
-							*/
-							/*
-								Example of chunked body:
-									4\r\n        (bytes to send)
-									Wiki\r\n     (data)
-									6\r\n        (bytes to send)
-									pedia \r\n   (data)
-									E\r\n        (bytes to send)
-									in \r\n
-									\r\n
-									chunks.\r\n  (data)
-									0\r\n        (final byte - 0)
-									\r\n         (end message)
-							*/
-							if (this->_handleRequest_(_it->second, _acceptedS_))
-							{
-								if (this->_chunkedReq_)
-									_it->second = this->_handleChunkedRequest_(_it->second);
-								// send the request data , the request call is in here
-								// request part needs a setter and a default constructor
-								std::cout << "SERVER[buffer] ==> &&&&&&&&&&&&&&&&&&&&& START &&&&&&&&&&&&&&&&&&&&&&&&&&&&\n";
-								std::cout << _it->second << std::endl;
-								std::cout << "SERVER[buffer] ==> &&&&&&&&&&&&&&&&&&&&& END &&&&&&&&&&&&&&&&&&&&&&&&&&&&\n";
-								HttpRequest _newReq_;
-								_newReq_.setBuffer(_it->second);
-								_newReq_.initRequest();
-								// this->_requestObj_.print();
-								// this->_requestObj_.setHost();
-								// this->_requestObj_.setPort()
-								//this->_request_.start();
-								if (FD_ISSET(_acceptedS_, &this->_writefds_))
-									this->_handleResponse_(_acceptedS_, _newReq_); 
-								_it->second = "";
-							}
-						}
-						else if (_rVal_ == 0) // socket shutdown
-						{
-							close(_acceptedS_);
-							FD_CLR(_acceptedS_, &this->_setFDs_);
-							FD_CLR(_acceptedS_, &this->_writefds_);
-							this->_clientsInfos_.erase(_acceptedS_);
-							std::cout << "The stream socket [ " << _acceptedS_ << " ] disconnected !" << std::endl;
-						}
-						else
-							return ;
-					}
-				}
-			}
-		}
-		if (_selectRet_ == -1)
-			throw (std::runtime_error("Select Error !"));
-	}
+	this->_holdForConnections_();
 }
 
 void	webServer::_getClientMaxBodySize_(int&	_clientSocket_)
@@ -248,8 +238,6 @@ void	webServer::_getClientMaxBodySize_(int&	_clientSocket_)
 					this->_respPort_  = *port;
 					this->_clientMaxBodyS_ = this->_respServer_.getClientMaxBodySize() * 1024 * 1024;
 					break;
-					// also set the current port and current server ....
-					// save this server and  port and return the max body size 
 				}
 			}
 		}
@@ -334,27 +322,20 @@ std::string	webServer::_handleChunkedRequest_(std::string& _reqbuff)
 
 void	webServer::_handleResponse_(int& _acceptedS_, HttpRequest& _newReq_)
 {
-	// CAll the respone class here // port && server
-	// std::cout << "***********************************************\n";
-	// this->_requestObj_.print();
-	// std::cout << "***********************************************\n";
 	HttpResponse	_responseObj_(_newReq_, this->_respServer_);
 	std::string _response_("");
-	// _responseObj_.print();
-	_response_.append(_responseObj_.getResponse());
-	// std::cout << std::endl <<"++++++++++++++++++++++++++\n"<< _response_ << std::endl;
-	if (send(_acceptedS_, _response_.c_str(), _response_.length(), 0) != (ssize_t)_response_.length())
-		throw (std::runtime_error("Response Error for [ Socket : "+std::to_string(_acceptedS_) + " ]"));
-	// std::cout << "----------------------- RESPONSE ---------------------------" << std::endl;
-	// std::cout << _response_ << std::endl;
-	// std::cout << "------------------------------------------------------------" << std::endl;
-	// check for Header connection and close the socket 
-	// if (true/*!_newReq_.getConnectionType().compare("close")*/) //if the option of connection is close :
+	// _response_.append(_responseObj_.getResponse());
+	// if (FD_ISSET(_acceptedS_, &this->_writefds_))
 	// {
-	// 	std::cout << "Socket [ " << _acceptedS_ << " ] disconnected !" << std::endl;
-	// 	close(_acceptedS_);
-	// 	FD_CLR(_acceptedS_, &_writefds_);
-	// 	FD_CLR(_acceptedS_, &_setFDs_);
+		if (send(_acceptedS_, _responseObj_.getResponse().c_str(), _responseObj_.getResponse().length(), 0) != (ssize_t)_responseObj_.getResponse().length())
+			throw (std::runtime_error("Response Error for [ Socket : "+std::to_string(_acceptedS_) + " ]"));
+		std::cout << "---------------- [ " + _newReq_.getConnectionType() + " ] ----------------" << std::endl;
+		if (!_newReq_.getConnectionType().compare("close")) //if the option of connection is close :
+		{
+			std::cout << "Socket [ " << _acceptedS_ << " ] disconnected !" << std::endl;
+			close(_acceptedS_);
+			FD_CLR(_acceptedS_, &_writefds_);
+			FD_CLR(_acceptedS_, &_setFDs_);
+		}
 	// }
-	// clear all for request and response ....
 }
