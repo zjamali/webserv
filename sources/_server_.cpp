@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/14 17:47:16 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/15 17:23:36 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ void	webServer::_buildASocket_()
 	// we do that by taking the fd of first arg and set its flag to non-blocking mode using fcntl
 	if (fcntl(this->_socket_, F_SETFL, O_NONBLOCK) == -1)
 		throw (std::runtime_error("Non-blocking error for socket " + std::to_string(this->_socket_)+ "!"));
-	this->_option_ = true;
-	if (setsockopt(this->_socket_, SOL_SOCKET, SO_REUSEADDR, &this->_option_, sizeof(socklen_t)))
+	this->_option_ = 1;
+	if (setsockopt(this->_socket_, SOL_SOCKET, SO_REUSEADDR, &this->_option_, sizeof(socklen_t)) == -1)
 		throw (std::runtime_error("Socket option error !"));
 	// binding the socket:
 	this->_addrSize_ = sizeof(this->_Saddr_);
@@ -47,7 +47,7 @@ void	webServer::_buildASocket_()
 	if (bind(this->_socket_, (struct sockaddr*)&this->_Saddr_, this->_addrSize_) == -1)
 		throw std::runtime_error("Binding Error [ Socket " + std::to_string(this->_socket_) + " and Host " + this->_host_ + " ] !");
 	// listenning:
-	if (listen(this->_socket_, 0))
+	if (listen(this->_socket_, 2048))
 		throw (std::runtime_error("Listenning error for socket [ " + std::to_string(this->_socket_) + " ]"));
 	FD_SET(this->_socket_, &this->_setFDs_);
 	// this is for select function we turn in always the max fd.
@@ -98,6 +98,16 @@ void	webServer::_closeSocket_(int& _acceptedS_)
 	std::cout << "The stream socket [ " << _acceptedS_ << " ] disconnected !" << std::endl;
 }
 
+// HttpRequest&	webServer::_sendBuffRequest_(std::string& _buffRequest)
+// {
+// 	HttpRequest _newReq_;
+
+// 	_newReq_.setBuffer(_buffRequest);
+// 	_newReq_.initRequest();
+// 	_newReq_.print();
+// 	return (_newReq_);
+// }
+
 void	webServer::_handlingClientConnection_(int& _fdsocket)
 {
 	int _acceptedS_ = _fdsocket;
@@ -134,22 +144,17 @@ void	webServer::_handlingClientConnection_(int& _fdsocket)
 			_newReq_.setBuffer(_it->second);
 			_newReq_.initRequest();
 			_newReq_.print();
-			if (FD_ISSET(_acceptedS_, &this->_writefds_))
-				this->_handleResponse_(_acceptedS_, _newReq_); 
-			_it->second = "";
+			this->_handleResponse_(_acceptedS_, _newReq_); 
+			_it->second.clear();
 		}
 	}
 	else if (_rVal_ == 0) // socket shutdown
-	{
 		this->_closeSocket_(_acceptedS_);
-		// close(_acceptedS_);
-		// FD_CLR(_acceptedS_, &this->_setFDs_);
-		// FD_CLR(_acceptedS_, &this->_writefds_);
-		// this->_clientsInfos_.erase(_acceptedS_);
-		// std::cout << "The stream socket [ " << _acceptedS_ << " ] disconnected !" << std::endl;
-	}
-	else
+	else if (_rVal_ == -1)
+	{
+		std::cout << "===========> RECV ERROR <===========" << std::endl;
 		return ;
+	}
 }
 
 void	webServer::_holdForConnections_()
@@ -177,6 +182,7 @@ void	webServer::_holdForConnections_()
 				if (FD_ISSET(_fdsocket, &this->_readfds_))
 				{
 					bool _newC_ = this->_checkServerSocket_(_fdsocket);
+
 					if (_newC_)
 						this->_acceptingClientConnection_(_fdsocket);
 					else // for reading the request
@@ -322,20 +328,20 @@ std::string	webServer::_handleChunkedRequest_(std::string& _reqbuff)
 
 void	webServer::_handleResponse_(int& _acceptedS_, HttpRequest& _newReq_)
 {
-	HttpResponse	_responseObj_(_newReq_, this->_respServer_);
-	std::string _response_("");
-	// _response_.append(_responseObj_.getResponse());
-	// if (FD_ISSET(_acceptedS_, &this->_writefds_))
-	// {
+	if (FD_ISSET(_acceptedS_, &this->_writefds_))
+	{
+		HttpResponse	_responseObj_(_newReq_, this->_respServer_);
+		// std::string _response_("");
+
 		if (send(_acceptedS_, _responseObj_.getResponse().c_str(), _responseObj_.getResponse().length(), 0) != (ssize_t)_responseObj_.getResponse().length())
 			throw (std::runtime_error("Response Error for [ Socket : "+std::to_string(_acceptedS_) + " ]"));
 		std::cout << "---------------- [ " + _newReq_.getConnectionType() + " ] ----------------" << std::endl;
-		if (!_newReq_.getConnectionType().compare("close")) //if the option of connection is close :
+		if (_newReq_.getConnectionType().compare("close")) //if the option of connection is close :
 		{
 			std::cout << "Socket [ " << _acceptedS_ << " ] disconnected !" << std::endl;
 			close(_acceptedS_);
 			FD_CLR(_acceptedS_, &_writefds_);
 			FD_CLR(_acceptedS_, &_setFDs_);
 		}
-	// }
+	}
 }

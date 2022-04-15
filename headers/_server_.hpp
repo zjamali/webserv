@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/14 16:29:15 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/14 17:52:13 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/15 16:31:38 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ class webServer{
 	
 	private:
 		int						_socket_; // current socket of the server
-		bool 					_option_; // for setsocketopt()
+		int 					_option_; // for setsocketopt()
 		int 					_currPort_; // the port in use
 		std::vector<int>		_socketFds_; // Holds all the sockets
 		std::set<int> 			_ports_; // holds all the ports
@@ -72,6 +72,7 @@ class webServer{
 		size_t			_getHexSizeOfChunk_(std::string&);
 		void			_handleResponse_(int&, HttpRequest&);
 		void			_acceptingClientConnection_(int&);
+		// HttpRequest&	_sendBuffRequest_(std::string&);
 		bool			_checkServerSocket_(int&);
 		void			_handlingClientConnection_(int&);
 		void			_closeSocket_(int&);
