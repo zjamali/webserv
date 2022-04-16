@@ -5,6 +5,8 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
     init_response();
 
     _responseStatus = request.getRequestStatus();
+
+    std::cout << "REQUEST STATUS : " << _responseStatus << "\n";
     _method = request.getMethod();
     _httpVersion = request.getHttpVersion();
     _path = request.getPath();
@@ -622,10 +624,10 @@ std::string HttpResponse::handle_POST_Request()
         std::cout << "upload : " << uploadPath << "\n";
         for (std::vector<t_bodyPart>::iterator it = _postRequestData.begin(); it != _postRequestData.end(); it++)
         {
-            if (!(it->_filename.empty())) // a filename exist
+            if (!(it->_filename.empty())) // a filename parametre exist
             {
                 std::cout << "filename : " << it->_filename << "| data" << it->_data << "\n";
-                std::ofstream outFile(uploadPath + "/" + it->_filename,std::ios::out | std::ios::binary);
+                std::ofstream outFile(uploadPath + "/" + it->_filename,std::ios::out | std::ios::binary |  std::ofstream::trunc);
                 if (outFile)
                 {
                     outFile << it->_data;
