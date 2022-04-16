@@ -72,7 +72,6 @@ class webServer{
 		size_t			_getHexSizeOfChunk_(std::string&);
 		void			_handleResponse_(int&, HttpRequest&);
 		void			_acceptingClientConnection_(int&);
-		// HttpRequest&	_sendBuffRequest_(std::string&);
 		bool			_checkServerSocket_(int&);
 		void			_handlingClientConnection_(int&);
 		void			_closeSocket_(int&);
