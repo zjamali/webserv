@@ -482,7 +482,7 @@ bool HttpResponse::upload(std::string const &path, std::string const &filename, 
 std::string HttpResponse::readFile(std::string const &file_path)
 {
 
-    std::ifstream file(file_path);
+    std::ifstream file(file_path, std::ios::binary);
     if (file)
     {
         std::ostringstream stream_string;
