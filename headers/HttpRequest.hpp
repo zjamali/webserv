@@ -99,7 +99,7 @@ private:
     void parseformUrlencoded();
 
 public:
-    std::string getRequestBody() const;
+    std::string getRequestBody() const { return _requestBody;};
     
     std::vector<t_bodyPart> getBodyParts() const {return _bodyParts;};
 

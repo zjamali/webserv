@@ -83,6 +83,8 @@ private:
     std::map<std::string, bool> _allowedMethods;
     std::set<std::string> _indices;
     bool _is_cgi;
+    std::map<std::string, std::string>  _queries;
+    std::string _cookies;
 
     bool _php_cgi_exist;
     std::string _php_cgi_path;
