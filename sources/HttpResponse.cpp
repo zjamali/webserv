@@ -25,7 +25,15 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
         }
     }
     __connection = static_cast<std::string>(request.getConnectionType());
-
+    if (_method == "POST")
+    {
+        __contentLength = request.getRequestBody().length();
+        std::cout << "POST -> CONTENT LENGHT " << __contentLength << "<---\n";
+    }
+    // get queries:
+    _queries = request.getQueries();
+    // _get cookies
+    _cookies = request.getHedaers()["Cookie"];
     // init servers find server
     std::cout << "========================>" << _host << "<========================\n";
 
@@ -34,7 +42,6 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
     // root
 
     _root = _server.getRoot();
-
 
     // error pages
     __errorPages = _server.getErrorPages();
@@ -46,7 +53,7 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
     location _location;
     bool isLocationFounded = false;
 
-    if(_root.empty())
+    if (_root.empty())
     {
         _errorPagesExist = false;
     }
@@ -532,7 +539,7 @@ std::string HttpResponse::handle_GET_Request(std::string const &root, std::strin
                             _is_cgi = true;
                             if (stat((fullPath + default_page).c_str(), &sb) == 0)
                             {
-                                    return CGI_GET_Request(root, path + default_page, _php_cgi_path);
+                                return CGI_GET_Request(root, path + default_page, _php_cgi_path);
                             }
                         }
                         else if (default_page.rfind(".py") != std::string::npos)
@@ -540,7 +547,7 @@ std::string HttpResponse::handle_GET_Request(std::string const &root, std::strin
                             _is_cgi = true;
                             if (stat((fullPath + default_page).c_str(), &sb) == 0)
                             {
-                                    return CGI_GET_Request(root, path + default_page, _python_cgi_path);
+                                return CGI_GET_Request(root, path + default_page, _python_cgi_path);
                             }
                         }
                         if (stat((fullPath + default_page).c_str(), &sb) == 0)
@@ -576,6 +583,8 @@ std::string HttpResponse::handle_GET_Request(std::string const &root, std::strin
             }
             else // if file open it and ;
             {
+                std::cout << "wa zabi\n";
+                std::cout << "path : " << fullPath << "\n";
                 if (fullPath.find(".php") != std::string::npos)
                 {
                     return run_CGI(fullPath, _php_cgi_path);
@@ -627,7 +636,7 @@ std::string HttpResponse::handle_POST_Request()
             if (!(it->_filename.empty())) // a filename parametre exist
             {
                 std::cout << "filename : " << it->_filename << "| data" << it->_data << "\n";
-                std::ofstream outFile(uploadPath + "/" + it->_filename,std::ios::out | std::ios::binary |  std::ofstream::trunc);
+                std::ofstream outFile(uploadPath + "/" + it->_filename, std::ios::out | std::ios::binary | std::ofstream::trunc);
                 if (outFile)
                 {
                     outFile << it->_data;
@@ -694,6 +703,38 @@ std::string HttpResponse::run_CGI(std::string const &filename, std::string const
     cmd[1] = strdup(filename.c_str());
     cmd[2] = NULL;
     pipe(pipefd);
+
+    setenv("REDIRECT_STATUS", std::to_string(_responseStatus).c_str(),1);
+    setenv("SERVER_SOFTWARE", "Webserv", 1);
+    setenv("GATEWAY_INTERFACE", "Zend Engine/1.1", 1);
+    setenv("SERVER_PROTOCOL", "HTTP/1.1", 1);
+    setenv("REQUEST_METHOD", _method.c_str(),1);
+    setenv("CONTENT_TYPE", __contentType.c_str(), 1);
+    setenv("SCRIPT_FILENAME", filename.c_str(), 1);
+    setenv("REDIRECT_STATUS", std::to_string(_responseStatus).c_str(), 1);
+    if (_method == "GET")
+    {
+        setenv("CONTENT_LENGTH", "0", 0);
+        if (!_queries.empty())
+        {
+            std::string queriesString;
+            for (std::map<std::string, std::string>::iterator it = _queries.begin(); it != _queries.end(); it++)
+            {
+                queriesString += it->first + "=" + it->second;
+                queriesString += "&";
+            }
+            setenv("QUERY_STRING", queriesString.c_str(), 1);
+        }
+    }
+    else
+    {
+        setenv("CONTENT_LENGTH", __contentLength.c_str(), 0);
+    }
+    if (!_cookies.empty())
+    {
+        setenv("HTTP_COOKIE", _cookies.c_str(), 1);
+    }
+
     if (!(pid = fork()))
     {
         close(pipefd[0]);
@@ -713,11 +754,16 @@ std::string HttpResponse::run_CGI(std::string const &filename, std::string const
         }
         close(pipefd[0]);
     }
-    std::cout << "++++++++++++++\n";
+    std::cout << "+++++++++ cgi start +++++\n";
     std::cout << str << "\n";
-    std::cout << "++++++++++++++\n";
-    std::string body = str.substr(str.find("\r\n\r\n") + 5);
-    std::string header = generateHeader(OK, body.length(), "text/html; charset=UTF-8");
-    header.append("\r\nX-Powered-By: PHP/8.1.4");
+    std::cout << "+++++++++ cgi end   +++++\n";
+    
+    std::string body = str.substr(str.find("\r\n\r\n") + 4);
+    std::string header;
+    header = generateHeader(OK, body.length(), "text/html; charset=UTF-8");
+    header.append(str.substr(0,str.find("\r\n\r\n") - 1));
+
     return header + CRLF_Combination + CRLF_Combination + body;
+    
+    // return str;
 }
