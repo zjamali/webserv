@@ -76,6 +76,7 @@ class webServer{
 		void			_handlingClientConnection_(int&);
 		void			_closeSocket_(int&);
 		void			_holdForConnections_();
+		void			_dropSocket_(int&);
 };
 
 
