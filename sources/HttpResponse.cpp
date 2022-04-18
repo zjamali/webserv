@@ -27,6 +27,7 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
     __connection = static_cast<std::string>(request.getConnectionType());
     if (_method == "POST")
     {
+        _requestBody = request.getRequestBody();
         __contentLength = request.getRequestBody().length();
         std::cout << "POST -> CONTENT LENGHT " << __contentLength << "<---\n";
     }
@@ -583,8 +584,6 @@ std::string HttpResponse::handle_GET_Request(std::string const &root, std::strin
             }
             else // if file open it and ;
             {
-                std::cout << "wa zabi\n";
-                std::cout << "path : " << fullPath << "\n";
                 if (fullPath.find(".php") != std::string::npos)
                 {
                     return run_CGI(fullPath, _php_cgi_path);
@@ -625,6 +624,12 @@ std::string HttpResponse::handleRedirection(std::string const &host, int const &
 
 std::string HttpResponse::handle_POST_Request()
 {
+    if ((_root + _path).find(".php") != std::string::npos)
+    {
+        std::cout << "we we : " << _root + _path << "<<\n";
+        std::cout << "post body :" <<  _requestBody << "---------*\n";
+       return run_CGI(_root + _path, _php_cgi_path);
+    }
     // check if upload location exist
     struct stat sb;
     std::string uploadPath = _root + _uploadpath;
@@ -672,6 +677,23 @@ std::string HttpResponse::handle_DELETE_Request(std::string const &root, std::st
 }
 
 std::string HttpResponse::CGI_GET_Request(std::string const &root, std::string const &path, std::string const &cgi_path)
+{
+    struct stat sb;
+    std::string body;
+    std::string header;
+    // regular file call
+    if (stat((root + path).c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
+    {
+        body = run_CGI(root + path, cgi_path);
+    }
+    else // directory
+    {
+        body = "";
+    }
+    return header + CRLF_Combination + CRLF_Combination + body;
+}
+
+std::string HttpResponse::CGI_POST_Request(std::string const &root, std::string const &path, std::string const &cgi_path)
 {
     struct stat sb;
     std::string body;
@@ -746,7 +768,11 @@ std::string HttpResponse::run_CGI(std::string const &filename, std::string const
     }
     else
     {
-        close(pipefd[1]);
+        // close(pipefd[1]);
+        if (_method == "POST")
+        {
+            write(pipefd[1],_requestBody.c_str(), __contentLength.length());
+        }
         while ((r = read(pipefd[0], &buffer, 1000)) > 1)
         {
             buffer[r] = '\0';
