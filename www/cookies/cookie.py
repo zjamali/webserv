@@ -1,8 +1,8 @@
-# Import modules for CGI handling
-import cgi, cgitb
+# Import modules for CGI handling 
+import cgi, cgitb 
 
-# Create instance of FieldStorage
-form = cgi.FieldStorage()
+# Create instance of FieldStorage 
+form = cgi.FieldStorage() 
 
 # Get data from fields
 first_name = form.getvalue('fname')
