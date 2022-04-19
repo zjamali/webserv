@@ -12,8 +12,11 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
     _path = request.getPath();
     _postRequestData = request.getBodyParts();
     std::map<std::string, std::string> _headers = request.getHedaers();
-    if (_headers.find("Content-Type:") != _headers.end())
-        __contentType = request.getHedaers()["Content-Type:"];
+    if (_headers.find("Content-Type") != _headers.end())
+    {
+        std::cout << "ppppppppp\n";
+        __contentType = request.getHedaers()["Content-Type"];
+    }
     // generate response
     std::string hosts[3] = {"Host", "host", "HOST"};
     for (int i = 0; i < 3; i++)
@@ -27,7 +30,8 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
     __connection = static_cast<std::string>(request.getConnectionType());
     if (_method == "POST")
     {
-        __contentLength = request.getRequestBody().length();
+        _requestBody = request.getRequestBody();
+        __contentLength = request.getHedaers()["Content-Length"];
         std::cout << "POST -> CONTENT LENGHT " << __contentLength << "<---\n";
     }
     // get queries:
@@ -583,8 +587,6 @@ std::string HttpResponse::handle_GET_Request(std::string const &root, std::strin
             }
             else // if file open it and ;
             {
-                std::cout << "wa zabi\n";
-                std::cout << "path : " << fullPath << "\n";
                 if (fullPath.find(".php") != std::string::npos)
                 {
                     return run_CGI(fullPath, _php_cgi_path);
@@ -625,6 +627,12 @@ std::string HttpResponse::handleRedirection(std::string const &host, int const &
 
 std::string HttpResponse::handle_POST_Request()
 {
+    if ((_root + _path).find(".php") != std::string::npos)
+    {
+        std::cout << "we we : " << _root + _path << "<<\n";
+        std::cout << "post body :" <<  _requestBody << "*---------\n";
+       return run_CGI(_root + _path, _php_cgi_path);
+    }
     // check if upload location exist
     struct stat sb;
     std::string uploadPath = _root + _uploadpath;
@@ -688,10 +696,28 @@ std::string HttpResponse::CGI_GET_Request(std::string const &root, std::string c
     return header + CRLF_Combination + CRLF_Combination + body;
 }
 
+std::string HttpResponse::CGI_POST_Request(std::string const &root, std::string const &path, std::string const &cgi_path)
+{
+    struct stat sb;
+    std::string body;
+    std::string header;
+    // regular file call
+    if (stat((root + path).c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
+    {
+        body = run_CGI(root + path, cgi_path);
+    }
+    else // directory
+    {
+        body = "";
+    }
+    return header + CRLF_Combination + CRLF_Combination + body;
+}
+
 std::string HttpResponse::run_CGI(std::string const &filename, std::string const &cgi_path)
 {
     extern char **environ;
     int pipefd[2];
+    int pipefd2[2];
     pid_t pid;
     char **cmd;
     std::string str;
@@ -703,6 +729,7 @@ std::string HttpResponse::run_CGI(std::string const &filename, std::string const
     cmd[1] = strdup(filename.c_str());
     cmd[2] = NULL;
     pipe(pipefd);
+    pipe(pipefd2);
 
     setenv("REDIRECT_STATUS", std::to_string(_responseStatus).c_str(),1);
     setenv("SERVER_SOFTWARE", "Webserv", 1);
@@ -738,21 +765,31 @@ std::string HttpResponse::run_CGI(std::string const &filename, std::string const
     if (!(pid = fork()))
     {
         close(pipefd[0]);
-        dup2(pipefd[1], 1);
+        close(pipefd2[1]);
+        dup2(pipefd[1], 1);// stdout
+        dup2(pipefd2[0], 0);
         if (execve(cmd[0], cmd, environ) == -1)
         {
-            return generateErrorResponse(NOT_FOUND);
+            exit(1);
+            // return generateErrorResponse(NOT_FOUND);
         }
     }
     else
     {
         close(pipefd[1]);
+        close(pipefd2[0]);
+        std::cout << "ENV " << getenv("CONTENT_TYPE") << "\n";
+        if (_method == "POST")
+        {
+            write(pipefd2[1],_requestBody.c_str(), _requestBody.length());
+        }
         while ((r = read(pipefd[0], &buffer, 1000)) > 1)
         {
             buffer[r] = '\0';
             str.append(buffer);
         }
         close(pipefd[0]);
+        close(pipefd2[1]);
     }
     std::cout << "+++++++++ cgi start +++++\n";
     std::cout << str << "\n";
