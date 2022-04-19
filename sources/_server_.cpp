@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/17 16:18:07 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/19 02:14:37 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -336,13 +336,13 @@ void	webServer::_handleResponse_(int& _acceptedS_, HttpRequest& _newReq_)
 		_respSize_ = _response_.length();
 		send(_acceptedS_, _response_.c_str(), _respSize_, 0);
 		_dropSocket_(_acceptedS_);// this is lssaqaa 
-		if (!_newReq_.getConnectionType().compare("close")) //if the option of connection is close :
-		{
-			std::cout << "Client Socket [ " << _acceptedS_ << " ] disconnected !" << std::endl;
+		// if (!_newReq_.getConnectionType().compare("close")) //if the option of connection is close :
+		// {
+		// 	std::cout << "Client Socket [ " << _acceptedS_ << " ] disconnected !" << std::endl;
 
-			close(_acceptedS_);
-			FD_CLR(_acceptedS_, &_writefds_);
-			FD_CLR(_acceptedS_, &_setFDs_);
-		}
+		// 	close(_acceptedS_);
+		// 	FD_CLR(_acceptedS_, &_writefds_);
+		// 	FD_CLR(_acceptedS_, &_setFDs_);
+		// }
 	}
 }
