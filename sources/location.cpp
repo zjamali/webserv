@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:45:44 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/13 07:23:15 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/13 22:57:29 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 location::location() : _autoIndex(false), _isRedirection(false), _isCgi(false), _isUploadEnable(false)
 {
-	_allowedMethods.insert(std::make_pair<std::string, bool>("GET", true));
-	_allowedMethods.insert(std::make_pair<std::string, bool>("POST", false));
-	_allowedMethods.insert(std::make_pair<std::string, bool>("DELETE", false));
+	_allowedMethods.insert(std::make_pair("GET", true));
+	_allowedMethods.insert(std::make_pair("POST", false));
+	_allowedMethods.insert(std::make_pair("DELETE", false));
 }
 
 location::~location()

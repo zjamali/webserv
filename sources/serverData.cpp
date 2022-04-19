@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:36:44 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/13 07:23:05 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/13 22:59:27 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ std::set<std::string> serverData::getServerNames()
 
 void serverData::setErrorPages(int errorCode, std::string errorPath)
 {
-	_errorPages.insert(std::make_pair<int, std::string>(errorCode, errorPath));
+	_errorPages.insert(std::make_pair(errorCode, errorPath));
 }
 
 std::map<int, std::string> serverData::getErrorPages()

@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:33 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/13 07:22:51 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/18 21:18:35 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,12 @@
 //I know the following foking ugly cood is foking ugly but don't worry I will butterfly it 
 
 
+/*
+** ************************************************************************** **
+									Getters
+** ************************************************************************** **
+*/
+
 const std::vector<serverData> &configParser::getServers() const
 {
 	return (_servers);
@@ -33,7 +39,7 @@ const std::vector<serverData> &configParser::getServers() const
 
 /*
 ** ************************************************************************** **
-							Tokenization
+								Tokenization
 ** ************************************************************************** **
 */
 
@@ -41,27 +47,24 @@ void	configParser::startTokenization(char *configFileName)
 {
 	std::ifstream configFile(configFileName);
 	token	tokenNode;
-	type	tokenType;
+	type	tokenType(name);
 	std::string word;
 	char		byte;
-	size_t		line;
-
-
-line = 1;
-//firstly the type will be a name
-tokenType = name;
+	size_t		line(1);
 
 	if (configFile.is_open())
 	{
-		///////////////////////
+		/*********************/
 		/* reading file time */
-		///////////////////////
+		/*********************/
 		while (configFile.good())
 		{
 			configFile.get(byte);
+			/************************************/
+			/*			skip spaces				*/
+			/************************************/
 			if (isspace(byte) == true)
 			{
-				//skip spaces and empty lines
 				if (byte == '\n')
 					line++;
 				while (configFile.good())
@@ -77,13 +80,14 @@ tokenType = name;
 				}
 			}
 
-
 			/**********************************/
 			/* another loop for reading words */
 			/**********************************/
 			while (configFile.good())
 			{
-				//skip hashtags
+				/************************************/
+				/*			skip hashtags			*/
+				/************************************/
 				if (byte == '#')
 				{
 					while (configFile.good())
@@ -106,7 +110,6 @@ tokenType = name;
 					/*********************************************************************************/
 					if (!word.empty())
 					{
-						//determine token type
 						tokenNode.data = word;
 						tokenNode.type = tokenType;
 						tokenNode.line = line;
@@ -134,13 +137,12 @@ tokenType = name;
 						_tokensList.push_back(tokenNode);
 					}
 
-					//determine next token type if it is a word
+					//determine next token type
 					if (byte == '{' || byte == '}' || byte == ';')
 						tokenType = name;
 					else if (byte == ' ')
 						tokenType = parameter;
-
-					if (byte == '\n')
+					else if (byte == '\n')
 						line++;
 
 					break ;
@@ -153,6 +155,7 @@ tokenType = name;
 	else
 		throw (std::runtime_error("File couldn't be open!!"));
 
+	//Debugging Time
 	if (DEBUG)
 	{
 		std::list<token>::iterator it = _tokensList.begin();
@@ -253,7 +256,7 @@ void	configParser::checkReturnSyntax(std::list<token>::iterator &it, location &l
 	{
 		errorCode = strtol((*it).data.c_str(), &ptr, 10);
 		if (*ptr != '\0')
-			throw (std::runtime_error("invalid return code " + (*it).data + " in " + _configFileName + ":" + (*it).data));
+			throw (std::runtime_error("invalid return code \"" + (*it).data + "\" in " + _configFileName + ":" + std::to_string((*it).line)));
 		it++;
 		if ((*it).type == parameter)
 		{
@@ -269,7 +272,7 @@ void	configParser::checkReturnSyntax(std::list<token>::iterator &it, location &l
 		throw (std::runtime_error("invalid number of arguments in \"return\" directive in " + _configFileName + ":" + std::to_string((*it).line)));
 	
 	loc.setIsRedirection(true);
-	loc.setReturnData(std::make_pair<int, std::string>(errorCode, errorPath));
+	loc.setReturnData(std::make_pair(errorCode, errorPath));
 }
 
 void	configParser::checkFastcgiPassSyntax(std::list<token>::iterator &it, location &loc)
@@ -488,7 +491,7 @@ void	configParser::checkErrorPageSyntax(std::list<token>::iterator &it, serverDa
 			errorPath = (*it).data;
 			it++;
 			if ((*it).type != semicolon)
-				throw (std::runtime_error("invalid value \"" + (*it).data + "\" in " + _configFileName + ":" + std::to_string((*it).line)));
+				throw (std::runtime_error("invalid number of arguments in \"error_page\" directive in " + _configFileName + ":" + std::to_string((*--it).line)));
 		}
 		else
 			throw (std::runtime_error("invalid number of arguments in \"error_page\" directive in " + _configFileName + ":" + std::to_string((*--it).line)));
@@ -572,10 +575,9 @@ void	configParser::checkSyntaxAndFillData()
 	while (it != _tokensList.end())
 	{
 		if ((*it).data == "server")
-			checkServerSyntax(++it);//check server syntax
+			checkServerSyntax(++it);
 		else
 			throw(std::runtime_error("Unknown directive \"" + (*it).data + "\" in " + _configFileName + ":" + std::to_string((*it).line)));//throw an error
-	//unknown directive "blah" in /etc/nginx/conf.d/default.conf:4
 	}
 }
 
@@ -589,11 +591,3 @@ configParser::configParser(char *configFileName) : _configFileName(configFileNam
 configParser::~configParser()
 {
 }
-
-
-
-
-//************************************//
-//**	  must check this case		**//
-//************************************//
-//listen 80#hello world
