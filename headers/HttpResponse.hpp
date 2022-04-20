@@ -68,7 +68,7 @@ private:
     std::string const ResponseNotFound() const;
     std::string const ResponseMethodNotAllowed() const;
     std::string const ResponseHttpVersionNotSupported() const;
-
+    std::string const ResponseServerError() const;
 
 public:
     HttpResponse(HttpRequest const &request, serverData const &server);

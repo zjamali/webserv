@@ -363,7 +363,7 @@ std::string const HttpResponse::defaultServerPages(unsigned int &statusCode) con
     else if (statusCode == FORBIDDEN)
         return ResponseForbidden();
     else if (statusCode == INTERNAL_SERVER_ERROR)
-        return ResponseForbidden();
+        return ResponseServerError();
     else
         return ResponseNotFound();
 }
@@ -473,6 +473,12 @@ std::string const HttpResponse::ResponseHttpVersionNotSupported() const
 {
     std::string const body = "<!DOCTYPE html>\r\n<html>\r\n<head>\r\n<title>505 HTTP Version Not Supported</title> \r\n</head> \r\n<body>\r\n<center><h1>505 HTTP Version Not Supported</h1></center>\r\n<hr><center><p>webserv/1.0</p></center>\r\n</body>\r\n</html>\r\n";
     std::string const header = "HTTP/1.1 505 HTTP Version Not Supported" + CRLF_Combination + "Content-Type: text/html; charset=UTF-8" + CRLF_Combination + "Content-Length: " + std::to_string(body.length()) + CRLF_Combination + "Connection: Closed" + CRLF_Combination + "Server: webserv/1.0" + CRLF_Combination + "Date: " + getLocalTime();
+    return (header + CRLF_Combination + CRLF_Combination + body);
+}
+std::string const HttpResponse::ResponseServerError() const
+{
+    std::string const body = "<!DOCTYPE html>\r\n<html>\r\n<head>\r\n<title>500 Internal Server Error</title> \r\n</head> \r\n<body>\r\n<center><h1>505 HTTP Version Not Supported</h1></center>\r\n<hr><center><p>webserv/1.0</p></center>\r\n</body>\r\n</html>\r\n";
+    std::string const header = "HTTP/1.1 500 HTTP Version Not Supported" + CRLF_Combination + "Content-Type: text/html; charset=UTF-8" + CRLF_Combination + "Content-Length: " + std::to_string(body.length()) + CRLF_Combination + "Connection: Closed" + CRLF_Combination + "Server: webserv/1.0" + CRLF_Combination + "Date: " + getLocalTime();
     return (header + CRLF_Combination + CRLF_Combination + body);
 }
 
@@ -664,7 +670,7 @@ std::string HttpResponse::handle_POST_Request()
     }
     else
     {
-        return generateErrorResponse((_responseStatus == INTERNAL_SERVER_ERROR));
+        return generateErrorResponse(INTERNAL_SERVER_ERROR);
     }
 }
 
@@ -728,6 +734,8 @@ std::string HttpResponse::run_CGI(std::string const &filename, std::string const
     char **cmd;
     std::string str;
 
+    if (access(cgi_path.c_str(), F_OK) != 0)
+        return (generateErrorResponse(INTERNAL_SERVER_ERROR));
     char buffer[10000];
     int r;
     cmd = (char **)malloc(sizeof(char *) * 3);
@@ -737,9 +745,10 @@ std::string HttpResponse::run_CGI(std::string const &filename, std::string const
     pipe(pipefd);
     pipe(pipefd2);
 
+
     setenv("REDIRECT_STATUS", std::to_string(_responseStatus).c_str(), 1);
     setenv("SERVER_SOFTWARE", "Webserv", 1);
-    setenv("GATEWAY_INTERFACE", "Zend Engine/1.1", 1);
+    setenv("GATEWAY_INTERFACE", "CGI/1.1", 1);
     setenv("SERVER_PROTOCOL", "HTTP/1.1", 1);
     setenv("REQUEST_METHOD", _method.c_str(), 1);
     setenv("CONTENT_TYPE", __contentType.c_str(), 1);
@@ -807,6 +816,4 @@ std::string HttpResponse::run_CGI(std::string const &filename, std::string const
     header.append(str.substr(0, str.find("\r\n\r\n") - 1));
 
     return header + CRLF_Combination + CRLF_Combination + body;
-
-    // return str;
 }
