@@ -83,7 +83,9 @@ private:
     std::map<std::string, bool> _allowedMethods;
     std::set<std::string> _indices;
     bool _is_cgi;
-
+    std::map<std::string, std::string>  _queries;
+    std::string _cookies;
+    std::string _requestBody;
     bool _php_cgi_exist;
     std::string _php_cgi_path;
     std::string _php_index;
@@ -110,6 +112,7 @@ public:
 
     // cgi 
     std::string CGI_GET_Request(std::string const &root, std::string const &path, std::string const &cgi_path);
+    std::string CGI_POST_Request(std::string const &root, std::string const &path, std::string const &cgi_path);
     std::string run_CGI(std::string const &filename, std::string const &cgi_path);
 };
 
