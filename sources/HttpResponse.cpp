@@ -373,7 +373,9 @@ std::string const HttpResponse::generateErrorResponse(unsigned int errorCode)
     if (_errorPagesExist)
     {
         if (__errorPages.find(errorCode) == __errorPages.end())
+        {
             return defaultServerPages(errorCode);
+        }
         else
         {
             std::string body;
@@ -430,7 +432,9 @@ std::string HttpResponse::generateResponse(unsigned int const code_status, std::
         return handle_DELETE_Request(root, path);
     }
     else
-        return generateErrorResponse((code_status == NOT_IMPLLIMENTED));
+    {
+        return generateErrorResponse(NOT_IMPLLIMENTED);
+    }
 }
 
 std::string HttpResponse::ResponseOK() const
@@ -629,9 +633,11 @@ std::string HttpResponse::handle_POST_Request()
 {
     if ((_root + _path).find(".php") != std::string::npos)
     {
-        std::cout << "we we : " << _root + _path << "<<\n";
-        std::cout << "post body :" <<  _requestBody << "*---------\n";
-       return run_CGI(_root + _path, _php_cgi_path);
+        return run_CGI(_root + _path, _php_cgi_path);
+    }
+    if ((_root + _path).find(".py") != std::string::npos)
+    {
+        return run_CGI(_root + _path, _python_cgi_path);
     }
     // check if upload location exist
     struct stat sb;
@@ -684,14 +690,14 @@ std::string HttpResponse::CGI_GET_Request(std::string const &root, std::string c
     struct stat sb;
     std::string body;
     std::string header;
-    // regular file call
+    // regular file
     if (stat((root + path).c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
     {
         body = run_CGI(root + path, cgi_path);
     }
-    else // directory
+    else
     {
-        body = "";
+        return generateErrorResponse(NOT_FOUND);
     }
     return header + CRLF_Combination + CRLF_Combination + body;
 }
@@ -701,14 +707,14 @@ std::string HttpResponse::CGI_POST_Request(std::string const &root, std::string 
     struct stat sb;
     std::string body;
     std::string header;
-    // regular file call
+    // regular file
     if (stat((root + path).c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
     {
         body = run_CGI(root + path, cgi_path);
     }
-    else // directory
+    else
     {
-        body = "";
+        return generateErrorResponse(NOT_FOUND);
     }
     return header + CRLF_Combination + CRLF_Combination + body;
 }
@@ -731,11 +737,11 @@ std::string HttpResponse::run_CGI(std::string const &filename, std::string const
     pipe(pipefd);
     pipe(pipefd2);
 
-    setenv("REDIRECT_STATUS", std::to_string(_responseStatus).c_str(),1);
+    setenv("REDIRECT_STATUS", std::to_string(_responseStatus).c_str(), 1);
     setenv("SERVER_SOFTWARE", "Webserv", 1);
     setenv("GATEWAY_INTERFACE", "Zend Engine/1.1", 1);
     setenv("SERVER_PROTOCOL", "HTTP/1.1", 1);
-    setenv("REQUEST_METHOD", _method.c_str(),1);
+    setenv("REQUEST_METHOD", _method.c_str(), 1);
     setenv("CONTENT_TYPE", __contentType.c_str(), 1);
     setenv("SCRIPT_FILENAME", filename.c_str(), 1);
     setenv("REDIRECT_STATUS", std::to_string(_responseStatus).c_str(), 1);
@@ -766,7 +772,7 @@ std::string HttpResponse::run_CGI(std::string const &filename, std::string const
     {
         close(pipefd[0]);
         close(pipefd2[1]);
-        dup2(pipefd[1], 1);// stdout
+        dup2(pipefd[1], 1); // stdout
         dup2(pipefd2[0], 0);
         if (execve(cmd[0], cmd, environ) == -1)
         {
@@ -781,7 +787,7 @@ std::string HttpResponse::run_CGI(std::string const &filename, std::string const
         std::cout << "ENV " << getenv("CONTENT_TYPE") << "\n";
         if (_method == "POST")
         {
-            write(pipefd2[1],_requestBody.c_str(), _requestBody.length());
+            write(pipefd2[1], _requestBody.c_str(), _requestBody.length());
         }
         while ((r = read(pipefd[0], &buffer, 1000)) > 1)
         {
@@ -790,17 +796,17 @@ std::string HttpResponse::run_CGI(std::string const &filename, std::string const
         }
         close(pipefd[0]);
         close(pipefd2[1]);
+        std::cout << "cgi end \n";
     }
-    std::cout << "+++++++++ cgi start +++++\n";
-    std::cout << str << "\n";
-    std::cout << "+++++++++ cgi end   +++++\n";
-    
+    free(cmd[0]);
+    free(cmd[1]);
+    free(cmd);
     std::string body = str.substr(str.find("\r\n\r\n") + 4);
     std::string header;
     header = generateHeader(OK, body.length(), "text/html; charset=UTF-8");
-    header.append(str.substr(0,str.find("\r\n\r\n") - 1));
+    header.append(str.substr(0, str.find("\r\n\r\n") - 1));
 
     return header + CRLF_Combination + CRLF_Combination + body;
-    
+
     // return str;
 }
