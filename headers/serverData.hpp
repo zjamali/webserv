@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:36:55 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/11 01:29:03 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/20 01:33:58 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ class serverData
 
 	public:
 		void setHost(std::string givenHost);
-		void setPorts(int givenPort);
+		bool setPorts(int givenPort);
 
 		std::set<int> getPorts();
 		std::string getHost();

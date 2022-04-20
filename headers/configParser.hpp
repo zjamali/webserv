@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/21 21:44:02 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/13 07:24:18 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/20 00:25:56 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,9 @@
 # include <list>
 # include <fstream>
 # include "serverData.hpp"
+
+#define RED "\e[1;91m"
+# define RESET "\033[0m"
 
 enum type { name, parameter, semicolon, openingCurlyBracket, closingCurlyBracket };
 
@@ -58,6 +61,7 @@ class configParser
 		configParser(char *configFileName);
 		void startTokenization(char *configFileName);
 		void checkSyntaxAndFillData();
+		void checkFileExtension(std::string configFileName);
 		const std::vector<serverData> &getServers() const;
 		~configParser();
 };

@@ -6,7 +6,7 @@
 /*   By: iltafah <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/29 11:36:44 by iltafah           #+#    #+#             */
-/*   Updated: 2022/04/13 07:23:05 by iltafah          ###   ########.fr       */
+/*   Updated: 2022/04/20 01:33:39 by iltafah          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,11 @@ serverData::~serverData()
 {
 }
 
-void serverData::setPorts(int givenPort)
+bool serverData::setPorts(int givenPort)
 {
-	_ports.insert(givenPort);
+	std::pair<std::set<int>::iterator, bool> ret = _ports.insert(givenPort);
+	
+	return (ret.second);
 }
 
 std::set<int> serverData::getPorts()
@@ -72,7 +74,7 @@ std::set<std::string> serverData::getServerNames()
 
 void serverData::setErrorPages(int errorCode, std::string errorPath)
 {
-	_errorPages.insert(std::make_pair<int, std::string>(errorCode, errorPath));
+	_errorPages.insert(std::make_pair(errorCode, errorPath));
 }
 
 std::map<int, std::string> serverData::getErrorPages()
