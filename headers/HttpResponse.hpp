@@ -11,6 +11,7 @@
 #include <sstream>
 #include <dirent.h>
 #include <time.h>
+#include <exception>
 #include "HttpRequest.hpp"
 #include "IndexOfHtmlTemplate.hpp"
 #include "serverData.hpp"

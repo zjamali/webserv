@@ -6,17 +6,13 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
 
     _responseStatus = request.getRequestStatus();
 
-    std::cout << "REQUEST STATUS : " << _responseStatus << "\n";
     _method = request.getMethod();
     _httpVersion = request.getHttpVersion();
     _path = request.getPath();
     _postRequestData = request.getBodyParts();
     std::map<std::string, std::string> _headers = request.getHedaers();
     if (_headers.find("Content-Type") != _headers.end())
-    {
-        std::cout << "ppppppppp\n";
         __contentType = request.getHedaers()["Content-Type"];
-    }
     // generate response
     std::string hosts[3] = {"Host", "host", "HOST"};
     for (int i = 0; i < 3; i++)
@@ -32,14 +28,12 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
     {
         _requestBody = request.getRequestBody();
         __contentLength = request.getHedaers()["Content-Length"];
-        std::cout << "POST -> CONTENT LENGHT " << __contentLength << "<---\n";
     }
     // get queries:
     _queries = request.getQueries();
     // _get cookies
     _cookies = request.getHedaers()["Cookie"];
     // init servers find server
-    std::cout << "========================>" << _host << "<========================\n";
 
     _server = server;
 
@@ -167,7 +161,6 @@ HttpResponse::HttpResponse(HttpRequest const &request, serverData const &server)
         }
     }
 
-    std::cout << "location : " << _location.getPath() << "\n";
     // location  is retdirection or not
     /// allowed methods
     // error pages
@@ -495,7 +488,6 @@ bool HttpResponse::upload(std::string const &path, std::string const &filename, 
     }
     else
     {
-        std::cout << "file not created" << std::endl;
         return 1;
     }
 }
@@ -599,11 +591,25 @@ std::string HttpResponse::handle_GET_Request(std::string const &root, std::strin
             {
                 if (fullPath.find(".php") != std::string::npos)
                 {
-                    return run_CGI(fullPath, _php_cgi_path);
+                    try
+                    {
+                        return run_CGI(fullPath, _php_cgi_path);
+                    }
+                    catch (const std::exception &e)
+                    {
+                        return generateErrorResponse(INTERNAL_SERVER_ERROR);
+                    }
                 }
                 if (fullPath.find(".py") != std::string::npos)
                 {
-                    return run_CGI(fullPath, _python_cgi_path);
+                    try
+                    {
+                        return run_CGI(fullPath, _python_cgi_path);
+                    }
+                    catch (const std::exception &e)
+                    {
+                        return generateErrorResponse(INTERNAL_SERVER_ERROR);
+                    }
                 }
                 if (access((fullPath).c_str(), R_OK) == 0)
                 {
@@ -639,23 +645,35 @@ std::string HttpResponse::handle_POST_Request()
 {
     if ((_root + _path).find(".php") != std::string::npos)
     {
-        return run_CGI(_root + _path, _php_cgi_path);
+        try
+        {
+            return run_CGI(_root + _path, _php_cgi_path);
+        }
+        catch (const std::exception &e)
+        {
+            return generateErrorResponse(INTERNAL_SERVER_ERROR);
+        }
     }
     if ((_root + _path).find(".py") != std::string::npos)
     {
-        return run_CGI(_root + _path, _python_cgi_path);
+        try
+        {
+            return run_CGI(_root + _path, _python_cgi_path);
+        }
+        catch (const std::exception &e)
+        {
+            return generateErrorResponse(INTERNAL_SERVER_ERROR);
+        }
     }
     // check if upload location exist
     struct stat sb;
     std::string uploadPath = _root + _uploadpath;
     if (stat(uploadPath.c_str(), &sb) == 0 && S_ISDIR(sb.st_mode) /* && access(uploadPath.c_str(), W_OK)*/)
     {
-        std::cout << "upload : " << uploadPath << "\n";
         for (std::vector<t_bodyPart>::iterator it = _postRequestData.begin(); it != _postRequestData.end(); it++)
         {
             if (!(it->_filename.empty())) // a filename parametre exist
             {
-                std::cout << "filename : " << it->_filename << "| data" << it->_data << "\n";
                 std::ofstream outFile(uploadPath + "/" + it->_filename, std::ios::out | std::ios::binary | std::ofstream::trunc);
                 if (outFile)
                 {
@@ -676,7 +694,6 @@ std::string HttpResponse::handle_POST_Request()
 
 std::string HttpResponse::handle_DELETE_Request(std::string const &root, std::string const &path)
 {
-    std::cout << "DELETE CALLED " << root + path << "\n";
     struct stat sb;
     if (stat((root + path).c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
     {
@@ -699,7 +716,14 @@ std::string HttpResponse::CGI_GET_Request(std::string const &root, std::string c
     // regular file
     if (stat((root + path).c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
     {
-        body = run_CGI(root + path, cgi_path);
+        try
+        {
+            body = run_CGI(root + path, cgi_path);
+        }
+        catch (const std::exception &e)
+        {
+            return generateErrorResponse(INTERNAL_SERVER_ERROR);
+        }
     }
     else
     {
@@ -716,7 +740,14 @@ std::string HttpResponse::CGI_POST_Request(std::string const &root, std::string 
     // regular file
     if (stat((root + path).c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
     {
-        body = run_CGI(root + path, cgi_path);
+        try
+        {
+            body = run_CGI(root + path, cgi_path);
+        }
+        catch (const std::exception &e)
+        {
+            return generateErrorResponse(INTERNAL_SERVER_ERROR);
+        }
     }
     else
     {
@@ -735,16 +766,18 @@ std::string HttpResponse::run_CGI(std::string const &filename, std::string const
     std::string str;
 
     if (access(cgi_path.c_str(), F_OK) != 0)
-        return (generateErrorResponse(INTERNAL_SERVER_ERROR));
+        throw std::runtime_error("error in cgi path");
     char buffer[10000];
     int r;
     cmd = (char **)malloc(sizeof(char *) * 3);
     cmd[0] = strdup(cgi_path.c_str());
     cmd[1] = strdup(filename.c_str());
     cmd[2] = NULL;
-    pipe(pipefd);
-    pipe(pipefd2);
+    if (pipe(pipefd) != 0)
+        throw std::runtime_error("pipe error");
 
+    if (pipe(pipefd2) != 0)
+        throw std::runtime_error("pipe error");
 
     setenv("REDIRECT_STATUS", std::to_string(_responseStatus).c_str(), 1);
     setenv("SERVER_SOFTWARE", "Webserv", 1);
@@ -793,7 +826,6 @@ std::string HttpResponse::run_CGI(std::string const &filename, std::string const
     {
         close(pipefd[1]);
         close(pipefd2[0]);
-        std::cout << "ENV " << getenv("CONTENT_TYPE") << "\n";
         if (_method == "POST")
         {
             write(pipefd2[1], _requestBody.c_str(), _requestBody.length());
@@ -805,7 +837,10 @@ std::string HttpResponse::run_CGI(std::string const &filename, std::string const
         }
         close(pipefd[0]);
         close(pipefd2[1]);
-        std::cout << "cgi end \n";
+        int r;
+        waitpid(pid, &r, 0);
+        if (WEXITSTATUS(r) == 1)
+            throw std::runtime_error("process error");
     }
     free(cmd[0]);
     free(cmd[1]);

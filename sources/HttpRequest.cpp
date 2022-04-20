@@ -208,20 +208,11 @@ bool HttpRequest::checkRequestkHeaders()
 
 void HttpRequest::parseRequestBody()
 {
-    std::cout << "-------------------------------------- start request ------------------------------\n";
-    std::cout << _request << "\n";
-    std::cout << "-------------------------------------- end   request ------------------------------\n";
     //_requestBody = _request.c_str() + _requestIndex; // skip + 4 : /r/n/r/n
     _requestBody = _request.substr(_requestIndex);
-    std::cout << "++++++++++++++++++++++++++++++++ start body ++++++++++++++++++++++++++++++++\n";
-    std::cout << "--------> body start index : " << _requestIndex  << "<-------\n";
-    std::cout << _requestBody << "\n";
-    std::cout << "++++++++++++++++++++++++++++++++ end   body ++++++++++++++++++++++++++++++++\n";
-    //_bodyExist = _requestBody == CRLF ? false : true;
     _bodyExist = true;
     if (_headers.find("Content-Length") == _headers.end()) // content-type not exist
     {
-        std::cout << "======>>>>>>>>>>  CONTENT LENGHT NOT FOUND <<<<<<========\n";
         _requestStatus = BAD_REQUEST;
         return;
     }
@@ -229,7 +220,6 @@ void HttpRequest::parseRequestBody()
     {
         if (_headers.find("Content-Type") == _headers.end())
         {
-            std::cout << "======>>>>>>>>>>  CONTENT TYPE NOT FOUND <<<<<<========\n";
             _requestStatus = BAD_REQUEST;
             return;
         }
@@ -253,10 +243,6 @@ void HttpRequest::parseRequestBody()
             }
         }
     }
-    std::cout << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% body parts %%%%%%%%%%%%%%%%%%%%%%%%%%%\n";
-    std::cout << "FILE NAME : " << _bodyParts[0]._filename  << "\n";
-    std::cout << "DATA : " << _bodyParts[0]._data  << "\n";
-    std::cout << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% body parts %%%%%%%%%%%%%%%%%%%%%%%%%%%\n";
 }
 
 void HttpRequest::parseDataFormat()
@@ -270,9 +256,6 @@ void HttpRequest::parseDataFormat()
     int begin = 0, end = 0;
     int beginData = 0, endData = 0;
     std::string rawData;
-    std::cout << "======================== request_body start ========================================\n";
-    std::cout << _requestBody << "\n";
-    std::cout << "======================== request_body end   ========================================\n";
     while (_requestBody.find(beginBoundary, beginData) != std::string::npos)
     {
         t_bodyPart bodyPart;
