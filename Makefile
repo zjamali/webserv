@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: iltafah <marvin@42.fr>                     +#+  +:+       +#+         #
+#    By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/10 14:58:16 by abdait-m          #+#    #+#              #
-#    Updated: 2022/04/13 22:53:05 by abdait-m         ###   ########.fr        #
+#    Updated: 2022/04/21 04:52:58 by abdait-m         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,14 +33,14 @@ CPPFLAGS = -std=c++98 -Wall -Wextra -Werror
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CPP) $(OBJS) -o $@
+	@$(CPP) $(OBJS) -o $@
 	@echo "\n\033[35mExecutable file has been created .\033[0m\n"
 
 %.o: %.cpp $(HDRS)
-	$(CPP) $(CPPFLAGS) -o $@ -c $<
+	@$(CPP) $(CPPFLAGS) -o $@ -c $<
 
 clean:
-	rm -f $(OBJS)
+	@rm -f $(OBJS)
 	@echo "\n\033[31mObjects removed!\033[0m\n"
 
 fclean: clean

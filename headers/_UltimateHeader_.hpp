@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:28 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/11 01:03:58 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/21 04:55:23 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,13 @@
 # include "HttpResponse.hpp"
 # include "configParser.hpp"
 # include "_server_.hpp"
+# define Y	"\033[1;33m"
+# define S_B "\033[1;36m"
+# define R "\033[1;31m"
+# define G "\033[1;32m"
+# define W "\033[1;37m"
+# define DEF "\033[0;37m"
+# define D_G "\033[1;30m"
 
 
 #endif // !_UltimateHeader_.hpp
