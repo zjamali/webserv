@@ -6,7 +6,7 @@
 /*   By: abdait-m <abdait-m@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 20:43:19 by abdait-m          #+#    #+#             */
-/*   Updated: 2022/04/21 05:04:47 by abdait-m         ###   ########.fr       */
+/*   Updated: 2022/04/22 13:43:38 by abdait-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,6 @@ void	webServer::_holdForConnections_()
 	std::cout << "\033[1;30m---> Waiting for incoming connections \033[0;37m\n";
 	while(true)
 	{
-		usleep(2000);
 		FD_ZERO(&this->_readfds_);
 		this->_readfds_ = this->_setFDs_;
 		struct timeval _time_ = {1, 0};
