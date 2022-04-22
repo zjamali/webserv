@@ -51,14 +51,6 @@ This server handler the following HTTP features:
 
 [FTP (RFC 959)](https://www.rfc-editor.org/rfc/rfc959.html)
 
-### HTTP Header Syntax
-
-[HTTP Request Methods](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods)
-
-[HTTP Status Codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)
-
-[HTTP Header Break Style](https://stackoverflow.com/questions/5757290/http-header-line-break-style)
-
 ### Select and non-blocking
 
 [Select](https://www.lowtek.com/sockets/select.html)
