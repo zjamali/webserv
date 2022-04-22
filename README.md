@@ -1,10 +1,19 @@
 # webserv
 
-42 project, recoding our own web server in C++. A program capable of running an HTTP server, handling requests, and parsing configuration files.
+> 42 project, Building our own web server in C++. A program capable of running an HTTP server, handling requests, and parsing configuration files.
 
 Team : [abdait-m](https://github.com/nowl01) / [zjamali](https://github.com/zjamali) / [iltafah](https://github.com/iltafah)
 
-[Subject]()
+[Subject](https://github.com/zjamali/webserv/blob/main/subject/en.subject.pdf)
+
+## Main points:
+This server handler the following HTTP features:
+- The basics of HTTP protocol (status line / request line, and a few headers).
+- GET, POST and DELETE methods.
+- HTTP response status codes (200, 404, 400 ....)
+- Error pages for the appropriate status code.
+- CGI.
+-  Cookies and session management.
 
 ## Resources
 
